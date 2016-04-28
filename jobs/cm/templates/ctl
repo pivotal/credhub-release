@@ -1,0 +1,34 @@
+#!/bin/bash
+
+RUN_DIR=/var/vcap/sys/run/cm
+LOG_DIR=/var/vcap/sys/log/cm
+PIDFILE=${RUN_DIR}/pid
+
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+
+case $1 in
+
+  start)
+    mkdir -p $RUN_DIR $LOG_DIR
+    chown -R vcap:vcap $RUN_DIR $LOG_DIR
+
+    echo $$ > $PIDFILE
+
+    cd /var/vcap/packages/cm
+    exec java -jar *.jar
+
+    ;;
+
+  stop)
+    kill -9 `cat $PIDFILE`
+    rm -f $PIDFILE
+
+    ;;
+
+  *)
+    echo "Usage: ctl {start|stop}"
+
+    ;;
+
+esac

@@ -1,0 +1,6 @@
+---
+final_name: cm
+blobstore:
+  provider: s3
+  options:
+    bucket_name: cm-release-blobs

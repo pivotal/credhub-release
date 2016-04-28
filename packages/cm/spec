@@ -1,0 +1,6 @@
+---
+name: cm
+dependencies:
+- openjdk_1.8.0
+files:
+- cm/**/*

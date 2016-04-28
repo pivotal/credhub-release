@@ -1,0 +1,8 @@
+---
+name: cm
+templates:
+  ctl: bin/ctl
+
+packages:
+- cm
+- openjdk_1.8.0
