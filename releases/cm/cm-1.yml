@@ -1,0 +1,22 @@
+---
+packages:
+- name: cm
+  version: 2f5991d677bd7a7726b022c4c5e9fa597c6e7ef8
+  fingerprint: 2f5991d677bd7a7726b022c4c5e9fa597c6e7ef8
+  sha1: c80d2808236edef4db27919ef456eac9f24bc512
+  dependencies:
+  - openjdk_1.8.0
+- name: openjdk_1.8.0
+  version: 89c90673c2c5fd784974f32f913886df37852d11
+  fingerprint: 89c90673c2c5fd784974f32f913886df37852d11
+  sha1: f0176cce2cefcb79551aa8c9dd6a62646d9498f4
+  dependencies: []
+jobs:
+- name: cm
+  version: bdd8635b47e674f502c061358035d746c00ce314
+  fingerprint: bdd8635b47e674f502c061358035d746c00ce314
+  sha1: 93db79f498f585253563ee1e7f4f8ab0ec0b73ee
+commit_hash: 5d973003
+uncommitted_changes: true
+name: cm
+version: '1'
