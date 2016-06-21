@@ -1,4 +1,15 @@
 #!/bin/bash
+
+set -e
+
 script_dir=$(dirname $0)
 
-$script_dir/staged_shortlog | git ci -F -
+tmpfile=/tmp/$$staged_shortlog
+trap "rm -f $tmpfile" EXIT
+$script_dir/staged_shortlog > $tmpfile
+echo ""
+echo "staged_shortlog commit list:"
+cat $tmpfile
+echo ""
+
+git ci -F - < $tmpfile

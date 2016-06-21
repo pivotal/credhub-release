@@ -32,3 +32,5 @@ locations.each do |location, shas|
     end
   end
 end
+
+exit 0
