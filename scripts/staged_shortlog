@@ -9,26 +9,28 @@ diffs.each do |diff|
   end
 end
 
-puts "Bump #{locations.keys.join(", ")}"
-puts # Second line of git commit message should always be empty
+if locations.any?
+  puts "Bump #{locations.keys.join(", ")}"
+  puts # Second line of git commit message should always be empty
 
-locations.each do |location, shas|
-  Dir.chdir(location) do
-    remote = `git remote -v`.match(/github.com[\/:]([^\s]+?).git/)
-    repo = remote && remote[1]
+  locations.each do |location, shas|
+    Dir.chdir(location) do
+      remote = `git remote -v`.match(/github.com[\/:]([^\s]+?).git/)
+      repo = remote && remote[1]
 
-    puts "Bump #{repo}"
-    
-    commit_messages_by_author = Hash.new([])
-    `git log #{shas} --pretty=format:'%h %an: %s'`.split("\n").each do |commit|
-      _sha, rest_of_commit = commit.split(" ", 2)
-      author, message = rest_of_commit.split(":", 2)
-      commit_messages_by_author[author] += [message]
-    end
+      puts "Bump #{repo}"
 
-    commit_messages_by_author.each do |author, messages|
-      puts "  #{author}:"
-      messages.each { |message| puts "    #{message}" }
+      commit_messages_by_author = Hash.new([])
+      `git log #{shas} --pretty=format:'%h %an: %s'`.split("\n").each do |commit|
+        _sha, rest_of_commit = commit.split(" ", 2)
+        author, message = rest_of_commit.split(":", 2)
+        commit_messages_by_author[author] += [message]
+      end
+
+      commit_messages_by_author.each do |author, messages|
+        puts "  #{author}:"
+        messages.each { |message| puts "    #{message}" }
+      end
     end
   end
 end
