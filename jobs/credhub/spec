@@ -1,8 +1,0 @@
----
-name: credhub
-templates:
-  ctl: bin/ctl
-
-packages:
-- credhub
-- openjdk_1.8.0
