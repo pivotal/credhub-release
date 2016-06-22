@@ -1,0 +1,10 @@
+set -ex
+
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+export PATH=$JAVA_HOME/bin:$PATH
+
+pushd credhub
+  ./gradlew build
+popd
+
+cp credhub/build/libs/*.jar ${BOSH_INSTALL_TARGET}

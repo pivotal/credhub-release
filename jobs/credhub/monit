@@ -1,0 +1,5 @@
+check process credhub
+  with pidfile /var/vcap/sys/run/credhub/pid
+  start program "/var/vcap/jobs/credhub/bin/ctl start"
+  stop program "/var/vcap/jobs/credhub/bin/ctl stop"
+  group vcap
