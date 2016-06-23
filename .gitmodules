@@ -1,6 +1,6 @@
 [submodule "src/cm"]
 	path = src/cm
 	url = git@github.com:pivotal-cf/sec-eng-credential-manager.git
-[submodule "credhub"]
-	path = credhub
+[submodule "src/credhub"]
+	path = src/credhub
 	url = git@github.com:pivotal-cf/sec-eng-credential-manager.git
