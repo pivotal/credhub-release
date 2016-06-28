@@ -2,7 +2,13 @@
 name: cm
 templates:
   ctl: bin/ctl
+  application.properties.erb: config/application.properties
 
 packages:
 - cm
 - openjdk_1.8.0
+
+properties:
+    credhub.port:
+      description: "Port for the CredHub server to listen on"
+      default: 8844
