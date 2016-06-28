@@ -16,7 +16,7 @@ case $1 in
     echo $$ > $PIDFILE
 
     cd /var/vcap/packages/cm
-    exec java -Dspring.config.location=/var/vcap/jobs/cm/config -jar *.jar
+    exec java -Dspring.config.location=/var/vcap/jobs/cm/config/application.properties -jar *.jar
 
     ;;
 
