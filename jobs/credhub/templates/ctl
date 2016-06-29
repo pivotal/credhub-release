@@ -1,7 +1,7 @@
 #!/bin/bash
 
-RUN_DIR=/var/vcap/sys/run/cm
-LOG_DIR=/var/vcap/sys/log/cm
+RUN_DIR=/var/vcap/sys/run/credhub
+LOG_DIR=/var/vcap/sys/log/credhub
 PIDFILE=${RUN_DIR}/pid
 
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
@@ -15,8 +15,8 @@ case $1 in
 
     echo $$ > $PIDFILE
 
-    cd /var/vcap/packages/cm
-    exec java -Dspring.config.location=/var/vcap/jobs/cm/config/application.properties -jar *.jar
+    cd /var/vcap/packages/credhub
+    exec java -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties -jar *.jar
 
     ;;
 

@@ -1,5 +1,0 @@
-check process cm
-  with pidfile /var/vcap/sys/run/cm/pid
-  start program "/var/vcap/jobs/cm/bin/ctl start"
-  stop program "/var/vcap/jobs/cm/bin/ctl stop"
-  group vcap
