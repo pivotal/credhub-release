@@ -9,6 +9,6 @@ packages:
 - openjdk_1.8.0
 
 properties:
-    credhub.port:
+    cm.port:
       description: "Port for the CredHub server to listen on"
       default: 8844
