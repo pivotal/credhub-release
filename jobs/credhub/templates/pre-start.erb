@@ -1,0 +1,5 @@
+#!/bin/bash
+
+<% if p('credhub.ssl.certificate') %>
+/var/vcap/jobs/credhub/bin/install_crt.sh <%= p('credhub.ssl.certificate') %> <%= p('credhub.ssl.private_key') %>
+<% end %>

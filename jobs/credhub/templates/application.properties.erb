@@ -1,1 +1,7 @@
 server.port=<%= p("credhub.port") %>
+<% if p('credhub.ssl.certificate') %>
+server.ssl.enabled=true
+server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
+server.ssl.password=changeit
+server.ssl.key-alias=credhub_ssl_cert
+<% end %>
