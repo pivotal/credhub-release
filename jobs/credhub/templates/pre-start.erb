@@ -1,5 +1,17 @@
 #!/bin/bash
 
-<% if p('credhub.ssl.certificate') %>
-/var/vcap/jobs/credhub/bin/install_crt.sh <%= p('credhub.ssl.certificate') %> <%= p('credhub.ssl.private_key') %>
+<% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do |certificate, private_key| %>
+
+CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
+PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
+
+cat > $CERT_FILE <<EOL
+<%= certificate %>
+EOL
+
+cat > $PRIV_KEY_FILE <<EOL
+<%= private_key %>
+EOL
+
+/var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE
 <% end %>

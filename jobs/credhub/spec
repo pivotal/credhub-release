@@ -11,10 +11,10 @@ packages:
 - credhub
 
 properties:
-    credhub.port:
-      description: "Port for the CredHub server to listen on"
-      default: 8844
-    credhub.ssl.certificate:
-      description: "SSL certificate"
-    credhub.ssl.private_key:
-      description: "SSL private key for given certificate"
+  credhub.port:
+    description: "Port for the CredHub server to listen on"
+    default: 8844
+  credhub.ssl.certificate:
+    description: "SSL certificate"
+  credhub.ssl.private_key:
+    description: "SSL private key for given certificate"
