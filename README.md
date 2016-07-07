@@ -1,14 +1,26 @@
+# cm-release repo
+
 cm-release is a kind of wrapper on the source repo "sec-eng-credential-manager". This
 wrapper provides a way to dictate how Bosh uses credential manager (cm) as a release.
 
-The source code from that repo is submoduled here. To manually update a local repo, use
-
-    ./scripts/update
-
-to ensure that the latest code has been pulled into the submodules. 
+The source code from that repo is submoduled here.  
 
 The pipeline "credential-manager.yml" has a phase "bump-credential-manager" that
-updates the SHA reference in the submodules in order to specify the latest snapshot to be wrapped into a bosh release. 
+has the responsibility to ensure that only green builds that also have
+ changes to sec-eng-credential-manager are worthy of being used.
+ It updates the SHA reference to this 'golden' build in order to specify the latest 
+ snapshot to be wrapped into a bosh release. 
+ 
+ 
+## Updating this repo's submodule before a BOSH release
+
+To manually update a local repo, use
+ 
+     ./scripts/update
+ 
+ to ensure that the latest code has been pulled into the submodule.
+
+## Creating a BOSH release
 
 After that, to create a new release for bosh with
 
