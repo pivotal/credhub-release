@@ -4,5 +4,5 @@ blobstore:
   provider: s3
   options:
     bucket_name: cm-release-blobs
-    access_key_id: AKIAJPZUP3WMPO2D6SWQ
-    secret_access_key: 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
+    access_key_id: AKIAIUQO6OED2AFHZ4SQ
+    secret_access_key: 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
