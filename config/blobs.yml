@@ -1,9 +1,5 @@
 ---
 openjdk_1.8.0/openjdk-1.8.0_91-x86_64-trusty.tar.gz:
-  object_id: 6cbe4ad7-c9ce-4cb4-b04a-3e6947a89b2d
-  sha: 69c612c7f783aad33f4d73ec9b44e1a2ee50f386
-  size: 78278698
-openjdk-1.8.0_91-x86_64-trusty.tar.gz:
   object_id: b81b12f2-ba16-49ea-b5e4-83254fbdb125
   sha: 69c612c7f783aad33f4d73ec9b44e1a2ee50f386
   size: 78278698
