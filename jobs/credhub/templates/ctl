@@ -17,7 +17,7 @@ case $1 in
     echo $$ > $PIDFILE
 
     cd /var/vcap/packages/credhub
-    exec chpst -u $RUNAS:$RUNAS java -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties -jar *.jar
+    exec chpst -u $RUNAS:$RUNAS java -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties -ea -Dauth-server.url=https://example.com -jar *.jar
 
     ;;
 
