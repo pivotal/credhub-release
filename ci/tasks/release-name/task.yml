@@ -1,0 +1,11 @@
+---
+platform: linux
+image: docker:///pcfseceng/sec-eng-ci
+run:
+  path: sh
+  args:
+  - -exc
+  - |
+    cd credhub-release-tarball
+    echo "credhub-release-tarball" > name
+
