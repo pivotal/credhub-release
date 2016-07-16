@@ -6,6 +6,5 @@ run:
   args:
   - -exc
   - |
-    cd credhub-release-tarball
     echo "credhub-release-tarball" > name
 
