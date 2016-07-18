@@ -4,6 +4,7 @@ image: docker:///pcfseceng/sec-eng-ci
 
 inputs:
   - name: task-repo
+  - name: credhub-release-tarball
 outputs:
   - name: release-name-output
 run:
