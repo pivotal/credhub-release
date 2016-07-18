@@ -5,6 +5,7 @@ set -exu
 RELEASE_NAME_OUTPUT=$(mktemp -d -t release-name-output)
 FAKE_TARBALLS=$(mktemp -d -t credhub-release-fakes)
 touch $FAKE_TARBALLS/credhub-1+dev.1468862844.tgz
+touch $FAKE_TARBALLS/version
 
 fly \
   -t private \
