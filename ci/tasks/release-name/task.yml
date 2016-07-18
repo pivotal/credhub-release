@@ -1,10 +1,13 @@
 ---
 platform: linux
 image: docker:///pcfseceng/sec-eng-ci
-run:
-  path: sh
-  args:
-  - -exc
-  - |
-    echo "credhub-release-tarball" > name
 
+inputs:
+  - name: task-repo
+outputs:
+  - name: release-name-output
+run:
+  path: task-repo/ci/tasks/release-name/task.sh
+
+params:
+  RELEASE_NAME_OUTPUT_PATH: release-name-output
