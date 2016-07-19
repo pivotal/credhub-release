@@ -1,6 +1,5 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
-auth-server.client=credhub
 data-storage.type=<%= p("credhub.data_storage.type") %>
 <% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do %>
 server.ssl.enabled=true
