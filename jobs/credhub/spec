@@ -18,9 +18,6 @@ properties:
     description: "SSL certificate"
   credhub.ssl.private_key:
     description: "SSL private key for given certificate"
-  credhub.auth-server.url:
+  credhub.user_management.uaa.url:
     description: "url of UAA instance for client to contact"
     default: "http://localhost:8080/uaa"
-  credhub.auth-server.client:
-    description: "the client defined in UAA for use by credhub; must have no secret"
-    default: "credhub"
