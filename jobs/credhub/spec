@@ -20,6 +20,5 @@ properties:
     description: "SSL private key for given certificate"
   credhub.user_management.uaa.url:
     description: "URL of UAA instance for client to contact"
-    default: "http://localhost:8080/uaa"
   credhub.data_storage.type:
     description: "Database type, either in-memory (development only), mysql, or postgres, and there is no default"
