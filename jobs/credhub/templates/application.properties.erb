@@ -1,6 +1,6 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
-<% if_p('credhub.user_management.uaa.skip-ssl-validation') do %>
+<% if_p("credhub.user_management.uaa.skip-ssl-validation") do %>
 auth-server.skip-ssl-validation=true
 <% end %>
 data-storage.type=<%= p("credhub.data_storage.type") %>
