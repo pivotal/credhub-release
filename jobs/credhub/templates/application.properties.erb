@@ -1,6 +1,11 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
 data-storage.type=<%= p("credhub.data_storage.type") %>
+<%
+if !['in-memory'].include?(p("credhub.data_storage.type"))
+  raise ArgumentError, 'credhub.data_storage.type must be set to "in-memory".'
+end
+%>
 <% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do %>
 server.ssl.enabled=true
 server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
