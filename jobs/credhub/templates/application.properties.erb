@@ -1,9 +1,11 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
 data-storage.type=<%= p("credhub.data_storage.type") %>
+data-storage.username=<%= p("credhub.data_storage.username") %>
+data-storage.password=<%= p("credhub.data_storage.password") %>
 <%
-if !['in-memory'].include?(p("credhub.data_storage.type"))
-  raise ArgumentError, 'credhub.data_storage.type must be set to "in-memory".'
+if !['in-memory', 'postgres'].include?(p("credhub.data_storage.type"))
+  raise ArgumentError, 'credhub.data_storage.type must be set to "postgres" or "in-memory".'
 end
 %>
 <% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do %>

@@ -22,5 +22,9 @@ properties:
     description: "URL of UAA instance for client to contact"
   credhub.data_storage.type:
     description: "Database type, either in-memory (development only), mysql, or postgres, and there is no default"
+  credhub.data_storage.username:
+    description: "User name for credhub's database access"
+  credhub.data_storage.password:
+    description: "Password for credhub's database access"
   uaa.jwt.verification_key:
     description: "The public key for verifying oauth tokens issued by the UAA"
