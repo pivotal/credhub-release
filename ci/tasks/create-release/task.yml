@@ -3,12 +3,11 @@ platform: linux
 image: docker:///pcfseceng/sec-eng-ci
 
 inputs:
-  - name: task-repo
-  - name: credhub-release-tarball
+  - name: release-repo
 outputs:
   - name: release-name-output
 run:
-  path: task-repo/ci/tasks/release-name/task.sh
+  path: release-repo/ci/tasks/create-release/task.sh
 
 params:
-  RELEASE_NAME_OUTPUT_PATH: release-name-output
+  OUTPUT_PATH: create-release-output
