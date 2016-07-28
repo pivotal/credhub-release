@@ -2,7 +2,7 @@
 
 set -eux
 
-cd release_repo
+cd ../../..
 
 bosh -n create release --name credhub --force --with-tarball --timestamp-version
 
