@@ -26,5 +26,9 @@ properties:
     description: "User name for credhub's database access"
   credhub.data_storage.password:
     description: "Password for credhub's database access"
+  credhub.data_storage.host:
+    description: "Host for credhub's database access"
+  credhub.data_storage.port:
+    description: "Port for credhub's database access"
   uaa.jwt.verification_key:
     description: "The public key for verifying oauth tokens issued by the UAA"
