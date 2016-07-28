@@ -1,13 +1,16 @@
 ---
 platform: linux
 image: docker:///pcfseceng/sec-eng-ci
-
 inputs:
-  - name: release-repo
+- name: release-dir
+- name: release-version
 outputs:
-  - name: release-name-output
+- name: create-release-output
 run:
-  path: release-repo/ci/tasks/create-release/task.sh
-
+  path: sec-eng-ci-repo/tasks/create-release/task.sh
 params:
   OUTPUT_PATH: create-release-output
+  RELEASE_VERSION_FILE:
+  RELEASE_NAME:
+  GITHUB_RELEASE_NAME:
+  BOSH_TARGET:
