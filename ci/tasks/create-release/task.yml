@@ -7,7 +7,7 @@ inputs:
 outputs:
 - name: create-release-output
 run:
-  path: sec-eng-ci-repo/tasks/create-release/task.sh
+  path: release-dir/ci/tasks/create-release/task.sh
 params:
   OUTPUT_PATH: create-release-output
   RELEASE_VERSION_FILE:
