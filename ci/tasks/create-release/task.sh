@@ -18,6 +18,7 @@ fi
 cd release-dir
 bosh create release --with-tarball --name $RELEASE_NAME --force $VERSION_ARG
 # upload release to bosh
+bosh login $BOSH_USERNAME $BOSH_PASSWORD
 bosh -t $BOSH_TARGET upload release
 
 cd dev_releases/$RELEASE_NAME
