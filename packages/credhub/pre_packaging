@@ -1,25 +1,25 @@
 set -e -x
 
-cd ${BUILD_DIR}
-
 # Make sure we can see uname
 export PATH=$PATH:/bin:/usr/bin
 
-#unpack Java - we support Mac OS 64bit otherwise we require JAVA_HOME to point to JDK
-if [ ! -d $JAVA_HOME ]; then
-    echo "JAVA_HOME property set is required for non Linux/Darwin builds."
-    exit 1
+#unpack Java - we support Mac OS 64bit and Linux otherwise we require JAVA_HOME to point to JDK
+if [ `uname` = "Linux" ]; then
+  export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+else
+  export JAVA_HOME=$(/usr/libexec/java_home)
 fi
 
 
 #setup Java path
 export PATH=$JAVA_HOME/bin:$PATH
 
-#build credhub jar
-cd ${BUILD_DIR}/credhub
-    ./gradlew assemble
-    #GIT_DIR=$(find $RELEASE_DIR -path "*/modules/src/credhub") ./gradlew :assemble
-    cp credhub/build/libs/credhub*.jar ${BUILD_DIR}/credhub/credhub.jar
+pushd ${BUILD_DIR}/credhub
+  GIT_DIR=$(find $RELEASE_DIR -path "*/modules/src/credhub") ./gradlew :assemble
+  cp build/libs/*.jar ${BUILD_DIR}/credhub/credhub.jar
+  ./gradlew clean
+popd
 
-    #clean build data
-    ./gradlew clean
+#clean build data
+rm -rf java
+rm -rf openjdk_1.8.0
