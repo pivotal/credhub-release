@@ -1,21 +1,25 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
-data-storage.type=<%= p("credhub.data_storage.type") %>
 <% if_p('credhub.data_storage.username') do %>
-data-storage.username=<%= p("credhub.data_storage.username") %>
+spring.datasource.username=<%= p("credhub.data_storage.username") %>
 <% if_p('credhub.data_storage.password') do %>
-data-storage.password=<%= p("credhub.data_storage.password") %>
+spring.datasource.password=<%= p("credhub.data_storage.password") %>
 <% end %>
 <% end %>
-<% if_p('credhub.data_storage.host', 'credhub.data_storage.port') do %>
-data-storage.host=<%= p("credhub.data_storage.host") %>
-data-storage.port=<%= p("credhub.data_storage.port") %>
-<% end %>
+spring.jpa.hibernate.ddl-auto=update
 <%
-if !['in-memory', 'postgres', 'mysql'].include?(p("credhub.data_storage.type"))
-  raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
+case p("credhub.data_storage.type")
+    when 'in-memory'
+@url = 'jdbc:h2:mem'
+    when 'postgres'
+@url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/credhub"
+    when 'mysql'
+@url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/credhub"
+    else
+raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
 end
 %>
+spring.datasource.url=<%=@url%>
 <% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do %>
 server.ssl.enabled=true
 server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
