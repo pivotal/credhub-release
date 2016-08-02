@@ -30,5 +30,9 @@ properties:
     description: "Host for credhub's database access"
   credhub.data_storage.port:
     description: "Port for credhub's database access"
+  credhub.data_storage.database:
+    description: "Name of database"
+    default: "credhub"
+
   uaa.jwt.verification_key:
     description: "The public key for verifying oauth tokens issued by the UAA"

@@ -12,9 +12,9 @@ case p("credhub.data_storage.type")
     when 'in-memory'
 @url = 'jdbc:h2:mem'
     when 'postgres'
-@url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/credhub"
+@url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
     when 'mysql'
-@url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/credhub"
+@url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
     else
 raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
 end
