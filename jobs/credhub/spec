@@ -5,6 +5,7 @@ templates:
   install_crt.sh: bin/install_crt.sh
   application.properties.erb: config/application.properties
   pre-start.erb: bin/pre-start
+  post-start.erb: bin/post-start
 
 packages:
 - openjdk_1.8.0
