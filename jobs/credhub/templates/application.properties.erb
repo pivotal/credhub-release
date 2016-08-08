@@ -9,14 +9,23 @@ spring.datasource.password=<%= p("credhub.data_storage.password") %>
 spring.jpa.hibernate.ddl-auto=update
 <%
 case p("credhub.data_storage.type")
-    when 'in-memory'
-@url = 'jdbc:h2:mem'
-    when 'postgres'
-@url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
-    when 'mysql'
-@url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
-    else
-raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
+  when 'in-memory'
+    @url = 'jdbc:h2:mem'
+  when 'postgres'
+    @url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
+  when 'mysql'
+    @url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
+
+    case p('credhub.data_storage.require_tls')
+      when true
+        @url << "?useSSL=true&requireSSL=true&verifyServerCertificate=false"
+      when false
+        @foo = 'bar'
+      else
+        raise ArgumentError, "credhub.data_storage.require_tls (#{p('credhub.data_storage.require_tls')}) must be set to \"true\" or \"false\"."
+    end
+  else
+    raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
 end
 %>
 spring.datasource.url=<%=@url%>

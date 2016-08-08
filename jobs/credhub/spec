@@ -34,6 +34,8 @@ properties:
   credhub.data_storage.database:
     description: "Name of database"
     default: "credhub"
-
+  credhub.data_storage.require_tls:
+    description: "If true, forbid insecure connections to MySQL. Does not apply to Postgres."
+    default: true
   uaa.jwt.verification_key:
     description: "The public key for verifying oauth tokens issued by the UAA"
