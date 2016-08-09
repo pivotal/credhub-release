@@ -32,7 +32,7 @@ spring.datasource.url=<%=@url%>
 <% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do %>
 server.ssl.enabled=true
 server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
-server.ssl.key-password=changeit
+server.ssl.password=changeit
 server.ssl.key-alias=credhub_ssl_cert
 <% end %>
 security.oauth2.resource.jwt.key-value=<%= p("uaa.jwt.verification_key").split("\n").map(&:strip).join() %>
