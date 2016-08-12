@@ -10,7 +10,7 @@ spring.jpa.hibernate.ddl-auto=update
 <%
 case p("credhub.data_storage.type")
   when 'in-memory'
-    @url = 'jdbc:h2:mem'
+    @url = "jdbc:h2:mem:#{p("credhub.data_storage.database")}"
   when 'postgres'
     @url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
   when 'mysql'
