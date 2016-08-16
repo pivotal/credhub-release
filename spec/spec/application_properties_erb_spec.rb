@@ -79,5 +79,12 @@ RSpec.describe "the template" do
       expect {render_erb('{ type: "foo", database: "my_db_name" }')}
           .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
     end
+
+    it "adds MySQL trust store parameters when tls_ca is set" do
+      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
+      expect(result).to include "verifyServerCertificate=true"
+      expect(result).to include "trustCertificateKeyStorePassword=changeit"
+      expect(result).to include "trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
+    end
   end
 end

@@ -37,5 +37,7 @@ properties:
   credhub.data_storage.require_tls:
     description: "If true, forbid insecure connections to MySQL. Does not apply to Postgres."
     default: true
+  credhub.data_storage.tls_ca:
+    description: "Certificate that database must supply when validation is required."
   uaa.jwt.verification_key:
     description: "The public key for verifying oauth tokens issued by the UAA"

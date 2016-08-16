@@ -8,6 +8,14 @@ spring.datasource.password=<%= p("credhub.data_storage.password") %>
 <% end %>
 spring.jpa.hibernate.ddl-auto=update
 <%
+def get_tls_ca
+  begin
+    return p('credhub.data_storage.tls_ca')
+  rescue UnknownProperty
+    return ''
+  end
+end
+
 case p("credhub.data_storage.type")
   when 'in-memory'
     @url = "jdbc:h2:mem:#{p("credhub.data_storage.database")}"
@@ -18,9 +26,16 @@ case p("credhub.data_storage.type")
 
     case p('credhub.data_storage.require_tls')
       when true
-        @url << "?useSSL=true&requireSSL=true&verifyServerCertificate=false"
+        @url << "?useSSL=true&requireSSL=true&verifyServerCertificate="
+        if get_tls_ca.empty?
+          @url << "false"
+        else
+          @url << "true"
+          @url << "&trustCertificateKeyStorePassword=changeit"
+          @url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
+        end
       when false
-        @foo = 'bar'
+        # no op
       else
         raise ArgumentError, "credhub.data_storage.require_tls (#{p('credhub.data_storage.require_tls')}) must be set to \"true\" or \"false\"."
     end

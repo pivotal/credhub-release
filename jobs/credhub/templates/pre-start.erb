@@ -1,9 +1,12 @@
 #!/bin/bash
 
-<% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do |certificate, private_key| %>
-
 CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
 PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
+DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
+
+rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
+
+<% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do |certificate, private_key| %>
 
 cat > $CERT_FILE <<EOL
 <%= certificate %>
@@ -13,5 +16,16 @@ cat > $PRIV_KEY_FILE <<EOL
 <%= private_key %>
 EOL
 
-/var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE
 <% end %>
+
+
+<% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
+
+cat > $DATABASE_CA_CERT <<EOL
+<%= tls_ca %>
+EOL
+
+<% end %>
+
+
+/var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
