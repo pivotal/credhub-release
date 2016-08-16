@@ -1,0 +1,47 @@
+set -eux
+
+tar -C ${BOSH_INSTALL_TARGET} --strip-components=1 -xzvf ${BOSH_COMPILE_TARGET}/lunaclient/lunaclient.tar.gz
+
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+
+cp ${BOSH_INSTALL_TARGET}/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
+cp ${BOSH_INSTALL_TARGET}/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
+
+if [ ! -e ${BOSH_INSTALL_TARGET}/Chrystoki.conf ]; then
+
+cat <<EOF > ${BOSH_INSTALL_TARGET}/Chrystoki.conf
+Chrystoki2 = {
+  LibUNIX = /var/vcap/packages/lunaclient/lib/libCryptoki2.so;
+  LibUNIX64 = /var/vcap/packages/lunaclient/lib/libCryptoki2_64.so;
+}
+
+Luna = {
+  DefaultTimeOut = 500000;
+  PEDTimeout1 = 100000;
+  PEDTimeout2 = 200000;
+  PEDTimeout3 = 10000;
+  KeypairGenTimeOut = 2700000;
+  CloningCommandTimeOut = 300000;
+  CommandTimeOutPedSet = 720000;
+}
+
+CardReader = {
+  RemoteCommand = 1;
+}
+
+Misc = {
+  PE1746Enabled = 0;
+  ToolsDir = /var/vcap/packages/lunaclient/bin;
+}
+LunaSA Client = {
+  ReceiveTimeout = 20000;
+  SSLConfigFile = /var/vcap/packages/lunaclient/bin/openssl.cnf;
+  ClientPrivKeyFile = /var/vcap/jobs/credhub/config/client_key.pem;
+  ClientCertFile = /var/vcap/jobs/credhub/config/client_cert.pem;
+  ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
+  NetClient = 1;
+  HtlDir = /var/vcap/packages/lunaclient/htl/;
+}
+EOF
+
+fi

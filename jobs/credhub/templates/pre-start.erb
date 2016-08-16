@@ -18,7 +18,6 @@ EOL
 
 <% end %>
 
-
 <% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
 
 cat > $DATABASE_CA_CERT <<EOL
@@ -27,5 +26,18 @@ EOL
 
 <% end %>
 
-
 /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
+
+cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
+<%= p('credhub.hsm.certificate') %>
+EOL
+
+cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
+<%= p('credhub.hsm.client_certificate') %>
+EOL
+
+cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
+<%= p('credhub.hsm.client_key') %>
+EOL
+
+ln -f -s /var/vcap/packages/lunaclient/Chrystoki.conf /etc/Chrystoki.conf

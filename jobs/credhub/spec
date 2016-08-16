@@ -9,12 +9,21 @@ templates:
 
 packages:
 - openjdk_1.8.0
+- lunaclient
 - credhub
 
 properties:
   credhub.port:
     description: "Port for the CredHub server to listen on"
     default: 8844
+  credhub.hsm.certificate:
+    description: "The HSMs certificate"
+  credhub.hsm.partition_password:
+    description: "Password for the HSM partition"
+  credhub.hsm.client_certificate:
+    description: "NTLS client certificate registered with HSM"
+  credhub.hsm.client_key:
+    description: "NTLS client private key matching the client_certificate"
   credhub.ssl.certificate:
     description: "SSL certificate"
   credhub.ssl.private_key:

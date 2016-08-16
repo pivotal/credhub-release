@@ -1,5 +1,6 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
+hsm.partition-password=<%= p("credhub.hsm.partition_password") %>
 <% if_p('credhub.data_storage.username') do %>
 spring.datasource.username=<%= p("credhub.data_storage.username") %>
 <% if_p('credhub.data_storage.password') do %>
