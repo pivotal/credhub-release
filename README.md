@@ -27,3 +27,10 @@ After that, to create a new release for bosh with
      bosh create release --with-tarball --name cm --force --timestamp-version
 
 The full path of this newly created release is indicated at the bottom of its output, with an extension ".tgz". Use this full path as the value of the property with which you create the bosh release for credential manager, within the repo "cm-release"
+
+## Rspec for testing .erb substitution logic
+
+     cd spec
+     bundle
+     bundle install --binstubs
+     ./bin/rspec
