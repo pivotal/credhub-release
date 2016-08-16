@@ -40,4 +40,4 @@ cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
 <%= p('credhub.hsm.client_key') %>
 EOL
 
-ln -f -s /var/vcap/packages/lunaclient/Chrystoki.conf /etc/Chrystoki.conf
+ln -f -s /var/vcap/jobs/credhub/config/Chrystoki.conf /etc/Chrystoki.conf

@@ -6,6 +6,7 @@ templates:
   application.properties.erb: config/application.properties
   pre-start.erb: bin/pre-start
   post-start.erb: bin/post-start
+  Chrystoki.conf.erb: config/Chrystoki.conf
 
 packages:
 - openjdk_1.8.0
@@ -16,6 +17,11 @@ properties:
   credhub.port:
     description: "Port for the CredHub server to listen on"
     default: 8844
+  credhub.hsm.host:
+    description: "The HSM"
+  credhub.hsm.port:
+    description: "The HSM port"
+    default: 1792
   credhub.hsm.certificate:
     description: "The HSMs certificate"
   credhub.hsm.partition_password:
