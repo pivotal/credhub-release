@@ -20,17 +20,17 @@ case p("credhub.data_storage.type")
   when 'in-memory'
     @url = "jdbc:h2:mem:#{p("credhub.data_storage.database")}"
   when 'postgres'
-    @url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
+    @url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
   when 'mysql'
-    @url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}"
+    @url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
 
     case p('credhub.data_storage.require_tls')
       when true
-        @url << "?useSSL=true&requireSSL=true&verifyServerCertificate="
+        @url << "&useSSL=true&requireSSL=true"
         if get_tls_ca.empty?
-          @url << "false"
+          @url << "&verifyServerCertificate=false"
         else
-          @url << "true"
+          @url << "&verifyServerCertificate=true"
           @url << "&trustCertificateKeyStorePassword=changeit"
           @url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
         end

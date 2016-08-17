@@ -38,11 +38,13 @@ RSpec.describe "the template" do
     it "sets url correctly for Postgres" do
       result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
       expect(result).to include "jdbc:postgresql://my_host:1234/my_db_name"
+      expect(result).to include "autoReconnect=true"
     end
 
     it "sets url correctly for MySQL without TLS" do
       result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
       expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
+      expect(result).to include "autoReconnect=true"
       expect(result).not_to include "useSSL=true"
       expect(result).not_to include "requireSSL=true"
       expect(result).not_to include "verifyServerCertificate=false"
@@ -51,6 +53,7 @@ RSpec.describe "the template" do
     it "sets url correctly for MySQL with TLS but without verification of certificate" do
       result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true }')
       expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
+      expect(result).to include "autoReconnect=true"
       expect(result).to include "useSSL=true"
       expect(result).to include "requireSSL=true"
       expect(result).to include "verifyServerCertificate=false"
