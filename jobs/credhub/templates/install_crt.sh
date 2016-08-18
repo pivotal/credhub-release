@@ -30,6 +30,7 @@ if [ -s $CERT_FILE ]; then
 fi
 
 if [ -s $DATABASE_TLS_CA_FILE ]; then
+    cp $JDK_KEYSTORE_FILE $CREDHUB_DB_TRUST_STORE_PATH
     $JDK_HOME/bin/keytool -import -noprompt -keystore $CREDHUB_DB_TRUST_STORE_PATH -storepass changeit \
             -alias $DATABASE_VERIFY_CA_ALIAS -file $DATABASE_TLS_CA_FILE
 fi

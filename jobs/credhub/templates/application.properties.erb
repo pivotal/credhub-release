@@ -9,11 +9,11 @@ spring.datasource.password=<%= p("credhub.data_storage.password") %>
 <% end %>
 spring.jpa.hibernate.ddl-auto=create
 <%
-def get_tls_ca
+def have_tls_ca
   begin
-    return p('credhub.data_storage.tls_ca')
+    return p('credhub.data_storage.tls_ca').length > 0
   rescue UnknownProperty
-    return ''
+    return false
   end
 end
 
@@ -27,11 +27,8 @@ case p("credhub.data_storage.type")
 
     case p('credhub.data_storage.require_tls')
       when true
-        @url << "&useSSL=true&requireSSL=true"
-        if get_tls_ca.empty?
-          @url << "&verifyServerCertificate=false"
-        else
-          @url << "&verifyServerCertificate=true"
+        @url << "?useSSL=true&requireSSL=true&verifyServerCertificate=true"
+        if have_tls_ca
           @url << "&trustCertificateKeyStorePassword=changeit"
           @url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
         end

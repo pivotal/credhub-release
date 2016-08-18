@@ -9,6 +9,8 @@ def render_erb(data_storage_yaml, ssl_yaml = '')
         properties:
           credhub:
             port: 9000
+            hsm:
+              partition_password: "partpass"
             user_management:
               uaa:
                 url: "my_uaa_url"
@@ -44,19 +46,28 @@ RSpec.describe "the template" do
     it "sets url correctly for MySQL without TLS" do
       result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
       expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
-      expect(result).to include "autoReconnect=true"
-      expect(result).not_to include "useSSL=true"
-      expect(result).not_to include "requireSSL=true"
-      expect(result).not_to include "verifyServerCertificate=false"
+      expect(result).to include "autoReconnect="
+      expect(result).not_to include "useSSL="
+      expect(result).not_to include "requireSSL="
+      expect(result).not_to include "verifyServerCertificate="
     end
 
-    it "sets url correctly for MySQL with TLS but without verification of certificate" do
+    it "sets url correctly for MySQL with TLS but without custom certificate" do
       result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true }')
       expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
       expect(result).to include "autoReconnect=true"
       expect(result).to include "useSSL=true"
       expect(result).to include "requireSSL=true"
-      expect(result).to include "verifyServerCertificate=false"
+      expect(result).to include "verifyServerCertificate=true"
+    end
+
+    it "sets url correctly for MySQL when tls_ca is set" do
+      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
+      expect(result).to include "useSSL=true"
+      expect(result).to include "requireSSL=true"
+      expect(result).to include "verifyServerCertificate=true"
+      expect(result).to include "trustCertificateKeyStorePassword=changeit"
+      expect(result).to include "trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
     end
 
     it "only adds SSL properties when both credhub.ssl.certificate and credhub.ssl.private_key are set" do
@@ -83,11 +94,5 @@ RSpec.describe "the template" do
           .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
     end
 
-    it "adds MySQL trust store parameters when tls_ca is set" do
-      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
-      expect(result).to include "verifyServerCertificate=true"
-      expect(result).to include "trustCertificateKeyStorePassword=changeit"
-      expect(result).to include "trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
-    end
   end
 end
