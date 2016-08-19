@@ -1,8 +1,3 @@
 set -eux
 
 tar -C ${BOSH_INSTALL_TARGET} --strip-components=1 -xzvf ${BOSH_COMPILE_TARGET}/lunaclient/lunaclient.tar.gz
-
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
-
-cp ${BOSH_INSTALL_TARGET}/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
-cp ${BOSH_INSTALL_TARGET}/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/

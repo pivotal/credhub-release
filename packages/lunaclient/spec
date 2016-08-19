@@ -1,6 +1,5 @@
 ---
 name: lunaclient
-dependencies:
-- openjdk_1.8.0
+dependencies: []
 files:
 - lunaclient/lunaclient.tar.gz
