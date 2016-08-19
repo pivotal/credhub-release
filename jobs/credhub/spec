@@ -17,8 +17,10 @@ properties:
   credhub.port:
     description: "Port for the CredHub server to listen on"
     default: 8844
+
+  # HSM properties
   credhub.hsm.host:
-    description: "The HSM"
+    description: "The IP address of the HSM"
   credhub.hsm.port:
     description: "The HSM port"
     default: 1792
@@ -30,12 +32,14 @@ properties:
     description: "NTLS client certificate registered with HSM"
   credhub.hsm.client_key:
     description: "NTLS client private key matching the client_certificate"
+
+  # TLS configuration for the server
   credhub.ssl.certificate:
     description: "SSL certificate"
   credhub.ssl.private_key:
     description: "SSL private key for given certificate"
-  credhub.user_management.uaa.url:
-    description: "URL of UAA instance for client to contact"
+
+  # Data storage
   credhub.data_storage.type:
     description: "Database type, either in-memory (development only), mysql, or postgres, and there is no default"
   credhub.data_storage.username:
@@ -54,5 +58,9 @@ properties:
     default: true
   credhub.data_storage.tls_ca:
     description: "Certificate that database must supply when validation is required."
+
+  # UAA
+  credhub.user_management.uaa.url:
+    description: "URL of UAA instance for client to contact"
   uaa.jwt.verification_key:
     description: "The public key for verifying oauth tokens issued by the UAA"
