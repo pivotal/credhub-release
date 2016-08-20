@@ -10,7 +10,9 @@ def render_erb(data_storage_yaml, ssl_yaml = '')
           credhub:
             port: 9000
             hsm:
+              partition: "partname"
               partition_password: "partpass"
+              encryption_key_name: "keyname"
             user_management:
               uaa:
                 url: "my_uaa_url"
