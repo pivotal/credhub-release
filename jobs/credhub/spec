@@ -66,5 +66,5 @@ properties:
   # UAA
   credhub.user_management.uaa.url:
     description: "URL of UAA instance for client to contact"
-  uaa.jwt.verification_key:
-    description: "The public key for verifying oauth tokens issued by the UAA"
+  credhub.user_management.uaa.verification_key:
+    description: "The public key for verifying tokens issued by the UAA instance"
