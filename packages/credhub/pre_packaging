@@ -28,5 +28,5 @@ popd
 
 # Clean build data
 if [ `uname` = "Linux" ]; then
-  rm -rf ${BUILD_DIR}/java
+  rm -rf ${BUILD_DIR}/openjdk_1.8.0 ${BUILD_DIR}/java
 fi
