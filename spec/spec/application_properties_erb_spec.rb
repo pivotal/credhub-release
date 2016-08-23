@@ -16,14 +16,12 @@ def render_erb(data_storage_yaml, ssl_yaml = '')
             user_management:
               uaa:
                 url: "my_uaa_url"
+                verification_key: |
+                  line 1
+                  line 2
             #{ssl_yaml.empty? ? "" : ("ssl: %s" % ssl_yaml)}
             data_storage:
               #{data_storage_yaml}
-          uaa:
-            jwt:
-              verification_key: |
-                line 1
-                line 2
   EOF
 
   # puts option_yaml
