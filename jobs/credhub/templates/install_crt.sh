@@ -4,7 +4,7 @@ set -e
 
 ## BEGIN CERTIFICATE INSTALLATION
 
-export JDK_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+export JDK_HOME=/var/vcap/packages/credhub/jdk
 
 CERT_FILE=$1
 PRIVATE_KEY_FILE=$2
