@@ -42,7 +42,7 @@ EOL
 
 ln -f -s /var/vcap/jobs/credhub/config/Chrystoki.conf /etc/Chrystoki.conf
 
-JAVA_HOME=/var/vcap/packages/credhub/jdk
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
 
 cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
 cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/

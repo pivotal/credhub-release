@@ -1,13 +1,3 @@
 set -ex
 
-pushd ${BOSH_INSTALL_TARGET}
-    mkdir jdk && tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/openjdk-1.8.0_91-x86_64-trusty.tar.gz -C jdk
-    if [[ $? != 0 ]] ; then
-      echo "Cannot unpack JDK"
-      exit 1
-    fi
-    # latest JDK release didn't have correct permissions
-    chmod -R a+r jdk
-popd
-
 cp ${BOSH_COMPILE_TARGET}/credhub/credhub.jar ${BOSH_INSTALL_TARGET}

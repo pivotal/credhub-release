@@ -9,6 +9,7 @@ templates:
   Chrystoki.conf.erb: config/Chrystoki.conf
 
 packages:
+- openjdk_1.8.0
 - lunaclient
 - credhub
 
