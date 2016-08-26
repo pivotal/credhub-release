@@ -29,7 +29,7 @@ case p("credhub.data_storage.type")
 
     case p('credhub.data_storage.require_tls')
       when true
-        @url << "?useSSL=true&requireSSL=true&verifyServerCertificate=true"
+        @url << "&useSSL=true&requireSSL=true&verifyServerCertificate=true"
         if have_tls_ca
           @url << "&trustCertificateKeyStorePassword=changeit"
           @url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
