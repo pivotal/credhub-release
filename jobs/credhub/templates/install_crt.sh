@@ -10,7 +10,7 @@ CERT_FILE=$1
 PRIVATE_KEY_FILE=$2
 DATABASE_TLS_CA_FILE=$3
 
-CERT_ALIAS=credhub_ssl_cert
+CERT_ALIAS=credhub_tls_cert
 KEYSTORE_PASSWORD=changeit
 JDK_KEYSTORE_FILE=$JDK_HOME/jre/lib/security/cacerts
 CREDHUB_KEYSTORE_PATH=/var/vcap/jobs/credhub/config/cacerts.jks
