@@ -39,9 +39,9 @@ properties:
 
   # TLS configuration for the server
   credhub.tls.certificate:
-    description: "SSL certificate"
+    description: "TLS certificate"
   credhub.tls.private_key:
-    description: "SSL private key for given certificate"
+    description: "TLS private key for given certificate"
 
   # Data storage
   credhub.data_storage.type:
