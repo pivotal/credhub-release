@@ -4,7 +4,7 @@ require 'bosh/template/renderer'
 require 'yaml'
 require 'json'
 
-def render_erb(data_storage_yaml, ssl_yaml = '')
+def render_erb(data_storage_yaml, tls_yaml = '')
   option_yaml = <<-EOF
         properties:
           credhub:
@@ -19,7 +19,7 @@ def render_erb(data_storage_yaml, ssl_yaml = '')
                 verification_key: |
                   line 1
                   line 2
-            #{ssl_yaml.empty? ? "" : ("ssl: %s" % ssl_yaml)}
+            #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage:
               #{data_storage_yaml}
   EOF
@@ -31,10 +31,20 @@ def render_erb(data_storage_yaml, ssl_yaml = '')
 end
 
 RSpec.describe "the template" do
-  context "with mysql" do
+  context "regarding storage types" do
+    it "prints error when credhub.data_storage.type is invalid" do
+      expect {render_erb('{ type: "foo", database: "my_db_name" }')}
+          .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
+    end
+
     it "sets url correctly for in-memory" do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }')
       expect(result).to include "jdbc:h2:mem:my_db_name"
+    end
+
+    it "renders verification_key as one long string" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+      expect(result).to include "line 1line 2"
     end
 
     it "sets url correctly for Postgres" do
@@ -42,7 +52,9 @@ RSpec.describe "the template" do
       expect(result).to include "jdbc:postgresql://my_host:1234/my_db_name"
       expect(result).to include "autoReconnect=true"
     end
+  end
 
+  context "with MySQL" do
     it "sets url correctly for MySQL without TLS" do
       result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
       expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
@@ -70,29 +82,23 @@ RSpec.describe "the template" do
       expect(result).to include "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
     end
 
-    it "only adds SSL properties when both credhub.ssl.certificate and credhub.ssl.private_key are set" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '{ certificate: "foo" }')
-      expect(result).not_to include "server.ssl.enabled"
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '{ private_key: "bar" }')
-      expect(result).not_to include "server.ssl.enabled"
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '{ certificate: "foo", private_key: "bar" }')
-      expect(result).to include "server.ssl.enabled"
-    end
-
-    it "renders verification_key as one long string" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-      expect(result).to include "line 1line 2"
-    end
-
     it "prints error when require_tls is not a boolean type" do
       expect {render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: "true" }')}
           .to raise_error("credhub.data_storage.require_tls (true) must be set to \"true\" or \"false\".")
     end
+  end
 
-    it "prints error when credhub.data_storage.type is invalid" do
-      expect {render_erb('{ type: "foo", database: "my_db_name" }')}
-          .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
+  context "with TLS properties" do
+    it "does not add SSL properties when either credhub.tls.certificate or credhub.tls.private_key is missing" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }', 'tls: { certificate: "foo" }')
+      expect(result).not_to include "server.ssl.enabled"
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }', 'tls: { private_key: "bar" }')
+      expect(result).not_to include "server.ssl.enabled"
     end
 
+    it "adds SSL properties when both credhub.tls.certificate and credhub.tls.private_key are set" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }', 'tls: { certificate: "foo", private_key: "bar" }')
+      expect(result).to include "server.ssl.enabled"
+    end
   end
 end

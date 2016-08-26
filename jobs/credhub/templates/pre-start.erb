@@ -6,7 +6,7 @@ DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
 
 rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
 
-<% if_p('credhub.ssl.certificate', 'credhub.ssl.private_key') do |certificate, private_key| %>
+<% if_p('credhub.tls.certificate', 'credhub.tls.private_key') do |certificate, private_key| %>
 
 cat > $CERT_FILE <<EOL
 <%= certificate %>
