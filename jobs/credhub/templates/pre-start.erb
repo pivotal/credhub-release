@@ -6,17 +6,22 @@ DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
 
 rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
 
-<% if_p('credhub.tls.certificate', 'credhub.tls.private_key') do |certificate, private_key| %>
+<%
+  begin
+    p('credhub.tls.certificate')
+    p('credhub.tls.private_key')
+  rescue UnknownProperty
+    raise "credhub.tls.certificate and credhub.tls.private_key must both be set."
+  end
+%>
 
 cat > $CERT_FILE <<EOL
-<%= certificate %>
+<%= p('credhub.tls.certificate') %>
 EOL
 
 cat > $PRIV_KEY_FILE <<EOL
-<%= private_key %>
+<%= p('credhub.tls.private_key') %>
 EOL
-
-<% end %>
 
 <% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
 

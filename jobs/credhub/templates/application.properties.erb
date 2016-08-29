@@ -44,11 +44,11 @@ case p("credhub.data_storage.type")
 end
 %>
 spring.datasource.url=<%=@url%>
-<% if_p('credhub.tls.certificate', 'credhub.tls.private_key') do %>
+
 server.ssl.enabled=true
 server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
 server.ssl.key-password=changeit
 server.ssl.key-alias=credhub_tls_cert
 server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384,DHE-RSA-AES128-GCM-SHA256,DHE-RSA-AES256-GCM-SHA384
-<% end %>
+
 security.oauth2.resource.jwt.key-value=<%= p("credhub.user_management.uaa.verification_key").split("\n").map(&:strip).join() %>

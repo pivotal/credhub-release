@@ -4,7 +4,7 @@ require 'bosh/template/renderer'
 require 'yaml'
 require 'json'
 
-def render_erb(data_storage_yaml, tls_yaml = '')
+def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private_key: "bar" }')
   option_yaml = <<-EOF
         properties:
           credhub:
@@ -88,17 +88,13 @@ RSpec.describe "the template" do
     end
   end
 
-  context "with TLS properties" do
-    it "does not add SSL properties when either credhub.tls.certificate or credhub.tls.private_key is missing" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', 'tls: { certificate: "foo" }')
-      expect(result).not_to include "server.ssl.enabled"
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', 'tls: { private_key: "bar" }')
-      expect(result).not_to include "server.ssl.enabled"
-    end
 
-    it "adds SSL properties when both credhub.tls.certificate and credhub.tls.private_key are set" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', 'tls: { certificate: "foo", private_key: "bar" }')
-      expect(result).to include "server.ssl.enabled"
-    end
+  it "adds SSL properties" do
+    result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+    expect(result).to include "server.ssl.enabled"
+    expect(result).to include "server.ssl.key-store"
+    expect(result).to include "server.ssl.key-password"
+    expect(result).to include "server.ssl.key-alias"
+    expect(result).to include "server.ssl.ciphers"
   end
 end
