@@ -68,3 +68,8 @@ properties:
     description: "URL of UAA instance for client to contact"
   credhub.user_management.uaa.verification_key:
     description: "The public key for verifying tokens issued by the UAA instance"
+
+  # Logging
+  credhub.log_level:
+    description: "Log level. Available levels are none, error, warn, info, debug"
+    default: info

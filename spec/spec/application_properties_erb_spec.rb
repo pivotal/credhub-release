@@ -4,7 +4,7 @@ require 'bosh/template/renderer'
 require 'yaml'
 require 'json'
 
-def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private_key: "bar" }')
+def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private_key: "bar" }', log_level = 'info')
   option_yaml = <<-EOF
         properties:
           credhub:
@@ -22,6 +22,8 @@ def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private
             #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage:
               #{data_storage_yaml}
+            log_level: #{log_level}
+
   EOF
 
   # puts option_yaml
@@ -96,5 +98,24 @@ RSpec.describe "the template" do
     expect(result).to include "server.ssl.key-password"
     expect(result).to include "server.ssl.key-alias"
     expect(result).to include "server.ssl.ciphers"
+  end
+
+  context "with logging" do
+    it "sets log level to the specified log_level" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'info')
+      expect(result).to include "logging.level.org=INFO"
+      expect(result).to include "logging.level.io=INFO"
+      expect(result).to include "logging.pattern.console=\"\""
+      expect(result).to include "logging.file=/var/vcap/sys/log/credhub/credhub.stdout.log"
+    end
+
+    it "sets logging.pattern.file to empty string when log_level is set to none" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'none')
+      expect(result).to include "logging.level.org=ERROR"
+      expect(result).to include "logging.level.io=ERROR"
+      expect(result).to include "logging.pattern.console=\"\""
+      expect(result).to include "logging.pattern.file=\"\""
+      expect(result).to include "logging.file=/var/vcap/sys/log/credhub/credhub.stdout.log"
+    end
   end
 end

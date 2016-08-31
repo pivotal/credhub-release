@@ -52,3 +52,14 @@ server.ssl.key-alias=credhub_tls_cert
 server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384,DHE-RSA-AES128-GCM-SHA256,DHE-RSA-AES256-GCM-SHA384
 
 security.oauth2.resource.jwt.key-value=<%= p("credhub.user_management.uaa.verification_key").split("\n").map(&:strip).join() %>
+
+logging.file=/var/vcap/sys/log/credhub/credhub.stdout.log
+logging.pattern.console=""
+<% if p('credhub.log_level') == 'none' %>
+logging.level.org=ERROR
+logging.level.io=ERROR
+logging.pattern.file=""
+<% else %>
+logging.level.org=<%= p('credhub.log_level').upcase %>
+logging.level.io=<%= p('credhub.log_level').upcase %>
+<% end %>
