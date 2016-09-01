@@ -4,6 +4,7 @@ templates:
   ctl: bin/ctl
   install_crt.sh: bin/install_crt.sh
   application.properties.erb: config/application.properties
+  log4j2.properties.erb: config/log4j2.properties
   pre-start.erb: bin/pre-start
   post-start.erb: bin/post-start
   Chrystoki.conf.erb: config/Chrystoki.conf

@@ -90,7 +90,6 @@ RSpec.describe "the template" do
     end
   end
 
-
   it "adds SSL properties" do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
     expect(result).to include "server.ssl.enabled"
@@ -101,21 +100,9 @@ RSpec.describe "the template" do
   end
 
   context "with logging" do
-    it "sets log level to the specified log_level" do
+    it "sets log configuration path" do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'info')
-      expect(result).to include "logging.level.org=INFO"
-      expect(result).to include "logging.level.io=INFO"
-      expect(result).to include "logging.pattern.console=\"\""
-      expect(result).to include "logging.file=/var/vcap/sys/log/credhub/credhub.stdout.log"
-    end
-
-    it "sets logging.pattern.file to empty string when log_level is set to none" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'none')
-      expect(result).to include "logging.level.org=ERROR"
-      expect(result).to include "logging.level.io=ERROR"
-      expect(result).to include "logging.pattern.console=\"\""
-      expect(result).to include "logging.pattern.file=\"\""
-      expect(result).to include "logging.file=/var/vcap/sys/log/credhub/credhub.stdout.log"
+      expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
     end
   end
 end

@@ -1,0 +1,20 @@
+rootLogger.level=<%= p('credhub.log_level') %>
+appender.FILE.name=CREDHUB
+appender.FILE.type=File
+appender.FILE.fileName=/var/vcap/sys/log/credhub/credhub.log
+appender.FILE.layout.type=PatternLayout
+appender.FILE.layout.pattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%t] .... %5p --- %c{1}: %m%n
+rootLogger.appenderRef.FILE.ref=CREDHUB
+
+# turn off logging for files that leak sensitive data
+logger.EntityPrinter.name=org.hibernate.internal.util.EntityPrinter
+logger.EntityPrinter.level=OFF
+
+logger.DefaultOAuth2ExceptionRenderer.name=org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer
+logger.DefaultOAuth2ExceptionRenderer.level=OFF
+
+logger.Http11InputBuffer.name=org.apache.coyote.http11.Http11InputBuffer
+logger.Http11InputBuffer.level=OFF
+
+logger.OAuth2AuthenticationProcessingFilter.name=org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter
+logger.OAuth2AuthenticationProcessingFilter.level=OFF
