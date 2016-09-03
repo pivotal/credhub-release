@@ -38,7 +38,9 @@ RSpec.describe "the template" do
       expect {render_erb('{ type: "foo", database: "my_db_name" }')}
           .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
     end
+  end
 
+  context "with in-memory" do
     it "sets url correctly for in-memory" do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }')
       expect(result).to include "jdbc:h2:mem:my_db_name"
@@ -49,10 +51,22 @@ RSpec.describe "the template" do
       expect(result).to include "line 1line 2"
     end
 
+    it "sets flyway location to be h2" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+      expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/h2"
+    end
+  end
+
+  context "with Postgres" do
     it "sets url correctly for Postgres" do
       result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
       expect(result).to include "jdbc:postgresql://my_host:1234/my_db_name"
       expect(result).to include "autoReconnect=true"
+    end
+
+    it "sets flyway location to be postgres" do
+      result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
+      expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/postgres"
     end
   end
 
@@ -64,6 +78,11 @@ RSpec.describe "the template" do
       expect(result).not_to include "useSSL="
       expect(result).not_to include "requireSSL="
       expect(result).not_to include "verifyServerCertificate="
+    end
+
+    it "sets flyway location to be mysql" do
+      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
+      expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/mysql"
     end
 
     it "sets url correctly for MySQL with TLS but without custom certificate" do
