@@ -3,6 +3,7 @@ platform: linux
 image: docker:///pcfseceng/sec-eng-ci
 
 inputs:
-  - name: cm-release
+  - name: credhub-release
+
 run:
-  path: cm-release/spec/run_tests.sh
+  path: credhub-release/spec/run_tests.sh
