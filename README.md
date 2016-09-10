@@ -13,17 +13,14 @@ To manually update a local repo, use
 
 ## Creating a BOSH release
 
-After that, create a new release with bosh
+After that, create a new tarball release with bosh
 
 ```sh
      bosh create release --with-tarball --name credhub --force --timestamp-version
 ```
 
-## Run unit tests for job templates
+## Run unit tests for job template logic
 
 ```sh
-     cd spec
-     bundle
-     bundle install --binstubs
-     ./bin/rspec
+     ./spec/run_tests.sh
 ```
