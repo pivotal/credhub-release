@@ -19,7 +19,7 @@ After that, create a new tarball release with bosh
      bosh create release --with-tarball --name credhub --force --timestamp-version
 ```
 
-## Run unit tests for job template logic
+## Run unit tests to exercise the template logic used for application properties
 
 ```sh
      ./spec/run_tests.sh
