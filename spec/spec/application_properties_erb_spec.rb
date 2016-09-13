@@ -118,6 +118,14 @@ RSpec.describe "the template" do
     expect(result).to include "server.ssl.ciphers"
   end
 
+  it "does not destroy the customer data" do
+    result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+    expect(result).to include "ddl-auto=validate"
+    expect(result).not_to include "ddl-auto=create"
+    expect(result).not_to include "ddl-auto=create-drop"
+    expect(result).not_to include "ddl-auto=update"
+  end
+
   context "with logging" do
     it "sets log configuration path" do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'info')

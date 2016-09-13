@@ -9,7 +9,7 @@ spring.datasource.username=<%= p("credhub.data_storage.username") %>
 spring.datasource.password=<%= p("credhub.data_storage.password") %>
 <% end %>
 <% end %>
-spring.jpa.hibernate.ddl-auto=create
+spring.jpa.hibernate.ddl-auto=validate
 <%
 def have_tls_ca
   begin
