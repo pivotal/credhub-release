@@ -3,7 +3,7 @@ openjdk_1.8.0/openjdk-1.8.0_91-x86_64-trusty.tar.gz:
   object_id: 61e953ff-7f1a-4dfd-b213-9b63a3db7bc6
   sha: 69c612c7f783aad33f4d73ec9b44e1a2ee50f386
   size: 78278698
-lunaclient/lunaclient.tar.gz:
-  object_id: dfaf1d3e-75f0-4a07-8481-55c34a0e5794
-  sha: 5268f356aeb874d8315fac19819dcbbfce747ba9
-  size: 8413060
+lunaclient_5.3.0-11/lunaclient_5.3.0-11.tar.gz:
+  object_id: 2ceaec43-ce10-43d8-92c3-a06654b6f3c7
+  sha: 09f0136a78ecbf7cbfe78d78419ab6b8ff5891cb
+  size: 7306782
