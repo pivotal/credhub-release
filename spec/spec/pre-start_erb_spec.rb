@@ -8,10 +8,12 @@ def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
   option_yaml = <<-EOF
         properties:
           credhub:
-            hsm:
-              certificate: "cert"
-              client_certificate: "client_cert"
-              client_key: "key"
+            encryption:
+              provider: hsm
+              hsm:
+                certificate: "cert"
+                client_certificate: "client_cert"
+                client_key: "key"
             #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage:
               #{data_storage_yaml}

@@ -20,22 +20,22 @@ properties:
     default: 8844
 
   # HSM properties
-  credhub.hsm.host:
+  credhub.encryption.hsm.host:
     description: "The IP address of the HSM"
-  credhub.hsm.port:
+  credhub.encryption.hsm.port:
     description: "The HSM port"
     default: 1792
-  credhub.hsm.certificate:
+  credhub.encryption.hsm.certificate:
     description: "The HSMs certificate"
-  credhub.hsm.partition:
+  credhub.encryption.hsm.partition:
     description: "Name of the HSM partition"
-  credhub.hsm.partition_password:
+  credhub.encryption.hsm.partition_password:
     description: "Password for the HSM partition"
-  credhub.hsm.encryption_key_name:
+  credhub.encryption.hsm.encryption_key_name:
     description: "The name of the key stored in HSM to be reference by CredHub server for encryption"
-  credhub.hsm.client_certificate:
+  credhub.encryption.hsm.client_certificate:
     description: "NTLS client certificate registered with HSM"
-  credhub.hsm.client_key:
+  credhub.encryption.hsm.client_key:
     description: "NTLS client private key matching the client_certificate"
 
   # TLS configuration for the server

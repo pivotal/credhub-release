@@ -8,11 +8,13 @@ def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private
   option_yaml = <<-EOF
         properties:
           credhub:
+            encryption:
+              provider: hsm
+              hsm:
+                partition: "partname"
+                partition_password: "partpass"
+                encryption_key_name: "keyname"
             port: 9000
-            hsm:
-              partition: "partname"
-              partition_password: "partpass"
-              encryption_key_name: "keyname"
             user_management:
               uaa:
                 url: "my_uaa_url"

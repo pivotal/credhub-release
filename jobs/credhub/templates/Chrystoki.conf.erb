@@ -30,7 +30,7 @@ LunaSA Client = {
   ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
   NetClient = 1;
   HtlDir = /var/vcap/packages/lunaclient/htl/;
-  ServerName00 = <%= p("credhub.hsm.host") %>;
-  ServerPort00 = <%= p("credhub.hsm.port") %>;
+  ServerName00 = <%= p("credhub.encryption.hsm.host") %>;
+  ServerPort00 = <%= p("credhub.encryption.hsm.port") %>;
   ServerHtl00 = 0;
 }

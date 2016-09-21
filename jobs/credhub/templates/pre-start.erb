@@ -36,15 +36,15 @@ EOL
 /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
 
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
-<%= p('credhub.hsm.certificate') %>
+<%= p('credhub.encryption.hsm.certificate') %>
 EOL
 
 cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
-<%= p('credhub.hsm.client_certificate') %>
+<%= p('credhub.encryption.hsm.client_certificate') %>
 EOL
 
 cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
-<%= p('credhub.hsm.client_key') %>
+<%= p('credhub.encryption.hsm.client_key') %>
 EOL
 
 ln -f -s /var/vcap/jobs/credhub/config/Chrystoki.conf /etc/Chrystoki.conf
