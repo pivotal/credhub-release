@@ -35,6 +35,7 @@ EOL
 
 /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
 
+<% if p('credhub.encryption.provider') == 'hsm' %>
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
 <%= p('credhub.encryption.hsm.certificate') %>
 EOL
@@ -53,3 +54,4 @@ export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
 
 cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
 cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
+<% end %>

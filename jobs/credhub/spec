@@ -19,6 +19,11 @@ properties:
     description: "Port for the CredHub server to listen on"
     default: 8844
 
+  # Encryption properties
+  credhub.encryption.provider:
+    description: "HSM or dev_internal encryption"
+    default: "hsm"
+
   # HSM properties
   credhub.encryption.hsm.host:
     description: "The IP address of the HSM"

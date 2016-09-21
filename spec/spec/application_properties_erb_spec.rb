@@ -134,4 +134,35 @@ RSpec.describe "the template" do
       expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
     end
   end
+
+  context "dev_internal encryption" do
+    it "sets hsm.disabled true" do
+      option_yaml = <<-EOF
+        properties:
+          credhub:
+            encryption:
+              provider: dev_internal
+            port: 9000
+            user_management:
+              uaa:
+                url: "my_uaa_url"
+                verification_key: |
+                  line 1
+                  line 2
+            tls:
+              certificate: foo
+              private_key: bar
+            data_storage:
+              type: in-memory
+              database: my_db_name
+            log_level: info
+
+      EOF
+
+      options = {:context => YAML.load(option_yaml).to_json}
+      renderer = Bosh::Template::Renderer.new(options)
+      render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
+      expect(render_erb_value).to include "hsm.disabled=true"
+    end
+  end
 end
