@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
 PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
 DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
