@@ -13,5 +13,4 @@ fly \
   execute \
   -c task.yml \
   -i release-dir=../../.. \
-  -i release-version=../../.. \
   -o create-release-output=temp_dir

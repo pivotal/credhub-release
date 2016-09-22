@@ -7,14 +7,12 @@ image_resource:
 
 inputs:
 - name: release-dir
-- name: release-version
 outputs:
 - name: create-release-output
 run:
   path: release-dir/ci/tasks/create-release/task.sh
 params:
   OUTPUT_PATH: create-release-output
-  RELEASE_VERSION_FILE:
   RELEASE_NAME:
   BOSH_TARGET:
   BOSH_USERNAME:
