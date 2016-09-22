@@ -1,6 +1,9 @@
 ---
 platform: linux
-image: docker:///pcfseceng/sec-eng-ci
+image_resource:
+  type: docker
+  source:
+    repository: pcfseceng/credhub
 
 inputs:
   - name: task-repo
