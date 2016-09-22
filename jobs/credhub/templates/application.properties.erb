@@ -5,7 +5,8 @@ hsm.partition=<%= p("credhub.encryption.hsm.partition") %>
 hsm.partition-password=<%= p("credhub.encryption.hsm.partition_password") %>
 hsm.encryption-key-name=<%= p("credhub.encryption.hsm.encryption_key_name") %>
 <% elsif p('credhub.encryption.provider') == 'dev_internal' %>
-hsm.disabled=true
+encryption.provider=dev_internal
+encryption.dev-key=<%= p("credhub.encryption.dev_key") %>
 <% end %>
 <% if_p('credhub.data_storage.username') do %>
 spring.datasource.username=<%= p("credhub.data_storage.username") %>

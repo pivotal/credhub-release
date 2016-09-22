@@ -136,12 +136,13 @@ RSpec.describe "the template" do
   end
 
   context "dev_internal encryption" do
-    it "sets hsm.disabled true" do
+    it "sets the provider and dev key correctly" do
       option_yaml = <<-EOF
         properties:
           credhub:
             encryption:
               provider: dev_internal
+              dev_key: 1234abcd
             port: 9000
             user_management:
               uaa:
@@ -162,7 +163,8 @@ RSpec.describe "the template" do
       options = {:context => YAML.load(option_yaml).to_json}
       renderer = Bosh::Template::Renderer.new(options)
       render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
-      expect(render_erb_value).to include "hsm.disabled=true"
+      expect(render_erb_value).to include "encryption.provider=dev_internal"
+      expect(render_erb_value).to include "encryption.dev-key=1234abcd"
     end
   end
 end

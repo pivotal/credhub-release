@@ -23,6 +23,9 @@ properties:
   credhub.encryption.provider:
     description: "HSM or dev_internal encryption"
     default: "hsm"
+  credhub.encryption.dev_key:
+    description: "AES key to be used for encryption during development"
+    default: ""
 
   # HSM properties
   credhub.encryption.hsm.host:
