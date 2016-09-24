@@ -136,13 +136,13 @@ RSpec.describe "the template" do
   end
 
   context "dev_internal encryption" do
-    it "sets the provider and dev key correctly" do
-      option_yaml = <<-EOF
+    let(:base_option_yaml) {
+      <<-EOF
         properties:
           credhub:
             encryption:
               provider: dev_internal
-              dev_key: 1234abcd
+              dev_key: XYZZ123412341234
             port: 9000
             user_management:
               uaa:
@@ -159,12 +159,54 @@ RSpec.describe "the template" do
             log_level: info
 
       EOF
+    }
+    let(:yaml) { YAML.load(base_option_yaml) }
 
-      options = {:context => YAML.load(option_yaml).to_json}
+    context "validating the dev key" do
+      it "should be valid hexadecimal" do
+        yaml['properties']['credhub']['encryption']['dev_key'] = 'xyz'
+        options = {:context => yaml.to_json}
+        renderer = Bosh::Template::Renderer.new(options)
+        expect {
+          renderer.render("../jobs/credhub/templates/application.properties.erb")
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should be 32 characters" do
+        yaml['properties']['credhub']['encryption']['dev_key']
+        options = {:context => yaml.to_json}
+        renderer = Bosh::Template::Renderer.new(options)
+        expect {
+          renderer.render("../jobs/credhub/templates/application.properties.erb")
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should not allow empty string" do
+        yaml['properties']['credhub']['encryption']['dev_key'] = ""
+        options = {:context => yaml.to_json}
+        renderer = Bosh::Template::Renderer.new(options)
+        expect {
+          renderer.render("../jobs/credhub/templates/application.properties.erb")
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should allow the dev_key to be omitted" do
+        yaml['properties']['credhub']['encryption'].delete('dev_key')
+        options = {:context => yaml.to_json}
+        renderer = Bosh::Template::Renderer.new(options)
+        expect {
+          renderer.render("../jobs/credhub/templates/application.properties.erb")
+        }.to_not raise_error
+      end
+    end
+
+    it "sets the provider and dev key correctly" do
+      yaml['properties']['credhub']['encryption']['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
+      options = {:context => yaml.to_json}
       renderer = Bosh::Template::Renderer.new(options)
       render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
       expect(render_erb_value).to include "encryption.provider=dev_internal"
-      expect(render_erb_value).to include "encryption.dev-key=1234abcd"
+      expect(render_erb_value).to include "encryption.dev-key=1234abcd1234abcd1234abcd1234abcd"
     end
   end
 end

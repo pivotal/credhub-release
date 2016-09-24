@@ -6,8 +6,15 @@ hsm.partition-password=<%= p("credhub.encryption.hsm.partition_password") %>
 hsm.encryption-key-name=<%= p("credhub.encryption.hsm.encryption_key_name") %>
 <% elsif p('credhub.encryption.provider') == 'dev_internal' %>
 encryption.provider=dev_internal
-encryption.dev-key=<%= p("credhub.encryption.dev_key") %>
-<% end %>
+<% if_p("credhub.encryption.dev_key") do |dev_key| %>
+<%
+def invalid_dev_key?(dev_key)
+dev_key[/\H/] || dev_key.size != 32
+end
+raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(dev_key) %>
+encryption.dev-key=<%= dev_key %>
+<% end
+end %>
 <% if_p('credhub.data_storage.username') do %>
 spring.datasource.username=<%= p("credhub.data_storage.username") %>
 <% if_p('credhub.data_storage.password') do %>
