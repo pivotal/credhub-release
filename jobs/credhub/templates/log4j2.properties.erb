@@ -1,10 +1,23 @@
 rootLogger.level=<%= p('credhub.log_level') %>
+
 appender.FILE.name=CREDHUB
 appender.FILE.type=File
 appender.FILE.fileName=/var/vcap/sys/log/credhub/credhub.log
 appender.FILE.layout.type=PatternLayout
 appender.FILE.layout.pattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%t] .... %5p --- %c{1}: %m%n
+
+appender.SECURITY_EVENTS_FILE.name=CREDHUB_SECURITY_EVENTS
+appender.SECURITY_EVENTS_FILE.type=File
+appender.SECURITY_EVENTS_FILE.fileName=/var/vcap/sys/log/credhub/credhub_security_events.log
+appender.SECURITY_EVENTS_FILE.layout.type=PatternLayout
+appender.SECURITY_EVENTS_FILE.layout.pattern=%m%n
+
 rootLogger.appenderRef.FILE.ref=CREDHUB
+
+logger.SECURITY_EVENTS_FILE.name=CREDHUB_SECURITY_EVENTS
+logger.SECURITY_EVENTS_FILE.appenderRefs=SECURITY_EVENTS_FILE
+logger.SECURITY_EVENTS_FILE.appenderRef.SECURITY_EVENTS_FILE.ref=CREDHUB_SECURITY_EVENTS
+logger.SECURITY_EVENTS_FILE.level=<%= p('credhub.log_level') %>
 
 # turn off logging for files that leak sensitive data
 logger.EntityPrinter.name=org.hibernate.internal.util.EntityPrinter
