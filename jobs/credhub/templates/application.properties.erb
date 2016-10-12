@@ -31,6 +31,10 @@ def have_tls_ca
   end
 end
 
+def pseudo_random_string(len)
+  SecureRandom.urlsafe_base64(len)
+end
+
 case p("credhub.data_storage.type")
   when 'in-memory'
     @url = "jdbc:h2:mem:#{p("credhub.data_storage.database")}"
@@ -63,7 +67,7 @@ spring.datasource.url=<%=@url%>
 
 server.ssl.enabled=true
 server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
-server.ssl.key-password=changeit
+server.ssl.key-password=<%= pseudo_random_string(20) %>
 server.ssl.key-alias=credhub_tls_cert
 server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384
 
