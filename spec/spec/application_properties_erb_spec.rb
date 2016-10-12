@@ -120,25 +120,6 @@ RSpec.describe "the template" do
     expect(result).to include "server.ssl.ciphers"
   end
 
-  it "should randomize the SSL key password" do
-    password_regex = /server\.ssl\.key-password=(?<password>[a-zA-Z0-9_-]*)/
-    result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    password_match = result.match(password_regex)
-
-    expect(password_match).not_to be_nil
-    password1 = password_match[:password]
-
-    result2 = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    password_match = result2.match(password_regex)
-
-    expect(password_match).not_to be_nil
-    password2 = password_match[:password]
-
-    expect(password1.length).to be >= 20
-    expect(password2.length).to be >= 20
-    expect(password1).not_to eq password2
-  end
-
   it "does not destroy the customer data" do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
     expect(result).to include "ddl-auto=validate"
