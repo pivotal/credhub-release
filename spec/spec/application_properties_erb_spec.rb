@@ -36,10 +36,6 @@ def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private
 end
 
 RSpec.describe "the template" do
-  before :all do
-    FileUtils.mkdir_p('/var/vcap/data/tmp/director/')
-  end
-
   context "regarding storage types" do
     it "prints error when credhub.data_storage.type is invalid" do
       expect {render_erb('{ type: "foo", database: "my_db_name" }')}

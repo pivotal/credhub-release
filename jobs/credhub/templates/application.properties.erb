@@ -31,27 +31,6 @@ def have_tls_ca
   end
 end
 
-# The ssl-password is also needed by pre-start.rb.
-# It seems like the only way to share the value is by copying the code and
-# storing the value in a file. :(
-def pseudo_random_string(len)
-  password = nil
-
-  File.open('/var/vcap/data/tmp/director/ssl_password', 'a+') { |f|
-    f.seek(0, 0)
-    password = f.read
-
-    if password.to_s.empty?
-      password = SecureRandom.urlsafe_base64(len)
-      f.write(password)
-    end
-  }
-
-  password
-end
-
-ssl_password = pseudo_random_string(20)
-
 case p("credhub.data_storage.type")
   when 'in-memory'
     @url = "jdbc:h2:mem:#{p("credhub.data_storage.database")}"
@@ -67,7 +46,7 @@ case p("credhub.data_storage.type")
       when true
         @url << "&useSSL=true&requireSSL=true&verifyServerCertificate=true"
         if have_tls_ca
-          @url << "&trustCertificateKeyStorePassword=#{ssl_password}"
+          @url << "&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER"
           @url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
         end
       when false
@@ -83,7 +62,7 @@ spring.datasource.url=<%=@url%>
 
 server.ssl.enabled=true
 server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks
-server.ssl.key-password=<%= ssl_password %>
+server.ssl.key-password=KEY_STORE_PASSWORD_PLACEHOLDER
 server.ssl.key-alias=credhub_tls_cert
 server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384
 
