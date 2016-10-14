@@ -97,11 +97,17 @@ RSpec.describe "the template" do
     end
 
     it "sets url correctly for MySQL when tls_ca is set" do
+      password_regex = /server\.ssl\.key-password=(?<password>[a-zA-Z0-9_-]*)/
+
       result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
+      password_match = result.match(password_regex)
+      expect(password_match).not_to be_nil
+      password = password_match[:password]
+
       expect(result).to include "&useSSL=true"
       expect(result).to include "&requireSSL=true"
       expect(result).to include "&verifyServerCertificate=true"
-      expect(result).to include "&trustCertificateKeyStorePassword=changeit"
+      expect(result).to include "&trustCertificateKeyStorePassword=#{password}"
       expect(result).to include "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
     end
 

@@ -15,6 +15,27 @@ rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
   rescue UnknownProperty
     raise "credhub.tls.certificate and credhub.tls.private_key must both be set."
   end
+
+  # The ssl-password is also needed by application.properties.erb.
+  # It seems like the only way to share the value is by copying the code and
+  # storing the value in a file. :(
+  def pseudo_random_string(len)
+    password = nil
+
+    File.open('/var/vcap/data/tmp/director/ssl_password', 'a+') { |f|
+      f.seek(0, 0)
+      password = f.read
+
+      if password.to_s.empty?
+        password = SecureRandom.urlsafe_base64(len)
+        f.write(password)
+      end
+    }
+
+    password
+  end
+
+  ssl_password = pseudo_random_string(20)
 %>
 
 cat > $CERT_FILE <<EOL
@@ -33,7 +54,7 @@ EOL
 
 <% end %>
 
-/var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
+/var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT "<%= ssl_password %>"
 
 <% if p('credhub.encryption.provider') == 'hsm' %>
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
