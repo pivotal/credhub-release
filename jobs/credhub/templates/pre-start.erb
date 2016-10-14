@@ -36,7 +36,11 @@ EOL
 
 <% end %>
 
+set +x
+
 /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT $KEYSTORE_PASSWORD
+
+set -x
 
 <% if p('credhub.encryption.provider') == 'hsm' %>
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
