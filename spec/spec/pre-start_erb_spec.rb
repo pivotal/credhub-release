@@ -3,6 +3,7 @@ require 'template'
 require 'bosh/template/renderer'
 require 'yaml'
 require 'json'
+require 'fileutils'
 
 def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
   option_yaml = <<-EOF
@@ -26,6 +27,10 @@ def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
 end
 
 RSpec.describe "the template" do
+  before :all do
+    FileUtils.mkdir_p('/var/vcap/data/tmp/director/')
+  end
+
   context "with hsm" do
     context "with TLS properties" do
       it "raises an error when either credhub.tls.certificate or credhub.tls.private_key is missing" do
