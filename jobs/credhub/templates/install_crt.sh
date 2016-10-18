@@ -22,7 +22,7 @@ cp $JDK_KEYSTORE_FILE $CREDHUB_KEYSTORE_PATH
 $JDK_HOME/bin/keytool -storepasswd -new $KEYSTORE_PASSWORD -keystore $CREDHUB_KEYSTORE_PATH -storepass changeit
 
 if [ -s $CERT_FILE ]; then
-    openssl pkcs12 -export -in $CERT_FILE -inkey $PRIVATE_KEY_FILE -out cert.p12 -name $CERT_ALIAS \
+    RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 -export -in $CERT_FILE -inkey $PRIVATE_KEY_FILE -out cert.p12 -name $CERT_ALIAS \
             -password pass:k0*l*s3cur1tyr0ck$
 
     $JDK_HOME/bin/keytool -importkeystore \
