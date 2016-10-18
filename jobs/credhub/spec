@@ -47,10 +47,17 @@ properties:
     description: "NTLS client private key matching the client_certificate"
 
   # TLS configuration for the server
-  credhub.tls.certificate:
-    description: "TLS certificate"
-  credhub.tls.private_key:
-    description: "TLS private key for given certificate"
+  credhub.tls:
+    description: "Certificate and private key for TLS connection to CredHub API"
+    example: |
+      certificate: |
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+      private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      ...
+      -----END RSA PRIVATE KEY-----
 
   # Data storage
   credhub.data_storage.type:
