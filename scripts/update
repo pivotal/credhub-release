@@ -13,7 +13,7 @@ cd $root_dir
 
 set -x # show the commands we are running
 
-git rev-parse @{u} > /dev/null 2>&1 && git pull
+git rev-parse @{u} > /dev/null 2>&1 && git pull -r
 
 # Update submodule pointers; Clean out any submodule changes
 git submodule sync
