@@ -13,6 +13,7 @@ packages:
 - openjdk_1.8.0
 - lunaclient
 - credhub
+- openssl
 
 properties:
   credhub.port:
