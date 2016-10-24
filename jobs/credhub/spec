@@ -49,6 +49,7 @@ properties:
   # TLS configuration for the server
   credhub.tls:
     description: "Certificate and private key for TLS connection to CredHub API"
+    type: certificate
     example: |
       certificate: |
       -----BEGIN CERTIFICATE-----
