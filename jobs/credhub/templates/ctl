@@ -20,7 +20,11 @@ case $1 in
     echo $$ > $PIDFILE
 
     cd /var/vcap/packages/credhub
-    exec chpst -u $RUNAS:$RUNAS java -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties -ea -jar *.jar
+    # https://wiki.apache.org/tomcat/HowTo/FasterStartUp#Entropy_Source
+    exec chpst -u $RUNAS:$RUNAS java \
+        -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties \
+        -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties -ea -jar *.jar \
+        -Djava.security.egd=file:/dev/./urandom
 
     ;;
 
