@@ -1,0 +1,6 @@
+---
+name: dsm
+dependencies: {}
+files:
+- "dsm/dsm_1.1.8818.788.DEBIAN_amd64.deb"
+- "openjdk_1.8.0/openjdk-1.8.0_91-x86_64-trusty.tar.gz"

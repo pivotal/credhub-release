@@ -1,0 +1,8 @@
+---
+name: dsm
+templates:
+  post-deploy.sh.erb: bin/post-deploy
+  pre-start.sh.erb: bin/pre-start
+
+packages:
+- dsm
