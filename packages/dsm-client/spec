@@ -1,6 +1,0 @@
----
-name: dsm-client
-dependencies: {}
-files:
-- "dsm/dsm-client_1.1.9183.834.DEBIAN_amd64.deb"
-# - "dsm/dsm-advapi-1.0.jar"

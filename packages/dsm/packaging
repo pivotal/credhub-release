@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -eux
-
-cp -a ${BOSH_COMPILE_TARGET}/dsm/dsm_1.1.8818.788.DEBIAN_amd64.deb ${BOSH_INSTALL_TARGET}
-cp -a ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/openjdk-1.8.0_91-x86_64-trusty.tar.gz ${BOSH_INSTALL_TARGET}

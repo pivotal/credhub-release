@@ -1,4 +1,0 @@
-check process dsm
-  with pidfile /var/run/DSM.pid
-  start program "/etc/init.d/dsm start"
-  stop program "/etc/init.d/dsm stop"

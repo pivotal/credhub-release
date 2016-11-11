@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -eux
-
-cp -a ${BOSH_COMPILE_TARGET}/dsm/dsm-client*.deb ${BOSH_INSTALL_TARGET}
-#cp -a ${BOSH_COMPILE_TARGET}/dsm/dsm-advapi-1.0.jar ${BOSH_INSTALL_TARGET}
