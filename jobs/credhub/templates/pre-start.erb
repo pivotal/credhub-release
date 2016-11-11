@@ -7,6 +7,10 @@ PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
 DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
 KEYSTORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
+if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.properties | wc -l` -eq 0 ]; then
+  exit 0
+fi
+
 sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEYSTORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.properties
 
 rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
