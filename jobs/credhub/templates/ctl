@@ -1,9 +1,13 @@
 #!/bin/bash
 
+
 RUN_DIR=/var/vcap/sys/run/credhub
 LOG_DIR=/var/vcap/sys/log/credhub
+TMP_DIR=/var/vcap/jobs/credhub/tmp
 PIDFILE=${RUN_DIR}/pid
 RUNAS=vcap
+
+mkdir -p /var/vcap/jobs/credhub/tmp
 
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
 export PATH=$JAVA_HOME/bin:$PATH
@@ -15,7 +19,7 @@ case $1 in
 
   start)
     mkdir -p $RUN_DIR $LOG_DIR
-    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR
+    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $TMP_DIR
 
     echo $$ > $PIDFILE
 
@@ -24,6 +28,7 @@ case $1 in
         -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties \
         -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \
         -Djava.security.egd=file:/dev/urandom \
+        -Djava.io.tmpdir=$TMP_DIR \
         -ea -jar *.jar
     ;;
 
