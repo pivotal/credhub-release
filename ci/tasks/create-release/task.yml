@@ -14,7 +14,4 @@ run:
 params:
   OUTPUT_PATH: create-release-output
   RELEASE_NAME:
-  BOSH_TARGET:
-  BOSH_USERNAME:
-  BOSH_PASSWORD:
   VERSION:

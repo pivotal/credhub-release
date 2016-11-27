@@ -10,10 +10,6 @@ fi
 
 pushd release-dir
     VERSION=$VERSION bosh create release --with-tarball --name $RELEASE_NAME --force --timestamp-version
-    # upload release to bosh
-    bosh -t $BOSH_TARGET login $BOSH_USERNAME $BOSH_PASSWORD
-    bosh target $BOSH_TARGET
-    bosh upload release
 
     pushd dev_releases/$RELEASE_NAME
         RELEASE_TARBALL=$(ls -t *.tgz | head -1)
