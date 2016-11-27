@@ -9,7 +9,7 @@ if [ -z "$RELEASE_NAME" ]; then
 fi
 
 pushd release-dir
-    VERSION=$VERSION bosh create release --with-tarball --name $RELEASE_NAME --force --timestamp-version
+    VERSION=$VERSION gbosh create-release --tarball --name $RELEASE_NAME --force --timestamp-version
 
     pushd dev_releases/$RELEASE_NAME
         RELEASE_TARBALL=$(ls -t *.tgz | head -1)
