@@ -4,4 +4,4 @@ dependencies:
 - openjdk_1.8.0
 files:
 - credhub/**/*
-- openjdk_1.8.0/openjdk-1.8.0_91-x86_64-trusty.tar.gz
+- openjdk_1.8.0/openjdk-1.8.0_111-x86_64-trusty.tar.gz
