@@ -21,8 +21,6 @@ case $1 in
     mkdir -p $RUN_DIR $LOG_DIR
     chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $TMP_DIR
 
-    echo $$ > $PIDFILE
-
     cd /var/vcap/packages/credhub
     exec chpst -u $RUNAS:$RUNAS java \
         -Dspring.config.location=/var/vcap/jobs/credhub/config/application.properties \
@@ -30,6 +28,16 @@ case $1 in
         -Djava.security.egd=file:/dev/urandom \
         -Djava.io.tmpdir=$TMP_DIR \
         -ea -jar *.jar
+
+    CREDHUB_PID=$(ps aux | grep java | grep 'credhub.jar' | awk '{print $2}')
+
+    if [ "$CREDHUB_PID" != "" ]; then
+        echo $CREDHUB_PID > $PIDFILE
+    else
+        echo "CredHub server failed to start. Please see logs for details."
+        exit 1
+    fi
+
     ;;
 
   stop)
