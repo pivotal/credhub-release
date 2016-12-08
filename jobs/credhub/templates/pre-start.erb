@@ -78,7 +78,7 @@ EOL
 
 chmod 400 $HOST_PRIVATE_KEY_FILE
 
-DSMUTIL_OUTPUT=$(ssh -oStrictHostKeyChecking=no -i $HOST_PRIVATE_KEY_FILE vcap@<%= server['host'] %> "dsmutil agent create -u ${HOSTNAME} -p <%= server['partition'] %>")
+DSMUTIL_OUTPUT=$(ssh -oStrictHostKeyChecking=no -i $HOST_PRIVATE_KEY_FILE <%= server['user'] %>@<%= server['host'] %> "dsmutil agent create -u ${HOSTNAME} -p <%= server['partition'] %>")
 
 if [[ "$DSMUTIL_OUTPUT" =~ ([0-9]+) ]]; then
   PIN=${BASH_REMATCH[0]}

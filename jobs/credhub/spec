@@ -58,6 +58,7 @@ properties:
     description: "The list of IP Addresses or the hostnames of the DSM's entry points"
     example:
       - host: 127.0.0.1
+        user: vcap
         partition: partition_name
         ssh_private_key: |
           -----BEGIN RSA PRIVATE KEY-----

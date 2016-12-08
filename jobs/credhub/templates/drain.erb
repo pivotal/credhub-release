@@ -13,10 +13,10 @@ EOL
 
 chmod 400 $HOST_PRIVATE_KEY_FILE
 
-AGENTS=`ssh -i $HOST_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no vcap@<%= server['host'] %> "dsmutil agent show" 2>/dev/null`
+AGENTS=`ssh -i $HOST_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no <%= server['user'] %>@<%= server['host'] %> "dsmutil agent show" 2>/dev/null`
 
 if [[ $AGENTS =~ ${HOSTNAME} ]]; then
-  ssh -i $HOST_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no vcap@<%= server['host'] %> "dsmutil agent delete -u ${HOSTNAME} -p <%= server['partition'] %>" &>/dev/null
+  ssh -i $HOST_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no <%= server['user'] %>@<%= server['host'] %> "dsmutil agent delete -u ${HOSTNAME} -p <%= server['partition'] %>" &>/dev/null
 fi
 
 rm $HOST_PRIVATE_KEY_FILE
