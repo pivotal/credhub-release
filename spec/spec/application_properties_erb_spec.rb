@@ -32,7 +32,7 @@ def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private
   # puts option_yaml
   options = {:context => YAML.load(option_yaml).to_json}
   renderer = Bosh::Template::Renderer.new(options)
-  return renderer.render("../jobs/credhub/templates/application.properties.erb")
+  renderer.render("../jobs/credhub/templates/application.properties.erb")
 end
 
 RSpec.describe "the template" do
@@ -139,6 +139,56 @@ RSpec.describe "the template" do
     it "sets log configuration path" do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'info')
       expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
+    end
+  end
+
+  context "hsm encryption" do
+    it "should set the hsm properties correctly" do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+
+      expect(result).to include "encryption.provider=hsm"
+      expect(result).to include "hsm.partition=partname"
+      expect(result).to include "hsm.partition-password=partpass"
+      expect(result).to include "hsm.encryption-key-name=keyname"
+    end
+  end
+
+
+  context "dsm encryption" do
+    let(:base_option_yaml) {
+      <<-EOF
+        properties:
+          credhub:
+            encryption:
+              provider: dsm
+              dsm:
+                encryption_key_name: dsm-key
+            port: 9000
+            user_management:
+              uaa:
+                url: "my_uaa_url"
+                verification_key: |
+                  line 1
+                  line 2
+            tls:
+              certificate: foo
+              private_key: bar
+            data_storage:
+              type: in-memory
+              database: my_db_name
+            log_level: info
+
+      EOF
+    }
+    let(:yaml) { YAML.load(base_option_yaml) }
+
+    it "should set the hsm properties correctly" do
+      options = {:context => yaml.to_json}
+      renderer = Bosh::Template::Renderer.new(options)
+      result = renderer.render("../jobs/credhub/templates/application.properties.erb")
+
+      expect(result).to include "encryption.provider=dsm"
+      expect(result).to include "dsm.encryption-key-name=dsm-key"
     end
   end
 

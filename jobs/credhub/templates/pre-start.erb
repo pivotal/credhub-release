@@ -6,6 +6,7 @@ CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
 PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
 DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
 KEYSTORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
+JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
 
 if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.properties | wc -l` -eq 0 ]; then
   exit 0
@@ -55,10 +56,39 @@ cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
 <%= p('credhub.encryption.hsm.client_key') %>
 EOL
 
-ln -f -s /var/vcap/jobs/credhub/config/Chrystoki.conf /etc/Chrystoki.conf
-
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
 
 cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
 cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
+<% end %>
+
+<% if p('credhub.encryption.provider') == 'dsm' %>
+dpkg -i /var/vcap/packages/dsm-client/libapr1_1.5.0-1_amd64.deb
+dpkg -i /var/vcap/packages/dsm-client/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb
+
+cp /usr/lib/dsm/dsm-advapi-1.0.jar $JAVA_HOME/jre/lib/ext/
+
+ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/dsm/client.conf
+<% p('credhub.encryption.dsm.servers').each do |server| %>
+HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
+
+cat > $HOST_PRIVATE_KEY_FILE <<EOL
+<%= server['ssh_private_key'] %>
+EOL
+
+chmod 400 $HOST_PRIVATE_KEY_FILE
+
+DSMUTIL_OUTPUT=$(ssh -oStrictHostKeyChecking=no -i $HOST_PRIVATE_KEY_FILE vcap@<%= server['host'] %> "dsmutil agent create -u ${HOSTNAME} -p <%= server['partition'] %>")
+
+if [[ "$DSMUTIL_OUTPUT" =~ ([0-9]+) ]]; then
+  PIN=${BASH_REMATCH[0]}
+else
+  exit 1
+fi
+
+dsmcl register -p "$PIN"
+
+rm $HOST_PRIVATE_KEY_FILE
+
+<% end %>
 <% end %>

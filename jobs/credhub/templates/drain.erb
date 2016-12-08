@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -eu
+
+<% if p('credhub.encryption.provider') == 'dsm' %>
+<% p('credhub.encryption.dsm.servers').each do |server| %>
+
+HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
+
+cat > $HOST_PRIVATE_KEY_FILE <<EOL
+<%= server['ssh_private_key'] %>
+EOL
+
+chmod 400 $HOST_PRIVATE_KEY_FILE
+
+AGENTS=`ssh -i $HOST_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no vcap@<%= server['host'] %> "dsmutil agent show" 2>/dev/null`
+
+if [[ $AGENTS =~ ${HOSTNAME} ]]; then
+  ssh -i $HOST_PRIVATE_KEY_FILE -o StrictHostKeyChecking=no vcap@<%= server['host'] %> "dsmutil agent delete -u ${HOSTNAME} -p <%= server['partition'] %>" &>/dev/null
+fi
+
+rm $HOST_PRIVATE_KEY_FILE
+
+<% end %>
+<% end %>
+
+# Drain scripts must print a number to stdout:
+# https://bosh.io/docs/drain.html
+echo 0

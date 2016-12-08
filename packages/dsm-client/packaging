@@ -1,0 +1,4 @@
+set -eux
+
+cp ${BOSH_COMPILE_TARGET}/libapr1_1.5.0-1/libapr1_1.5.0-1_amd64.deb ${BOSH_INSTALL_TARGET}/
+cp ${BOSH_COMPILE_TARGET}/dsm-client_1.2.10136.1262/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb ${BOSH_INSTALL_TARGET}/

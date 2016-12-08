@@ -1,3 +1,4 @@
+<% if p('credhub.encryption.provider') == 'hsm' %>
 Chrystoki2 = {
   LibUNIX = /var/vcap/packages/lunaclient/lib/libCryptoki2.so;
   LibUNIX64 = /var/vcap/packages/lunaclient/lib/libCryptoki2_64.so;
@@ -36,3 +37,9 @@ LunaSA Client = {
 <% end %>
   ServerHtl00 = 0;
 }
+
+<% elsif p('credhub.encryption.provider') == 'dsm' %>
+<% if_p('credhub.encryption.dsm.servers') do |servers| %>
+servers=<%= servers.collect { |server| server['host'] }.join(',') %>
+<% end %>
+<% end %>

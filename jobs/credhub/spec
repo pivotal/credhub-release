@@ -1,17 +1,22 @@
 ---
 name: credhub
 templates:
-  ctl: bin/ctl
-  application.properties.erb: config/application.properties
-  log4j2.properties.erb: config/log4j2.properties
-  install_crt.sh: bin/install_crt.sh
+  # Lifecycle scripts
   pre-start.erb: bin/pre-start
   post-start.erb: bin/post-start
-  Chrystoki.conf.erb: config/Chrystoki.conf
+  drain.erb: bin/drain
+  # Other scripts
+  ctl: bin/ctl
+  install_crt.sh: bin/install_crt.sh
+  # Config
+  application.properties.erb: config/application.properties
+  log4j2.properties.erb: config/log4j2.properties
+  encryption.conf.erb: config/encryption.conf
 
 packages:
 - openjdk_1.8.0
 - lunaclient
+- dsm-client
 - credhub
 
 properties:
@@ -46,19 +51,32 @@ properties:
   credhub.encryption.hsm.client_key:
     description: "NTLS client private key matching the client_certificate"
 
-  # TLS configuration for the server
+  # DSM properties
+  credhub.encryption.dsm.encryption_key_name:
+    description: "The name of the key stored in DSM to be reference by CredHub server for encryption"
+  credhub.encryption.dsm.servers:
+    description: "The list of IP Addresses or the hostnames of the DSM's entry points"
+    example:
+      - host: 127.0.0.1
+        partition: partition_name
+        ssh_private_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          ...
+          -----END RSA PRIVATE KEY-----
+
+# TLS configuration for the server
   credhub.tls:
     description: "Certificate and private key for TLS connection to CredHub API"
     type: certificate
     example: |
       certificate: |
-      -----BEGIN CERTIFICATE-----
-      ...
-      -----END CERTIFICATE-----
+        -----BEGIN CERTIFICATE-----
+        ...
+        -----END CERTIFICATE-----
       private_key: |
-      -----BEGIN RSA PRIVATE KEY-----
-      ...
-      -----END RSA PRIVATE KEY-----
+        -----BEGIN RSA PRIVATE KEY-----
+        ...
+        -----END RSA PRIVATE KEY-----
 
   # Data storage
   credhub.data_storage.type:

@@ -1,11 +1,19 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
+
 <% if p('credhub.encryption.provider') == 'hsm' %>
+encryption.provider=hsm
 hsm.partition=<%= p("credhub.encryption.hsm.partition") %>
 hsm.partition-password=<%= p("credhub.encryption.hsm.partition_password") %>
 hsm.encryption-key-name=<%= p("credhub.encryption.hsm.encryption_key_name") %>
+
+<% elsif p('credhub.encryption.provider') == 'dsm' %>
+encryption.provider=dsm
+dsm.encryption-key-name=<%= p("credhub.encryption.dsm.encryption_key_name") %>
+
 <% elsif p('credhub.encryption.provider') == 'dev_internal' %>
 encryption.provider=dev_internal
+
 <% if_p("credhub.encryption.dev_key") do |dev_key| %>
 <%
 def invalid_dev_key?(dev_key)
@@ -13,8 +21,9 @@ dev_key[/\H/] || dev_key.size != 32
 end
 raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(dev_key) %>
 encryption.dev-key=<%= dev_key %>
-<% end
-end %>
+<% end %>
+<% end %>
+
 <% if_p('credhub.data_storage.username') do %>
 spring.datasource.username=<%= p("credhub.data_storage.username") %>
 <% if_p('credhub.data_storage.password') do %>
@@ -22,6 +31,7 @@ spring.datasource.password=<%= p("credhub.data_storage.password") %>
 <% end %>
 <% end %>
 spring.jpa.hibernate.ddl-auto=validate
+
 <%
 def have_tls_ca
   begin
@@ -58,6 +68,7 @@ case p("credhub.data_storage.type")
     raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
 end
 %>
+
 spring.datasource.url=<%=@url%>
 
 server.ssl.enabled=true

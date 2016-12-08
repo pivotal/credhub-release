@@ -7,3 +7,11 @@ openjdk_1.8.0/openjdk-1.8.0_111-x86_64-trusty.tar.gz:
   object_id: 753cf103-f071-4932-b0cb-c30bea07e2ca
   sha: eb2783401e59eddbc95304c50f1a34fbfa3bfc5d
   size: 181266688
+dsm-client_1.2.10136.1262/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb:
+  object_id: 137dbbd3-904c-4d47-900e-be5563396f07
+  sha: c750388b993d59245c4781ca8be4ab95879caec0
+  size: 3270478
+libapr1_1.5.0-1/libapr1_1.5.0-1_amd64.deb:
+  object_id: c599ceac-0de3-4931-ab90-8c03cf200bae
+  sha: defd73aeb230ec01527b2eee293b60c08d5c6e50
+  size: 85056
