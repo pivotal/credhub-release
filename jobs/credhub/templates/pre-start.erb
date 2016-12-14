@@ -11,14 +11,6 @@ JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
 chown -R vcap /var/vcap/jobs/credhub/config
 chmod 700 /var/vcap/jobs/credhub/config
 
-if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.properties | wc -l` -eq 0 ]; then
-  exit 0
-fi
-
-sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEYSTORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.properties
-
-rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
-
 <%
   begin
     p('credhub.tls.certificate')
@@ -28,23 +20,36 @@ rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
   end
 %>
 
-cat > $CERT_FILE <<EOL
+function init_keystore_and_certs() {
+  sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEYSTORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.properties
+
+  rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
+
+  cat > $CERT_FILE <<EOL
 <%= p('credhub.tls.certificate') %>
 EOL
 
-cat > $PRIV_KEY_FILE <<EOL
+  cat > $PRIV_KEY_FILE <<EOL
 <%= p('credhub.tls.private_key') %>
 EOL
 
-<% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
+  <% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
 
-cat > $DATABASE_CA_CERT <<EOL
+  cat > $DATABASE_CA_CERT <<EOL
 <%= tls_ca %>
 EOL
 
-<% end %>
+  <% end %>
 
-/var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT $KEYSTORE_PASSWORD
+  /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT $KEYSTORE_PASSWORD
+}
+
+if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.properties | wc -l` -eq 0 ]; then
+  echo "Keystore appears to be initialized. Skipping keystore and cert initialization."
+else
+  echo "Keystore appears to be uninitialized. Setting up keystore and installing certs."
+  init_keystore_and_certs
+fi
 
 <% if p('credhub.encryption.provider') == 'hsm' %>
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
