@@ -10,11 +10,16 @@ def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
         properties:
           credhub:
             encryption:
-              provider: hsm
-              hsm:
-                certificate: "cert"
-                client_certificate: "client_cert"
-                client_key: "key"
+              keys:
+                - provider_name: active_hsm
+                  encryption_key_name: "active_keyname"
+                  active: true
+              providers:
+                - name: active_hsm
+                  type: hsm
+                  certificate: "cert"
+                  client_certificate: "client_cert"
+                  client_key: "key"
             #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage:
               #{data_storage_yaml}
@@ -65,7 +70,13 @@ RSpec.describe "the template" do
         properties:
           credhub:
             encryption:
-              provider: dev_internal
+              keys:
+                - provider_name: dev-key
+                  active: true
+                  dev_key: test-key
+              providers:
+                - name: dev-key
+                  type: dev_internal
             tls:
               certificate: foo
               private_key: bar

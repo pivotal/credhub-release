@@ -25,45 +25,61 @@ properties:
     default: 8844
 
   # Encryption properties
-  credhub.encryption.provider:
-    description: "HSM or dev_internal encryption"
-    default: "hsm"
-  credhub.encryption.dev_key:
-    description: "AES key to be used for encryption during development"
-    default: "D673ACD01DA091B08144FBC8C0B5F524"
-
-  # HSM properties
-  credhub.encryption.hsm.host:
-    description: "The IP address of the HSM"
-  credhub.encryption.hsm.port:
-    description: "The HSM port"
-    default: 1792
-  credhub.encryption.hsm.certificate:
-    description: "The HSMs certificate"
-  credhub.encryption.hsm.partition:
-    description: "Name of the HSM partition"
-  credhub.encryption.hsm.partition_password:
-    description: "Password for the HSM partition"
-  credhub.encryption.hsm.encryption_key_name:
-    description: "The name of the key stored in HSM to be reference by CredHub server for encryption"
-  credhub.encryption.hsm.client_certificate:
-    description: "NTLS client certificate registered with HSM"
-  credhub.encryption.hsm.client_key:
-    description: "NTLS client private key matching the client_certificate"
-
-  # DSM properties
-  credhub.encryption.dsm.encryption_key_name:
-    description: "The name of the key stored in DSM to be reference by CredHub server for encryption"
-  credhub.encryption.dsm.servers:
-    description: "The list of IP Addresses or the hostnames of the DSM's entry points"
+  credhub.encryption.keys:
+    description: |
+      A list of active and inactive encryption keys, specifying the provider name and the encryption key name or value.
+      Key values for dev_internal providers must be valid, hex-encoded 128-bit AES keys.
+      One key must be marked active.
+      See below for examples of keys for each supported provider type.
     example:
-      - host: 127.0.0.1
-        user: vcap
-        partition: partition_name
-        ssh_private_key: |
+      - provider_name: hsm_provider
+        active: true
+        encryption_key_name: active-hsm-key-name
+      - provider_name: hsm_provider
+        encryption_key_name: inactive-hsm-key-name
+      - provider_name: dsm_provider
+        encryption_key_name: dsm-key-name
+      - provider_name: dev_internal
+        dev_key: ABCDEF0123456789ABCDEF0123456789
+
+  credhub.encryption.providers:
+    description: |
+      A list of all providers used for the current set of encryption keys.
+      See below for example structures of all supported provider types.
+      HSM port will default to 1792, if not provided.
+    example:
+      - provider_name: hsm-example_provider
+        type: hsm
+        host: 10.0.1.2
+        port: 1792
+        certificate: |
+          -----BEGIN CERTIFICATE-----
+          ...
+          -----END CERTIFICATE-----
+        partition: my-hsm-partition
+        partition_password: my-strong-password
+        client_certificate: |
+          -----BEGIN CERTIFICATE-----
+          ...
+          -----END CERTIFICATE-----
+        client_key: |
           -----BEGIN RSA PRIVATE KEY-----
           ...
           -----END RSA PRIVATE KEY-----
+
+      - provider_name: dsm-example-provider
+        type: dsm
+        dsm_servers:
+          - host: 10.0.1.3
+            user: vcap
+            partition: my-dsm-partition
+            ssh_private_key: |
+              -----BEGIN RSA PRIVATE KEY-----
+              ...
+              -----END RSA PRIVATE KEY-----
+
+      - provider_name: dev-example-provider
+        type: dev_internal
 
 # TLS configuration for the server
   credhub.tls:

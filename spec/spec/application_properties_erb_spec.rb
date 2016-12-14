@@ -10,11 +10,23 @@ def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private
         properties:
           credhub:
             encryption:
-              provider: hsm
-              hsm:
-                partition: "partname"
-                partition_password: "partpass"
-                encryption_key_name: "keyname"
+              keys:
+                - provider_name: old_hsm
+                  encryption_key_name: "old_keyname"
+                - provider_name: active_hsm
+                  encryption_key_name: "active_keyname"
+                  active: true
+                - provider_name: active_hsm
+                  encryption_key_name: "another_keyname"
+              providers:
+                - name: old_hsm
+                  type: hsm
+                  partition: "old_partition"
+                  partition_password: "old_partpass"
+                - name: active_hsm
+                  type: hsm
+                  partition: "active_partition"
+                  partition_password: "active_partpass"
             port: 9000
             user_management:
               uaa:
@@ -147,9 +159,9 @@ RSpec.describe "the template" do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }')
 
       expect(result).to include "encryption.provider=hsm"
-      expect(result).to include "hsm.partition=partname"
-      expect(result).to include "hsm.partition-password=partpass"
-      expect(result).to include "hsm.encryption-key-name=keyname"
+      expect(result).to include "hsm.partition=active_partition"
+      expect(result).to include "hsm.partition-password=active_partpass"
+      expect(result).to include "hsm.encryption-key-name=active_keyname"
     end
   end
 
@@ -160,9 +172,19 @@ RSpec.describe "the template" do
         properties:
           credhub:
             encryption:
-              provider: dsm
-              dsm:
-                encryption_key_name: dsm-key
+              keys:
+                - provider_name: old_dsm
+                  encryption_key_name: "1234abcd1234abcd1234abcd1234abcd"
+                - provider_name: active_dsm
+                  encryption_key_name: "active_keyname"
+                  active: true
+                - provider_name: active_dsm
+                  encryption_key_name: "abcd1234abcd1234abcd1234abcd1234"
+              providers:
+                - name: old_dsm
+                  type: dsm
+                - name: active_dsm
+                  type: dsm
             port: 9000
             user_management:
               uaa:
@@ -188,7 +210,7 @@ RSpec.describe "the template" do
       result = renderer.render("../jobs/credhub/templates/application.properties.erb")
 
       expect(result).to include "encryption.provider=dsm"
-      expect(result).to include "dsm.encryption-key-name=dsm-key"
+      expect(result).to include "dsm.encryption-key-name=active_keyname"
     end
   end
 
@@ -198,8 +220,17 @@ RSpec.describe "the template" do
         properties:
           credhub:
             encryption:
-              provider: dev_internal
-              dev_key: XYZZ123412341234
+              keys:
+                - provider_name: active_dev
+                  dev_key: "XYZZ123412341234"
+                  active: true
+                - provider_name: old_dev
+                  dev_key: "blahblahblah"
+              providers:
+                - name: active_dev
+                  type: dev_internal
+                - name: old_dev
+                  type: dev_internal
             port: 9000
             user_management:
               uaa:
@@ -219,9 +250,9 @@ RSpec.describe "the template" do
     }
     let(:yaml) { YAML.load(base_option_yaml) }
 
-    context "validating the dev key" do
+    context "validating the dev_key" do
       it "should be valid hexadecimal" do
-        yaml['properties']['credhub']['encryption']['dev_key'] = 'xyz'
+        yaml['properties']['credhub']['encryption']['keys'].first['dev_key'] = 'xyz'
         options = {:context => yaml.to_json}
         renderer = Bosh::Template::Renderer.new(options)
         expect {
@@ -230,7 +261,7 @@ RSpec.describe "the template" do
       end
 
       it "should be 32 characters" do
-        yaml['properties']['credhub']['encryption']['dev_key']
+        yaml['properties']['credhub']['encryption']['keys'].first['dev_key']
         options = {:context => yaml.to_json}
         renderer = Bosh::Template::Renderer.new(options)
         expect {
@@ -239,7 +270,7 @@ RSpec.describe "the template" do
       end
 
       it "should not allow empty string" do
-        yaml['properties']['credhub']['encryption']['dev_key'] = ""
+        yaml['properties']['credhub']['encryption']['keys'].first['dev_key'] = ''
         options = {:context => yaml.to_json}
         renderer = Bosh::Template::Renderer.new(options)
         expect {
@@ -248,7 +279,7 @@ RSpec.describe "the template" do
       end
 
       it "should allow the dev_key to be omitted" do
-        yaml['properties']['credhub']['encryption'].delete('dev_key')
+        yaml['properties']['credhub']['encryption']['keys'].first.delete('dev_key')
         options = {:context => yaml.to_json}
         renderer = Bosh::Template::Renderer.new(options)
         expect {
@@ -258,7 +289,7 @@ RSpec.describe "the template" do
     end
 
     it "sets the provider and dev key correctly" do
-      yaml['properties']['credhub']['encryption']['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
+      yaml['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
       options = {:context => yaml.to_json}
       renderer = Bosh::Template::Renderer.new(options)
       render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")

@@ -1,27 +1,33 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
 
-<% if p('credhub.encryption.provider') == 'hsm' %>
+<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
+<% active_provider_name = active_key['provider_name'] %>
+<% active_encryption_key_name = active_key['encryption_key_name'] %>
+<% active_dev_key = active_key['dev_key'] %>
+<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+
+<% if active_provider['type'] == 'hsm' %>
 encryption.provider=hsm
-hsm.partition=<%= p("credhub.encryption.hsm.partition") %>
-hsm.partition-password=<%= p("credhub.encryption.hsm.partition_password") %>
-hsm.encryption-key-name=<%= p("credhub.encryption.hsm.encryption_key_name") %>
-
-<% elsif p('credhub.encryption.provider') == 'dsm' %>
+hsm.partition=<%= active_provider['partition'] %>
+hsm.partition-password=<%= active_provider['partition_password'] %>
+hsm.encryption-key-name=<%= active_encryption_key_name %>
+<% elsif active_provider['type'] == 'dsm' %>
 encryption.provider=dsm
-dsm.encryption-key-name=<%= p("credhub.encryption.dsm.encryption_key_name") %>
-
-<% elsif p('credhub.encryption.provider') == 'dev_internal' %>
-encryption.provider=dev_internal
-
-<% if_p("credhub.encryption.dev_key") do |dev_key| %>
+dsm.encryption-key-name=<%= active_encryption_key_name %>
+<% elsif active_provider['type'] == 'dev_internal' %>
 <%
 def invalid_dev_key?(dev_key)
-dev_key[/\H/] || dev_key.size != 32
+  return false if dev_key.nil?
+
+  dev_key[/\H/] || dev_key.size != 32
 end
-raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(dev_key) %>
-encryption.dev-key=<%= dev_key %>
-<% end %>
+%>
+
+<% raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(active_dev_key) %>
+encryption.provider=dev_internal
+encryption.dev-key=<%= active_dev_key %>
+%>
 <% end %>
 
 <% if_p('credhub.data_storage.username') do %>

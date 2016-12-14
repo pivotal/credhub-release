@@ -11,6 +11,10 @@ JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
 chown -R vcap /var/vcap/jobs/credhub/config
 chmod 700 /var/vcap/jobs/credhub/config
 
+<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
+<% active_provider_name = active_key['provider_name'] %>
+<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+
 <%
   begin
     p('credhub.tls.certificate')
@@ -51,33 +55,32 @@ else
   init_keystore_and_certs
 fi
 
-<% if p('credhub.encryption.provider') == 'hsm' %>
+<% if active_provider['type'] == 'hsm' %>
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
-<%= p('credhub.encryption.hsm.certificate') %>
+<%= active_provider['certificate'] %>
 EOL
 
 cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
-<%= p('credhub.encryption.hsm.client_certificate') %>
+<%= active_provider['client_certificate'] %>
 EOL
 
 cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
-<%= p('credhub.encryption.hsm.client_key') %>
+<%= active_provider['client_key'] %>
 EOL
 
 ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
 
 cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
 cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
-<% end %>
 
-<% if p('credhub.encryption.provider') == 'dsm' %>
+<% elsif active_provider['type'] == 'dsm' %>
 dpkg -i /var/vcap/packages/dsm-client/libapr1_1.5.0-1_amd64.deb
 dpkg -i /var/vcap/packages/dsm-client/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb
 
 cp /usr/lib/dsm/dsm-advapi-1.0.jar $JAVA_HOME/jre/lib/ext/
 
 ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/dsm/client.conf
-<% p('credhub.encryption.dsm.servers').each do |server| %>
+<% (active_provider['servers'] || []).each do |server| %>
 HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
 
 cat > $HOST_PRIVATE_KEY_FILE <<EOL

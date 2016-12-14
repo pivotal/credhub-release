@@ -18,10 +18,34 @@ RSpec.describe "the encryption config template" do
         properties:
           credhub:
             encryption:
-              provider: hsm
-              hsm:
-                host: "example.com"
-                port: 1792
+              keys:
+                - provider_name: hsm-provider
+                  encryption_key_name: test-key
+                  active: true
+              providers:
+                - name: hsm-provider
+                  type: hsm
+                  host: "example.com"
+                  port: 1792
+      EOF
+)
+      expect(result).to include "ServerName00 = example.com"
+      expect(result).to include "ServerPort00 = 1792"
+    end
+
+    it "supplies a default port" do
+      result = render(<<-EOF
+        properties:
+          credhub:
+            encryption:
+              keys:
+                - provider_name: hsm-provider
+                  encryption_key_name: test-key
+                  active: true
+              providers:
+                - name: hsm-provider
+                  type: hsm
+                  host: "example.com"
       EOF
 )
       expect(result).to include "ServerName00 = example.com"
@@ -35,31 +59,23 @@ RSpec.describe "the encryption config template" do
         properties:
           credhub:
             encryption:
-              provider: dsm
-              dsm:
-                servers:
-                  - host: 1.2.3.4
-                    partition: fake-partition
-                    ssh_private_key: fake-private-key
-                  - host: 5.6.7.8
-                    partition: fake-partition
-                    ssh_private_key: fake-private-key
+              keys:
+                - provider_name: dsm-provider
+                  encryption_key_name: test-key
+                  active: true
+              providers:
+                - name: dsm-provider
+                  type: dsm
+                  servers:
+                    - host: 1.2.3.4
+                      partition: fake-partition
+                      ssh_private_key: fake-private-key
+                    - host: 5.6.7.8
+                      partition: fake-partition
+                      ssh_private_key: fake-private-key
       EOF
 )
       expect(result).to include "servers=1.2.3.4,5.6.7.8"
-    end
-  end
-
-  context "with dev_internal" do
-    it "should be empty" do
-      result = render(<<-EOF
-        properties:
-          credhub:
-            encryption:
-              provider: dev_internal
-      EOF
-)
-      expect(result.chomp).to be_empty
     end
   end
 end

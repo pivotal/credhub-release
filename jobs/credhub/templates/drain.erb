@@ -2,8 +2,12 @@
 
 set -eu
 
-<% if p('credhub.encryption.provider') == 'dsm' %>
-<% p('credhub.encryption.dsm.servers').each do |server| %>
+<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
+<% active_provider_name = active_key['provider_name'] %>
+<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+
+<% if active_provider['type'] == 'dsm' %>
+<% (active_provider['servers'] || []).each do |server| %>
 
 HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
 

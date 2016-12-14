@@ -1,4 +1,8 @@
-<% if p('credhub.encryption.provider') == 'hsm' %>
+<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
+<% active_provider_name = active_key['provider_name'] %>
+<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+
+<% if active_provider['type'] == 'hsm' %>
 Chrystoki2 = {
   LibUNIX = /var/vcap/packages/lunaclient/lib/libCryptoki2.so;
   LibUNIX64 = /var/vcap/packages/lunaclient/lib/libCryptoki2_64.so;
@@ -31,15 +35,16 @@ LunaSA Client = {
   ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
   NetClient = 1;
   HtlDir = /var/vcap/packages/lunaclient/htl/;
-<% if_p("credhub.encryption.hsm.host", "credhub.encryption.hsm.port") do |host, port| %>
-  ServerName00 = <%= host %>;
-  ServerPort00 = <%= port %>;
+<% hsm_host = active_provider['host'] %>
+<% hsm_port = active_provider['port'] || 1792 %>
+<% if hsm_host %>
+  ServerName00 = <%= hsm_host %>;
 <% end %>
+  ServerPort00 = <%= hsm_port %>;
   ServerHtl00 = 0;
 }
 
-<% elsif p('credhub.encryption.provider') == 'dsm' %>
-<% if_p('credhub.encryption.dsm.servers') do |servers| %>
+<% elsif active_provider['type'] == 'dsm' %>
+<% servers = active_provider['servers'] || [] %>
 servers=<%= servers.collect { |server| server['host'] }.join(',') %>
-<% end %>
 <% end %>
