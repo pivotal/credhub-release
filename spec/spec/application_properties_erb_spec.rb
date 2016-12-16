@@ -294,7 +294,7 @@ RSpec.describe "the template" do
       renderer = Bosh::Template::Renderer.new(options)
       render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
       expect(render_erb_value).to include "encryption.provider=dev_internal"
-      expect(render_erb_value).to include "encryption.dev-key=1234abcd1234abcd1234abcd1234abcd"
+      expect(render_erb_value).to include "encryption.active-key=1234abcd1234abcd1234abcd1234abcd"
     end
   end
 end
