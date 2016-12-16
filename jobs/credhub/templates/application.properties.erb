@@ -26,6 +26,7 @@ end
 
 <% raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(active_dev_key) %>
 encryption.active-key=<%= active_dev_key %>
+encryption.keys=<%= p('credhub.encryption.keys').collect { |k| k['dev_key'] }%>
 <% end %>
 
 <% if_p('credhub.data_storage.username') do %>
