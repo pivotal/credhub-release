@@ -1,7 +1,10 @@
 server.port=<%= p("credhub.port") %>
 auth-server.url=<%= p("credhub.user_management.uaa.url") %>
 
-<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
+<%
+    active_key = p('credhub.encryption.keys').find { |key| key.key?('active') }
+    raise ArgumentError, "Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed." if active_key.nil?
+%>
 <% active_provider_name = active_key['provider_name'] %>
 <% active_encryption_key_name = active_key['encryption_key_name'] %>
 <% active_dev_key = active_key['dev_key'] %>

@@ -5,19 +5,17 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
-def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private_key: "bar" }', log_level = 'info')
+def render_erb(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil)
+  tls_yaml ||= 'tls: { certificate: "foo", private_key: "bar" }'
+  keys_yaml ||= '[{provider_name: "old_hsm", encryption_key_name: "old_keyname"},
+                  {provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
+                  {provider_name: "active_hsm", encryption_key_name: "another_keyname"}]'
+  log_level ||= 'info'
   option_yaml = <<-EOF
         properties:
           credhub:
             encryption:
-              keys:
-                - provider_name: old_hsm
-                  encryption_key_name: "old_keyname"
-                - provider_name: active_hsm
-                  encryption_key_name: "active_keyname"
-                  active: true
-                - provider_name: active_hsm
-                  encryption_key_name: "another_keyname"
+              keys: #{keys_yaml}
               providers:
                 - name: old_hsm
                   type: hsm
@@ -35,8 +33,7 @@ def render_erb(data_storage_yaml, tls_yaml = 'tls: { certificate: "foo", private
                   line 1
                   line 2
             #{tls_yaml.empty? ? '' : tls_yaml}
-            data_storage:
-              #{data_storage_yaml}
+            data_storage: #{data_storage_yaml}
             log_level: #{log_level}
 
   EOF
@@ -149,10 +146,17 @@ RSpec.describe "the template" do
 
   context "with logging" do
     it "sets log configuration path" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', '', 'info')
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }', nil, nil, log_level = 'info')
       expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
     end
   end
+
+  context "encryption keys" do
+       it "raises an error when no key has been set active" do
+        expect {render_erb('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "old_hsm", encryption_key_name: "old_keyname"}]', nil)}
+            .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+      end
+    end
 
   context "hsm encryption" do
     it "should set the hsm properties correctly" do
