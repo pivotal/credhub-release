@@ -152,11 +152,22 @@ RSpec.describe "the template" do
   end
 
   context "encryption keys" do
-       it "raises an error when no key has been set active" do
-        expect {render_erb('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "old_hsm", encryption_key_name: "old_keyname"}]', nil)}
-            .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
-      end
+    it "raises an error when no key has been set active" do
+      expect {render_erb('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "hsm", encryption_key_name: "keyname"}]', nil)}
+          .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
     end
+
+    it "raises an error when more than one key has been set active" do
+      expect {render_erb('{ type: "in-memory", database: "my_db_name" }',
+                         nil,
+                         '[
+                            {provider_name: "hsm1", encryption_key_name: "keyname1", active: true},
+                            {provider_name: "hsm2", encryption_key_name: "keyname2", active: true}
+                         ]',
+                         nil)}
+        .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+    end
+  end
 
   context "hsm encryption" do
     it "should set the hsm properties correctly" do
