@@ -5,6 +5,7 @@ This is a BOSH Release for [CredHub](https://github.com/pivotal-cf/sec-eng-crede
 * [API Documentation] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Server-API)
 * [Integration with BOSH Director] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Integration-with-BOSH-Director-Configuration-Guide)
 * [Credential Types] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Credential-Types-and-How-to-Use-Them-in-a-Release)
+* [Backup and Restore Recommendations] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Backup-and-Restore-Recommendations)
 
 ## Updating this repo's submodule before a BOSH release
 
