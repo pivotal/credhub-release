@@ -48,7 +48,7 @@ properties:
       See below for example structures of all supported provider types.
       HSM port will default to 1792, if not provided.
     example:
-      - provider_name: hsm-example_provider
+      - name: hsm-example_provider
         type: hsm
         host: 10.0.1.2
         port: 1792
@@ -67,7 +67,7 @@ properties:
           ...
           -----END RSA PRIVATE KEY-----
 
-      - provider_name: dsm-example-provider
+      - name: dsm-example-provider
         type: dsm
         dsm_servers:
           - host: 10.0.1.3
@@ -78,7 +78,7 @@ properties:
               ...
               -----END RSA PRIVATE KEY-----
 
-      - provider_name: dev-example-provider
+      - name: dev-example-provider
         type: dev_internal
 
 # TLS configuration for the server
