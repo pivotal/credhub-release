@@ -41,24 +41,24 @@ def render_erb(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = n
   # puts option_yaml
   options = {:context => YAML.load(option_yaml).to_json}
   renderer = Bosh::Template::Renderer.new(options)
-  renderer.render("../jobs/credhub/templates/application.properties.erb")
+  renderer.render('../jobs/credhub/templates/application.properties.erb')
 end
 
-RSpec.describe "the template" do
+RSpec.describe 'the template' do
   it 'sets the CredHub port correctly' do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    expect(result).to include "port=9000"
+    expect(result).to include 'port=9000'
   end
 
   describe 'authentication' do
     it 'renders verification_key as one long string' do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-      expect(result).to include "security.oauth2.resource.jwt.key-value=line 1line 2"
+      expect(result).to include 'security.oauth2.resource.jwt.key-value=line 1line 2'
     end
 
     it 'sets uaa as the auth server' do
       result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-      expect(result).to include "auth-server.url=my_uaa_url"
+      expect(result).to include 'auth-server.url=my_uaa_url'
     end
   end
 
@@ -66,67 +66,67 @@ RSpec.describe "the template" do
     context 'with a username' do
       it 'sets the datasource username' do
         result = render_erb('{ type: "in-memory", database: "my_db_name", username: "my_username" }')
-        expect(result).to include "spring.datasource.username=my_username"
+        expect(result).to include 'spring.datasource.username=my_username'
       end
 
       context 'and with password' do
         it 'sets the datasource password' do
           result = render_erb('{ type: "in-memory", database: "my_db_name", username: "my_username", password: "my_password" }')
-          expect(result).to include "spring.datasource.password=my_password"
+          expect(result).to include 'spring.datasource.password=my_password'
         end
       end
     end
 
-    context "with in-memory" do
-      it "sets url correctly for in-memory" do
+    context 'with in-memory' do
+      it 'sets url correctly for in-memory' do
         result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-        expect(result).to include "spring.datasource.url=jdbc:h2:mem:my_db_name"
+        expect(result).to include 'spring.datasource.url=jdbc:h2:mem:my_db_name'
       end
 
-      it "sets flyway location to be h2" do
+      it 'sets flyway location to be h2' do
         result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-        expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/h2"
+        expect(result).to include 'flyway.locations=classpath:/db/migration/common,classpath:/db/migration/h2'
       end
     end
 
-    context "with Postgres" do
-      it "sets url correctly for Postgres" do
+    context 'with Postgres' do
+      it 'sets url correctly for Postgres' do
         result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
-        expect(result).to include "jdbc:postgresql://my_host:1234/my_db_name"
-        expect(result).to include "autoReconnect=true"
+        expect(result).to include 'jdbc:postgresql://my_host:1234/my_db_name'
+        expect(result).to include 'autoReconnect=true'
       end
 
-      it "sets flyway location to be postgres" do
+      it 'sets flyway location to be postgres' do
         result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
-        expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/postgres"
+        expect(result).to include 'flyway.locations=classpath:/db/migration/common,classpath:/db/migration/postgres'
       end
     end
 
-    context "with MySQL" do
-      it "sets url correctly for MySQL without TLS" do
+    context 'with MySQL' do
+      it 'sets url correctly for MySQL without TLS' do
         result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
-        expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
-        expect(result).to include "?autoReconnect=true"
-        expect(result).not_to include "useSSL="
-        expect(result).not_to include "requireSSL="
-        expect(result).not_to include "verifyServerCertificate="
+        expect(result).to include 'jdbc:mysql://my_host:1234/my_db_name'
+        expect(result).to include '?autoReconnect=true'
+        expect(result).not_to include 'useSSL='
+        expect(result).not_to include 'requireSSL='
+        expect(result).not_to include 'verifyServerCertificate='
       end
 
-      it "sets flyway location to be mysql" do
+      it 'sets flyway location to be mysql' do
         result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
-        expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/mysql"
+        expect(result).to include 'flyway.locations=classpath:/db/migration/common,classpath:/db/migration/mysql'
       end
 
-      it "sets url correctly for MySQL with TLS but without custom certificate" do
+      it 'sets url correctly for MySQL with TLS but without custom certificate' do
         result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true }')
-        expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
-        expect(result).to include "?autoReconnect=true"
-        expect(result).to include "&useSSL=true"
-        expect(result).to include "&requireSSL=true"
-        expect(result).to include "&verifyServerCertificate=true"
+        expect(result).to include 'jdbc:mysql://my_host:1234/my_db_name'
+        expect(result).to include '?autoReconnect=true'
+        expect(result).to include '&useSSL=true'
+        expect(result).to include '&requireSSL=true'
+        expect(result).to include '&verifyServerCertificate=true'
       end
 
-      it "sets url correctly for MySQL when tls_ca is set" do
+      it 'sets url correctly for MySQL when tls_ca is set' do
         password_regex = /server\.ssl\.key-password=(?<password>[a-zA-Z0-9_-]*)/
 
         result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
@@ -134,16 +134,16 @@ RSpec.describe "the template" do
         expect(password_match).not_to be_nil
         password = password_match[:password]
 
-        expect(result).to include "&useSSL=true"
-        expect(result).to include "&requireSSL=true"
-        expect(result).to include "&verifyServerCertificate=true"
+        expect(result).to include '&useSSL=true'
+        expect(result).to include '&requireSSL=true'
+        expect(result).to include '&verifyServerCertificate=true'
         expect(result).to include "&trustCertificateKeyStorePassword=#{password}"
-        expect(result).to include "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
+        expect(result).to include '&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks'
       end
 
-      it "prints error when require_tls is not a boolean type" do
+      it 'prints error when require_tls is not a boolean type' do
         expect {render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: "true" }')}
-            .to raise_error("credhub.data_storage.require_tls (true) must be set to \"true\" or \"false\".")
+            .to raise_error('credhub.data_storage.require_tls (true) must be set to "true" or "false".')
       end
     end
 
@@ -155,38 +155,38 @@ RSpec.describe "the template" do
     end
   end
 
-  it "adds SSL properties" do
+  it 'adds SSL properties' do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    expect(result).to include "server.ssl.enabled=true"
-    expect(result).to include "server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks"
-    expect(result).to include "server.ssl.key-password=KEY_STORE_PASSWORD_PLACEHOLDER"
-    expect(result).to include "server.ssl.key-alias=credhub_tls_cert"
-    expect(result).to include "server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384"
+    expect(result).to include 'server.ssl.enabled=true'
+    expect(result).to include 'server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks'
+    expect(result).to include 'server.ssl.key-password=KEY_STORE_PASSWORD_PLACEHOLDER'
+    expect(result).to include 'server.ssl.key-alias=credhub_tls_cert'
+    expect(result).to include 'server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384'
   end
 
-  it "does not destroy the customer data" do
+  it 'does not destroy the customer data' do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
 
-    expect(result).to include "spring.jpa.hibernate.ddl-auto=validate"
+    expect(result).to include 'spring.jpa.hibernate.ddl-auto=validate'
 
-    expect(result).not_to include "spring.jpa.hibernate.ddl-auto=create"
-    expect(result).not_to include "spring.jpa.hibernate.ddl-auto=create-drop"
-    expect(result).not_to include "spring.jpa.hibernate.ddl-auto=update"
+    expect(result).not_to include 'spring.jpa.hibernate.ddl-auto=create'
+    expect(result).not_to include 'spring.jpa.hibernate.ddl-auto=create-drop'
+    expect(result).not_to include 'spring.jpa.hibernate.ddl-auto=update'
   end
 
-  it "sets log configuration path" do
+  it 'sets log configuration path' do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
+    expect(result).to include 'logging.config=/var/vcap/jobs/credhub/config/log4j2.properties'
   end
 
   describe '`encryption:` section' do
     describe '`keys:` section' do
-      it "raises an error when no key has been set active" do
+      it 'raises an error when no key has been set active' do
         expect {render_erb('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "hsm", encryption_key_name: "keyname"}]', nil)}
             .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
       end
 
-      it "raises an error when more than one key has been set active" do
+      it 'raises an error when more than one key has been set active' do
         expect {render_erb('{ type: "in-memory", database: "my_db_name" }',
                            nil,
                            '[
@@ -199,18 +199,18 @@ RSpec.describe "the template" do
     end
 
     describe '`providers:` section' do
-      context "hsm encryption" do
-        it "should set the hsm properties correctly" do
+      context 'hsm encryption' do
+        it 'should set the hsm properties correctly' do
           result = render_erb('{ type: "in-memory", database: "my_db_name" }')
 
-          expect(result).to include "encryption.provider=hsm"
-          expect(result).to include "hsm.partition=active_partition"
-          expect(result).to include "hsm.partition-password=active_partpass"
-          expect(result).to include "hsm.encryption-key-name=active_keyname"
+          expect(result).to include 'encryption.provider=hsm'
+          expect(result).to include 'hsm.partition=active_partition'
+          expect(result).to include 'hsm.partition-password=active_partpass'
+          expect(result).to include 'hsm.encryption-key-name=active_keyname'
         end
       end
 
-      context "dsm encryption" do
+      context 'dsm encryption' do
         let(:base_option_yaml) {
           <<-EOF
         properties:
@@ -248,17 +248,17 @@ RSpec.describe "the template" do
         }
         let(:manifest_properties) { YAML.load(base_option_yaml) }
 
-        it "should set the dsm properties correctly" do
+        it 'should set the dsm properties correctly' do
           options = {:context => manifest_properties.to_json}
           renderer = Bosh::Template::Renderer.new(options)
-          result = renderer.render("../jobs/credhub/templates/application.properties.erb")
+          result = renderer.render('../jobs/credhub/templates/application.properties.erb')
 
-          expect(result).to include "encryption.provider=dsm"
-          expect(result).to include "dsm.encryption-key-name=active_keyname"
+          expect(result).to include 'encryption.provider=dsm'
+          expect(result).to include 'dsm.encryption-key-name=active_keyname'
         end
       end
 
-      context "dev_internal encryption" do
+      context 'dev_internal encryption' do
         let(:base_option_yaml) {
           <<-EOF
         properties:
@@ -295,61 +295,61 @@ RSpec.describe "the template" do
 
         let(:manifest_properties) { YAML.load(base_option_yaml) }
 
-        context "validating the dev_key" do
-          it "should be valid hexadecimal" do
+        context 'validating the dev_key' do
+          it 'should be valid hexadecimal' do
             manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = 'xyz'
 
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
 
             expect {
-              renderer.render("../jobs/credhub/templates/application.properties.erb")
+              renderer.render('../jobs/credhub/templates/application.properties.erb')
             }.to raise_error(ArgumentError, 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
           end
 
-          it "should be 32 characters" do
+          it 'should be 32 characters' do
             manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key']
 
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
 
             expect {
-              renderer.render("../jobs/credhub/templates/application.properties.erb")
+              renderer.render('../jobs/credhub/templates/application.properties.erb')
             }.to raise_error(ArgumentError, 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
           end
 
-          it "should not allow empty string" do
+          it 'should not allow empty string' do
             manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = ''
 
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
 
             expect {
-              renderer.render("../jobs/credhub/templates/application.properties.erb")
+              renderer.render('../jobs/credhub/templates/application.properties.erb')
             }.to raise_error(ArgumentError, 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
           end
 
-          it "should allow the dev_key to be omitted" do
+          it 'should allow the dev_key to be omitted' do
             manifest_properties['properties']['credhub']['encryption']['keys'].first.delete('dev_key')
 
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
 
             expect {
-              renderer.render("../jobs/credhub/templates/application.properties.erb")
+              renderer.render('../jobs/credhub/templates/application.properties.erb')
             }.to_not raise_error
           end
         end
 
         context 'when the user provides a dev key' do
-          it "sets the provider and dev key correctly" do
+          it 'sets the provider and dev key correctly' do
             manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
-            render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
+            render_erb_value = renderer.render('../jobs/credhub/templates/application.properties.erb')
 
-            expect(render_erb_value).to include "encryption.provider=dev_internal"
-            expect(render_erb_value).to include "encryption.active-key=1234abcd1234abcd1234abcd1234abcd"
+            expect(render_erb_value).to include 'encryption.provider=dev_internal'
+            expect(render_erb_value).to include 'encryption.active-key=1234abcd1234abcd1234abcd1234abcd'
           end
         end
       end
