@@ -304,7 +304,7 @@ RSpec.describe "the template" do
 
             expect {
               renderer.render("../jobs/credhub/templates/application.properties.erb")
-            }.to raise_error(ArgumentError)
+            }.to raise_error(ArgumentError, 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
           end
 
           it "should be 32 characters" do
@@ -315,7 +315,7 @@ RSpec.describe "the template" do
 
             expect {
               renderer.render("../jobs/credhub/templates/application.properties.erb")
-            }.to raise_error(ArgumentError)
+            }.to raise_error(ArgumentError, 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
           end
 
           it "should not allow empty string" do
@@ -326,7 +326,7 @@ RSpec.describe "the template" do
 
             expect {
               renderer.render("../jobs/credhub/templates/application.properties.erb")
-            }.to raise_error(ArgumentError)
+            }.to raise_error(ArgumentError, 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
           end
 
           it "should allow the dev_key to be omitted" do
@@ -341,13 +341,16 @@ RSpec.describe "the template" do
           end
         end
 
-        it "sets the provider and dev key correctly" do
-          manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
-          options = {:context => manifest_properties.to_json}
-          renderer = Bosh::Template::Renderer.new(options)
-          render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
-          expect(render_erb_value).to include "encryption.provider=dev_internal"
-          expect(render_erb_value).to include "encryption.active-key=1234abcd1234abcd1234abcd1234abcd"
+        context 'when the user provides a dev key' do
+          it "sets the provider and dev key correctly" do
+            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
+            options = {:context => manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
+            render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
+
+            expect(render_erb_value).to include "encryption.provider=dev_internal"
+            expect(render_erb_value).to include "encryption.active-key=1234abcd1234abcd1234abcd1234abcd"
+          end
         end
       end
     end
