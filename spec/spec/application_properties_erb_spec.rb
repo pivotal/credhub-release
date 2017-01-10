@@ -179,39 +179,40 @@ RSpec.describe "the template" do
     expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
   end
 
-  context "encryption keys" do
-    it "raises an error when no key has been set active" do
-      expect {render_erb('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "hsm", encryption_key_name: "keyname"}]', nil)}
-          .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
-    end
+  describe '`encryption:` section' do
+    describe '`keys:` section' do
+      it "raises an error when no key has been set active" do
+        expect {render_erb('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "hsm", encryption_key_name: "keyname"}]', nil)}
+            .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+      end
 
-    it "raises an error when more than one key has been set active" do
-      expect {render_erb('{ type: "in-memory", database: "my_db_name" }',
-                         nil,
-                         '[
+      it "raises an error when more than one key has been set active" do
+        expect {render_erb('{ type: "in-memory", database: "my_db_name" }',
+                           nil,
+                           '[
                             {provider_name: "hsm1", encryption_key_name: "keyname1", active: true},
                             {provider_name: "hsm2", encryption_key_name: "keyname2", active: true}
                          ]',
-                         nil)}
-        .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+                           nil)}
+            .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+      end
     end
-  end
 
-  context "hsm encryption" do
-    it "should set the hsm properties correctly" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+    describe '`providers:` section' do
+      context "hsm encryption" do
+        it "should set the hsm properties correctly" do
+          result = render_erb('{ type: "in-memory", database: "my_db_name" }')
 
-      expect(result).to include "encryption.provider=hsm"
-      expect(result).to include "hsm.partition=active_partition"
-      expect(result).to include "hsm.partition-password=active_partpass"
-      expect(result).to include "hsm.encryption-key-name=active_keyname"
-    end
-  end
+          expect(result).to include "encryption.provider=hsm"
+          expect(result).to include "hsm.partition=active_partition"
+          expect(result).to include "hsm.partition-password=active_partpass"
+          expect(result).to include "hsm.encryption-key-name=active_keyname"
+        end
+      end
 
-
-  context "dsm encryption" do
-    let(:base_option_yaml) {
-      <<-EOF
+      context "dsm encryption" do
+        let(:base_option_yaml) {
+          <<-EOF
         properties:
           credhub:
             encryption:
@@ -243,23 +244,23 @@ RSpec.describe "the template" do
               database: my_db_name
             log_level: info
 
-      EOF
-    }
-    let(:manifest_properties) { YAML.load(base_option_yaml) }
+          EOF
+        }
+        let(:manifest_properties) { YAML.load(base_option_yaml) }
 
-    it "should set the hsm properties correctly" do
-      options = {:context => manifest_properties.to_json}
-      renderer = Bosh::Template::Renderer.new(options)
-      result = renderer.render("../jobs/credhub/templates/application.properties.erb")
+        it "should set the dsm properties correctly" do
+          options = {:context => manifest_properties.to_json}
+          renderer = Bosh::Template::Renderer.new(options)
+          result = renderer.render("../jobs/credhub/templates/application.properties.erb")
 
-      expect(result).to include "encryption.provider=dsm"
-      expect(result).to include "dsm.encryption-key-name=active_keyname"
-    end
-  end
+          expect(result).to include "encryption.provider=dsm"
+          expect(result).to include "dsm.encryption-key-name=active_keyname"
+        end
+      end
 
-  context "dev_internal encryption" do
-    let(:base_option_yaml) {
-      <<-EOF
+      context "dev_internal encryption" do
+        let(:base_option_yaml) {
+          <<-EOF
         properties:
           credhub:
             encryption:
@@ -289,64 +290,66 @@ RSpec.describe "the template" do
               database: my_db_name
             log_level: info
 
-      EOF
-    }
+          EOF
+        }
 
-    let(:manifest_properties) { YAML.load(base_option_yaml) }
+        let(:manifest_properties) { YAML.load(base_option_yaml) }
 
-    context "validating the dev_key" do
-      it "should be valid hexadecimal" do
-        manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = 'xyz'
+        context "validating the dev_key" do
+          it "should be valid hexadecimal" do
+            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = 'xyz'
 
-        options = {:context => manifest_properties.to_json}
-        renderer = Bosh::Template::Renderer.new(options)
+            options = {:context => manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
 
-        expect {
-          renderer.render("../jobs/credhub/templates/application.properties.erb")
-        }.to raise_error(ArgumentError)
+            expect {
+              renderer.render("../jobs/credhub/templates/application.properties.erb")
+            }.to raise_error(ArgumentError)
+          end
+
+          it "should be 32 characters" do
+            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key']
+
+            options = {:context => manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
+
+            expect {
+              renderer.render("../jobs/credhub/templates/application.properties.erb")
+            }.to raise_error(ArgumentError)
+          end
+
+          it "should not allow empty string" do
+            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = ''
+
+            options = {:context => manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
+
+            expect {
+              renderer.render("../jobs/credhub/templates/application.properties.erb")
+            }.to raise_error(ArgumentError)
+          end
+
+          it "should allow the dev_key to be omitted" do
+            manifest_properties['properties']['credhub']['encryption']['keys'].first.delete('dev_key')
+
+            options = {:context => manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
+
+            expect {
+              renderer.render("../jobs/credhub/templates/application.properties.erb")
+            }.to_not raise_error
+          end
+        end
+
+        it "sets the provider and dev key correctly" do
+          manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
+          options = {:context => manifest_properties.to_json}
+          renderer = Bosh::Template::Renderer.new(options)
+          render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
+          expect(render_erb_value).to include "encryption.provider=dev_internal"
+          expect(render_erb_value).to include "encryption.active-key=1234abcd1234abcd1234abcd1234abcd"
+        end
       end
-
-      it "should be 32 characters" do
-        manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key']
-
-        options = {:context => manifest_properties.to_json}
-        renderer = Bosh::Template::Renderer.new(options)
-
-        expect {
-          renderer.render("../jobs/credhub/templates/application.properties.erb")
-        }.to raise_error(ArgumentError)
-      end
-
-      it "should not allow empty string" do
-        manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = ''
-
-        options = {:context => manifest_properties.to_json}
-        renderer = Bosh::Template::Renderer.new(options)
-
-        expect {
-          renderer.render("../jobs/credhub/templates/application.properties.erb")
-        }.to raise_error(ArgumentError)
-      end
-
-      it "should allow the dev_key to be omitted" do
-        manifest_properties['properties']['credhub']['encryption']['keys'].first.delete('dev_key')
-
-        options = {:context => manifest_properties.to_json}
-        renderer = Bosh::Template::Renderer.new(options)
-
-        expect {
-          renderer.render("../jobs/credhub/templates/application.properties.erb")
-        }.to_not raise_error
-      end
-    end
-
-    it "sets the provider and dev key correctly" do
-      manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
-      options = {:context => manifest_properties.to_json}
-      renderer = Bosh::Template::Renderer.new(options)
-      render_erb_value = renderer.render("../jobs/credhub/templates/application.properties.erb")
-      expect(render_erb_value).to include "encryption.provider=dev_internal"
-      expect(render_erb_value).to include "encryption.active-key=1234abcd1234abcd1234abcd1234abcd"
     end
   end
 end
