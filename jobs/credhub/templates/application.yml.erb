@@ -1,0 +1,116 @@
+<%
+  datasource_username = '# credhub.data_storage.username not set in your bosh deployment'
+  datasource_password = '# credhub.data_storage.password not set in your bosh deployment'
+  datasource_url = ''
+
+  if_p('credhub.data_storage.username') do |username|
+    datasource_username = username
+  end
+
+  if_p('credhub.data_storage.password') do |password|
+    datasource_password = password
+  end
+
+  def have_tls_ca
+    begin
+      return p('credhub.data_storage.tls_ca').length > 0
+    rescue UnknownProperty
+      return false
+    end
+  end
+
+  case p("credhub.data_storage.type")
+    when 'in-memory'
+      datasource_url = "jdbc:h2:mem:#{p("credhub.data_storage.database")}"
+      flyway_location = 'h2'
+    when 'postgres'
+      datasource_url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
+      flyway_location = 'postgres'
+    when 'mysql'
+      datasource_url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
+      flyway_location = 'mysql'
+
+      case p('credhub.data_storage.require_tls')
+        when true
+          datasource_url << "&useSSL=true&requireSSL=true&verifyServerCertificate=true"
+          if have_tls_ca
+            datasource_url << "&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER"
+            datasource_url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
+          end
+        when false
+          # no op
+        else
+          raise ArgumentError, "credhub.data_storage.require_tls (#{p('credhub.data_storage.require_tls')}) must be set to \"true\" or \"false\"."
+      end
+    else
+      raise ArgumentError, 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
+  end
+
+  flyway_locations = ['classpath:/db/migration/common', "classpath:/db/migration/#{flyway_location}"]
+
+  active_keys = p('credhub.encryption.keys').select { |key| key.key?('active') }
+  raise ArgumentError,
+    "Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed." if active_keys.empty? or active_keys.size > 1
+  active_key = active_keys.first
+
+  active_provider_name = active_key['provider_name']
+  active_encryption_key_name = active_key['encryption_key_name']
+  active_dev_key = active_key['dev_key']
+  active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
+
+
+  def invalid_dev_key?(dev_key)
+    return false if dev_key.nil?
+
+    dev_key[/\H/] || dev_key.size != 32
+  end
+
+  if active_provider['type'] == 'dev_internal'
+    raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(active_dev_key)
+  end
+
+  jwt_verification_key = { 'security' => { 'oauth2' => { 'resource' => { 'jwt' => { 'key-value' => p("credhub.user_management.uaa.verification_key") } } } } }.to_yaml
+  length_of_leading_document_separator_to_yaml_adds = 4
+  jwt_verification_key = jwt_verification_key[length_of_leading_document_separator_to_yaml_adds, jwt_verification_key.length]
+%>
+---
+server:
+  port: <%= p("credhub.port") %>
+  ssl:
+    enabled: true
+    key-store: /var/vcap/jobs/credhub/config/cacerts.jks
+    key-password: KEY_STORE_PASSWORD_PLACEHOLDER
+    key-alias: credhub_tls_cert
+    ciphers: ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384
+
+<%= jwt_verification_key %>
+auth-server:
+  url: <%= p("credhub.user_management.uaa.url") %>
+
+spring:
+  datasource:
+    username: <%= datasource_username %>
+    password: <%= datasource_password %>
+    url: <%= datasource_url %>
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+flyway:
+  locations: <%= flyway_locations %>
+
+logging:
+  config: /var/vcap/jobs/credhub/config/log4j2.properties
+
+encryption:
+  provider: <%= active_provider['type'] %>
+  active-key: <%= active_dev_key %>
+  keys: <%= p('credhub.encryption.keys').collect { |k| k['dev_key'] }%>
+
+hsm:
+  partition: <%= active_provider['partition'] %>
+  partition-password: <%= active_provider['partition_password'] %>
+  encryption-key-name: <%= active_encryption_key_name %>
+
+dsm:
+  encryption-key-name: <%= active_encryption_key_name %>

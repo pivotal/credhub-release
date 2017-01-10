@@ -9,7 +9,7 @@ templates:
   ctl: bin/ctl
   install_crt.sh: bin/install_crt.sh
   # Config
-  application.properties.erb: config/application.properties
+  application.yml.erb: config/application.yml
   log4j2.properties.erb: config/log4j2.properties
   encryption.conf.erb: config/encryption.conf
 

@@ -25,7 +25,7 @@ chmod 700 /var/vcap/jobs/credhub/config
 %>
 
 function init_keystore_and_certs() {
-  sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEYSTORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.properties
+  sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEYSTORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 
   rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
 
@@ -48,7 +48,7 @@ EOL
   /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT $KEYSTORE_PASSWORD
 }
 
-if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.properties | wc -l` -eq 0 ]; then
+if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.yml | wc -l` -eq 0 ]; then
   echo "Keystore appears to be initialized. Skipping keystore and cert initialization."
 else
   echo "Keystore appears to be uninitialized. Setting up keystore and installing certs."
