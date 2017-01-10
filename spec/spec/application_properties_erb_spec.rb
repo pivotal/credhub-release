@@ -45,85 +45,87 @@ def render_erb(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = n
 end
 
 RSpec.describe "the template" do
-  context "regarding storage types" do
-    it "prints error when credhub.data_storage.type is invalid" do
-      expect {render_erb('{ type: "foo", database: "my_db_name" }')}
-          .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
-    end
-  end
+  describe 'setting the database type' do
+    context "with in-memory" do
+      it "sets url correctly for in-memory" do
+        result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+        expect(result).to include "spring.datasource.url=jdbc:h2:mem:my_db_name"
+      end
 
-  context "with in-memory" do
-    it "sets url correctly for in-memory" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-      expect(result).to include "jdbc:h2:mem:my_db_name"
-    end
+      it "renders verification_key as one long string" do
+        result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+        expect(result).to include "security.oauth2.resource.jwt.key-value=line 1line 2"
+      end
 
-    it "renders verification_key as one long string" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-      expect(result).to include "line 1line 2"
-    end
-
-    it "sets flyway location to be h2" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-      expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/h2"
-    end
-  end
-
-  context "with Postgres" do
-    it "sets url correctly for Postgres" do
-      result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
-      expect(result).to include "jdbc:postgresql://my_host:1234/my_db_name"
-      expect(result).to include "autoReconnect=true"
+      it "sets flyway location to be h2" do
+        result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+        expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/h2"
+      end
     end
 
-    it "sets flyway location to be postgres" do
-      result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
-      expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/postgres"
-    end
-  end
+    context "with Postgres" do
+      it "sets url correctly for Postgres" do
+        result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
+        expect(result).to include "jdbc:postgresql://my_host:1234/my_db_name"
+        expect(result).to include "autoReconnect=true"
+      end
 
-  context "with MySQL" do
-    it "sets url correctly for MySQL without TLS" do
-      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
-      expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
-      expect(result).to include "?autoReconnect=true"
-      expect(result).not_to include "useSSL="
-      expect(result).not_to include "requireSSL="
-      expect(result).not_to include "verifyServerCertificate="
+      it "sets flyway location to be postgres" do
+        result = render_erb('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name" }')
+        expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/postgres"
+      end
     end
 
-    it "sets flyway location to be mysql" do
-      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
-      expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/mysql"
+    context "with MySQL" do
+      it "sets url correctly for MySQL without TLS" do
+        result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
+        expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
+        expect(result).to include "?autoReconnect=true"
+        expect(result).not_to include "useSSL="
+        expect(result).not_to include "requireSSL="
+        expect(result).not_to include "verifyServerCertificate="
+      end
+
+      it "sets flyway location to be mysql" do
+        result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
+        expect(result).to include "flyway.locations=classpath:/db/migration/common,classpath:/db/migration/mysql"
+      end
+
+      it "sets url correctly for MySQL with TLS but without custom certificate" do
+        result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true }')
+        expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
+        expect(result).to include "?autoReconnect=true"
+        expect(result).to include "&useSSL=true"
+        expect(result).to include "&requireSSL=true"
+        expect(result).to include "&verifyServerCertificate=true"
+      end
+
+      it "sets url correctly for MySQL when tls_ca is set" do
+        password_regex = /server\.ssl\.key-password=(?<password>[a-zA-Z0-9_-]*)/
+
+        result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
+        password_match = result.match(password_regex)
+        expect(password_match).not_to be_nil
+        password = password_match[:password]
+
+        expect(result).to include "&useSSL=true"
+        expect(result).to include "&requireSSL=true"
+        expect(result).to include "&verifyServerCertificate=true"
+        expect(result).to include "&trustCertificateKeyStorePassword=#{password}"
+        expect(result).to include "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
+      end
+
+      it "prints error when require_tls is not a boolean type" do
+        expect {render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: "true" }')}
+            .to raise_error("credhub.data_storage.require_tls (true) must be set to \"true\" or \"false\".")
+      end
     end
 
-    it "sets url correctly for MySQL with TLS but without custom certificate" do
-      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true }')
-      expect(result).to include "jdbc:mysql://my_host:1234/my_db_name"
-      expect(result).to include "?autoReconnect=true"
-      expect(result).to include "&useSSL=true"
-      expect(result).to include "&requireSSL=true"
-      expect(result).to include "&verifyServerCertificate=true"
-    end
-
-    it "sets url correctly for MySQL when tls_ca is set" do
-      password_regex = /server\.ssl\.key-password=(?<password>[a-zA-Z0-9_-]*)/
-
-      result = render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true, tls_ca: "something" }')
-      password_match = result.match(password_regex)
-      expect(password_match).not_to be_nil
-      password = password_match[:password]
-
-      expect(result).to include "&useSSL=true"
-      expect(result).to include "&requireSSL=true"
-      expect(result).to include "&verifyServerCertificate=true"
-      expect(result).to include "&trustCertificateKeyStorePassword=#{password}"
-      expect(result).to include "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
-    end
-
-    it "prints error when require_tls is not a boolean type" do
-      expect {render_erb('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: "true" }')}
-          .to raise_error("credhub.data_storage.require_tls (true) must be set to \"true\" or \"false\".")
+    context 'when the database type is invalid' do
+      it 'should throw an exception' do
+        expect {render_erb('{ type: "foo", database: "my_db_name" }')}
+            .to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
+      end
     end
   end
 
