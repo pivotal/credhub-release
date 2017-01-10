@@ -45,16 +45,42 @@ def render_erb(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = n
 end
 
 RSpec.describe "the template" do
+  it 'sets the CredHub port correctly' do
+    result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+    expect(result).to include "port=9000"
+  end
+
+  describe 'authentication' do
+    it 'renders verification_key as one long string' do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+      expect(result).to include "security.oauth2.resource.jwt.key-value=line 1line 2"
+    end
+
+    it 'sets uaa as the auth server' do
+      result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+      expect(result).to include "auth-server.url=my_uaa_url"
+    end
+  end
+
   describe 'setting the database type' do
+    context 'with a username' do
+      it 'sets the datasource username' do
+        result = render_erb('{ type: "in-memory", database: "my_db_name", username: "my_username" }')
+        expect(result).to include "spring.datasource.username=my_username"
+      end
+
+      context 'and with password' do
+        it 'sets the datasource password' do
+          result = render_erb('{ type: "in-memory", database: "my_db_name", username: "my_username", password: "my_password" }')
+          expect(result).to include "spring.datasource.password=my_password"
+        end
+      end
+    end
+
     context "with in-memory" do
       it "sets url correctly for in-memory" do
         result = render_erb('{ type: "in-memory", database: "my_db_name" }')
         expect(result).to include "spring.datasource.url=jdbc:h2:mem:my_db_name"
-      end
-
-      it "renders verification_key as one long string" do
-        result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-        expect(result).to include "security.oauth2.resource.jwt.key-value=line 1line 2"
       end
 
       it "sets flyway location to be h2" do
@@ -131,26 +157,26 @@ RSpec.describe "the template" do
 
   it "adds SSL properties" do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    expect(result).to include "server.ssl.enabled"
-    expect(result).to include "server.ssl.key-store"
-    expect(result).to include "server.ssl.key-password"
-    expect(result).to include "server.ssl.key-alias"
-    expect(result).to include "server.ssl.ciphers"
+    expect(result).to include "server.ssl.enabled=true"
+    expect(result).to include "server.ssl.key-store=/var/vcap/jobs/credhub/config/cacerts.jks"
+    expect(result).to include "server.ssl.key-password=KEY_STORE_PASSWORD_PLACEHOLDER"
+    expect(result).to include "server.ssl.key-alias=credhub_tls_cert"
+    expect(result).to include "server.ssl.ciphers=ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384"
   end
 
   it "does not destroy the customer data" do
     result = render_erb('{ type: "in-memory", database: "my_db_name" }')
-    expect(result).to include "ddl-auto=validate"
-    expect(result).not_to include "ddl-auto=create"
-    expect(result).not_to include "ddl-auto=create-drop"
-    expect(result).not_to include "ddl-auto=update"
+
+    expect(result).to include "spring.jpa.hibernate.ddl-auto=validate"
+
+    expect(result).not_to include "spring.jpa.hibernate.ddl-auto=create"
+    expect(result).not_to include "spring.jpa.hibernate.ddl-auto=create-drop"
+    expect(result).not_to include "spring.jpa.hibernate.ddl-auto=update"
   end
 
-  context "with logging" do
-    it "sets log configuration path" do
-      result = render_erb('{ type: "in-memory", database: "my_db_name" }', nil, nil, log_level = 'info')
-      expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
-    end
+  it "sets log configuration path" do
+    result = render_erb('{ type: "in-memory", database: "my_db_name" }')
+    expect(result).to include "logging.config=/var/vcap/jobs/credhub/config/log4j2.properties"
   end
 
   context "encryption keys" do
