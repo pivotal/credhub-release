@@ -101,6 +101,11 @@ RSpec.describe 'the template' do
         result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name", username: "my_username", password: "my_password" }')
         expect(result['spring']['datasource']['password']).to eq 'my_password'
       end
+
+      it 'explicitly stringifies the password with " marks' do
+        result = render_erb_to_yaml('{ type: "in-memory", database: "my_db_name", username: "my_username", password: "my_password" }')
+        expect(result).to include 'password: "my_password"'
+      end
     end
 
     context 'when no datasource password is provided' do

@@ -8,7 +8,7 @@
   end
 
   if_p('credhub.data_storage.password') do |password|
-    datasource_password = password
+    datasource_password = '"' + password + '"' # force string type, guard against special char parsing
   end
 
   def have_tls_ca
