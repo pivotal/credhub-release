@@ -1,0 +1,179 @@
+## This manifest deploys CredHub, a PostgreSQL database server and UAA on one VM.
+##
+## This deployment is intended for development testing only. You will lose all of your stored data in the event of an issue with the VM or mounted disks.
+##
+## This manifest assumes that you are deploying with a BOSH Director that has CredHub enabled. If this is not the case, you must replace the values below with ((variable)) syntax with actual values. If you are using BOSH with CredHub enabled, these values will be generated automatically.
+##
+## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace the external_ip and uaa_url with an accurate values.
+---
+name: credhub-postgres-uaa
+
+releases:
+- name: credhub
+  version: latest
+- name: postgres
+  version: latest
+- name: uaa
+  version: latest
+
+stemcells: 
+- alias: default 
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  update_watch_time: 10000-120000
+  canary_watch_time: 10000-120000
+
+variables:
+- name: credhub/encrypt-key
+  type: password
+  options:
+    only_hex: true
+    length: 32
+- name: credhub/tls
+  type: certificate
+  options:
+    ca: TeamCA
+    common_name: *ext
+    alternative_names:
+    - *ext
+- name: uaa/tls
+  type: certificate
+  options:
+    ca: TeamCA
+    common_name: *ext
+    alternative_names:
+    - *ext
+- name: uaa/jwt
+  type: rsa
+  options:
+    key_length: 4096
+- name: uaa/users/admin
+  type: password
+  options: 
+    length: 30
+    exclude_special: true
+- name: uaa/admin
+  type: password
+  options: 
+    length: 30
+    exclude_special: true
+- name: uaa/login
+  type: password
+  options: 
+    length: 30
+    exclude_special: true
+- name: database/admin
+  type: password
+  options: 
+    length: 30
+    exclude_special: true
+
+instance_groups: 
+- name: credhub-postgres-uaa
+  instances: 1
+  vm_type: medium
+  azs: [west]
+  stemcell: default
+  networks:
+  - name: west
+    default: [dns, gateway]
+  - name: public
+    static_ips: [*ext]
+
+  external_ip: &ext "198.51.100.100"
+  uaa_url: &uaa "https://uaa.example.com:8443"
+
+  jobs:
+  - name: credhub
+    release: credhub
+    properties: 
+      credhub:
+        port: 8844
+        data_storage:
+          type: postgres
+          username: admin
+          password: ((database/admin))
+          host: 127.0.0.1
+          port: 5432
+          database: credhub
+        user_management:
+          uaa:
+            url: *ext
+            verification_key: ((uaa/jwt.public_key)) 
+        tls: ((credhub/tls))
+        encryption:
+          keys: 
+          - provider_name: internal
+            dev_key: ((credhub/encrypt-key)) 
+            active: true
+          providers: 
+          - name: internal 
+            type: dev_internal
+        log_level: info
+
+  - name: postgres
+    release: postgres
+    properties: 
+      databases:
+        address: 127.0.0.1
+        port: 5432
+        databases: 
+        - name: credhub
+        - name: uaa
+        roles: 
+        - name: admin 
+          password: ((database/admin))
+
+  - name: uaa
+    release: uaa
+    properties:
+      uaa:
+        url: *uaa 
+        scim:
+          users:
+          - name: admin
+            password: ((uaa/users/admin))
+            groups:
+              - scim.write
+              - scim.read
+              - bosh.admin
+        clients:
+          credhub_cli:
+            override: true
+            authorized-grant-types: password,refresh_token
+            scope: credhub.read,credhub.write
+            authorities: uaa.resource
+            access-token-validity: 120
+            refresh-token-validity: 86400
+            secret: ""
+        admin: {client_secret: ((uaa/admin))}
+        login: {client_secret: ((uaa/login))}
+        zones: {internal: {hostnames: []}}
+        sslCertificate: ((uaa/tls.certificate))
+        sslPrivateKey: ((uaa/tls.private_key))
+        jwt:
+          revocable: true
+          policy:
+            active_key_id: key-1
+            keys:
+              key-1:
+                signingKey: ((uaa/jwt.private_key))
+      uaadb:
+        address: 127.0.0.1
+        port: 5432
+        db_scheme: postgresql
+        databases:
+        - {tag: uaa, name: uaa}
+        roles:
+        - tag: admin
+          name: admin
+          password: ((database/admin))
+      login:
+        saml:
+          serviceProviderCertificate: ((uaa/tls.certificate))
+          serviceProviderKey: ((uaa/tls.private_key))
+          serviceProviderKeyPassword: ""
