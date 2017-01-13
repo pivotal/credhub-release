@@ -68,7 +68,7 @@ instance_groups:
           type: postgres
           username: credhub
           password: ((database/admin))
-          host: localhost
+          host: 127.0.0.1
           port: 5432
           database: credhub
         user_management:
@@ -90,7 +90,7 @@ instance_groups:
     release: postgres
     properties: 
       databases:
-        address: localhost
+        address: 127.0.0.1
         port: 5432
         databases: 
         - name: credhub
