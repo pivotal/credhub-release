@@ -1,0 +1,65 @@
+## This manifest deploys CredHub. This configuration assumes that you have an existing database and UAA server deployed at known locations.
+##
+## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace any value using the ((variable)) syntax with accurate values.
+---
+name: credhub
+
+releases:
+- name: credhub
+  version: latest
+
+stemcells: 
+- alias: default 
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  update_watch_time: 10000-120000
+  canary_watch_time: 10000-120000
+
+instance_groups: 
+- name: credhub
+  instances: 1
+  vm_type: medium
+  azs: [west]
+  stemcell: default
+  networks:
+  - name: west
+    static_ips: [((internal-ip-address))]
+    default: [dns, gateway]
+  - name: public
+    static_ips: [((external-ip-address))]
+
+  jobs:
+  - name: credhub
+    release: credhub
+    properties:
+      credhub:
+        port: 8844
+        data_storage:
+          type: ((mysql | postgres))
+          username: ((database-username))
+          password: ((database-password)) 
+          host: ((database-host)) 
+          port: ((database-port))
+          database: credhub
+          require_tls: true
+          tls_ca: ((database-CA))
+        user_management:
+          uaa:
+            url: ((uaa-url))
+            verification_key: ((uaa-public-verification-key))
+        tls: 
+          certificate: ((credhub-tls-certificate)) 
+          private_key: ((credhub-tls-private-key)) 
+        encryption:
+          keys: 
+          - provider_name: internal
+            dev_key: ((encryption-key-value)) 
+            active: true
+          providers: 
+          - name: internal 
+            type: dev_internal
+        log_level: info
