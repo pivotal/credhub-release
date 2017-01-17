@@ -48,16 +48,13 @@
 
   flyway_locations = ['classpath:/db/migration/common', "classpath:/db/migration/#{flyway_location}"]
 
-  active_keys = p('credhub.encryption.keys').select { |key| key.key?('active') }
+  active_keys = p('credhub.encryption.keys').select { |key| key['active'] }
   raise ArgumentError,
     "Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed." if active_keys.empty? or active_keys.size > 1
   active_key = active_keys.first
 
   active_provider_name = active_key['provider_name']
-  active_encryption_key_name = active_key['encryption_key_name']
-  active_dev_key = active_key['dev_key']
   active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
-
 
   def invalid_dev_key?(dev_key)
     return false if dev_key.nil?
@@ -65,13 +62,34 @@
     dev_key[/\H/] || dev_key.size != 32
   end
 
-  if active_provider['type'] == 'dev_internal'
-    raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)." if invalid_dev_key?(active_dev_key)
-  end
+  length_of_leading_document_separator_to_yaml_adds = 4
 
   jwt_verification_key = { 'security' => { 'oauth2' => { 'resource' => { 'jwt' => { 'key-value' => p("credhub.user_management.uaa.verification_key") } } } } }.to_yaml
-  length_of_leading_document_separator_to_yaml_adds = 4
   jwt_verification_key = jwt_verification_key[length_of_leading_document_separator_to_yaml_adds, jwt_verification_key.length]
+
+  key_array = p('credhub.encryption.keys').map do |input_key|
+    {}.tap do |output_key|
+      output_key['active'] = input_key['active'] if input_key['active']
+      output_key['provider-name'] = input_key['provider_name'] if input_key['provider_name']
+      output_key['encryption-key-name'] = input_key['encryption_key_name'] if input_key['encryption_key_name']
+
+      if input_key.has_key?('dev_key')
+        if invalid_dev_key?(input_key['dev_key'])
+          raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)."
+        else
+          output_key['dev-key'] = input_key['dev_key']
+        end
+      end
+    end
+  end
+
+  encryption_section = {
+    'encryption' => {
+      'provider' => active_provider['type'],
+      'keys' => key_array
+    }
+  }.to_yaml
+  encryption_section = encryption_section[length_of_leading_document_separator_to_yaml_adds, encryption_section.length]
 %>
 ---
 server:
@@ -102,15 +120,8 @@ flyway:
 logging:
   config: /var/vcap/jobs/credhub/config/log4j2.properties
 
-encryption:
-  provider: <%= active_provider['type'] %>
-  active-key: <%= active_dev_key %>
-  keys: <%= p('credhub.encryption.keys').collect { |k| k['dev_key'] }%>
+<%= encryption_section %>
 
 hsm:
   partition: <%= active_provider['partition'] %>
   partition-password: <%= active_provider['partition_password'] %>
-  encryption-key-name: <%= active_encryption_key_name %>
-
-dsm:
-  encryption-key-name: <%= active_encryption_key_name %>

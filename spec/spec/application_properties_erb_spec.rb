@@ -228,7 +228,7 @@ RSpec.describe 'the template' do
   describe '`encryption:` section' do
     describe '`keys:` section' do
       it 'raises an error when no key has been set active' do
-        expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "hsm", encryption_key_name: "keyname"}]', nil)}
+        expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "active_hsm", encryption_key_name: "keyname"}]', nil)}
             .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
       end
 
@@ -236,11 +236,22 @@ RSpec.describe 'the template' do
         expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
                                    nil,
                                    '[
-                            {provider_name: "hsm1", encryption_key_name: "keyname1", active: true},
-                            {provider_name: "hsm2", encryption_key_name: "keyname2", active: true}
-                         ]',
+                                      {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
+                                      {provider_name: "active_hsm", encryption_key_name: "keyname2", active: true}
+                                   ]',
                                    nil)}
             .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+      end
+
+      it 'considers "false" to be false' do
+        expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
+                                   nil,
+                                   '[
+                                      {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
+                                      {provider_name: "old_hsm", encryption_key_name: "keyname2", active: false}
+                                   ]',
+                                   nil)}
+            .to_not raise_error
       end
     end
 
@@ -252,7 +263,24 @@ RSpec.describe 'the template' do
           expect(result['encryption']['provider']).to eq 'hsm'
           expect(result['hsm']['partition']).to eq 'active_partition'
           expect(result['hsm']['partition-password']).to eq 'active_partpass'
-          expect(result['hsm']['encryption-key-name']).to eq 'active_keyname'
+
+          expect(result['encryption']['keys'].length).to eq 3
+
+          first_key = result['encryption']['keys'][0]
+          second_key = result['encryption']['keys'][1]
+          third_key = result['encryption']['keys'][2]
+
+          expect(first_key['encryption-key-name']).to eq 'old_keyname'
+          expect(first_key['provider-name']).to eq 'old_hsm'
+          expect(first_key.has_key?('active')).to eq false
+
+          expect(second_key['encryption-key-name']).to eq 'active_keyname'
+          expect(second_key['provider-name']).to eq 'active_hsm'
+          expect(second_key['active']).to eq true
+
+          expect(third_key['encryption-key-name']).to eq 'another_keyname'
+          expect(third_key['provider-name']).to eq 'active_hsm'
+          expect(third_key.has_key?('active')).to eq false
         end
       end
 
@@ -300,7 +328,24 @@ RSpec.describe 'the template' do
           result = YAML.load(renderer.render('../jobs/credhub/templates/application.yml.erb'))
 
           expect(result['encryption']['provider']).to eq 'dsm'
-          expect(result['dsm']['encryption-key-name']).to eq 'active_keyname'
+
+          expect(result['encryption']['keys'].length).to eq 3
+
+          first_key = result['encryption']['keys'][0]
+          second_key = result['encryption']['keys'][1]
+          third_key = result['encryption']['keys'][2]
+
+          expect(first_key['encryption-key-name']).to eq '1234abcd1234abcd1234abcd1234abcd'
+          expect(first_key['provider-name']).to eq 'old_dsm'
+          expect(first_key.has_key?('active')).to eq false
+
+          expect(second_key['encryption-key-name']).to eq 'active_keyname'
+          expect(second_key['provider-name']).to eq 'active_dsm'
+          expect(second_key['active']).to eq true
+
+          expect(third_key['encryption-key-name']).to eq 'abcd1234abcd1234abcd1234abcd1234'
+          expect(third_key['provider-name']).to eq 'active_dsm'
+          expect(third_key.has_key?('active')).to eq false
         end
       end
 
@@ -312,10 +357,10 @@ RSpec.describe 'the template' do
             encryption:
               keys:
                 - provider_name: active_dev
-                  dev_key: "XYZZ123412341234"
+                  dev_key: "3456abcd1234abcd1234abcd1234abcd"
                   active: true
                 - provider_name: old_dev
-                  dev_key: "blahblahblah"
+                  dev_key: "2345abcd1234abcd1234abcd1234abcd"
               providers:
                 - name: active_dev
                   type: dev_internal
@@ -354,7 +399,7 @@ RSpec.describe 'the template' do
           end
 
           it 'should be 32 characters' do
-            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key']
+            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '3456abcd1234abcd1234abcd1234ab'
 
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
@@ -394,8 +439,16 @@ RSpec.describe 'the template' do
             renderer = Bosh::Template::Renderer.new(options)
             result = YAML.load(renderer.render('../jobs/credhub/templates/application.yml.erb'))
 
-            expect(result['encryption']['provider']).to eq 'dev_internal'
-            expect(result['encryption']['active-key']).to eq '1234abcd1234abcd1234abcd1234abcd'
+            expect(result['encryption']['keys'].length).to eq 2
+
+            first_key = result['encryption']['keys'].first
+            second_key = result['encryption']['keys'].last
+
+            expect(first_key['dev-key']).to eq '1234abcd1234abcd1234abcd1234abcd'
+            expect(first_key['active']).to eq true
+
+            expect(second_key['dev-key']).to eq '2345abcd1234abcd1234abcd1234abcd'
+            expect(second_key.has_key?('active')).to eq false
           end
         end
       end
