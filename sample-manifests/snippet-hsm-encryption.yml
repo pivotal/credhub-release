@@ -1,0 +1,46 @@
+## This manifest snippet shows an example configuration for deploying CredHub with a Luna HSM encryption provider. 
+##
+    - name: credhub
+      release: credhub
+      properties:
+        credhub:
+          port: 8844
+          user_management:
+            uaa:
+              url: *uaa_url
+              verification_key: ((uaa-jwt.public_key))
+          data_storage:
+            type: mysql
+            host: 10.0.0.20
+            port: 3306
+            username: admin
+            password: ((mysql-admin))
+            database: credhub
+          tls:
+            certificate: ((tls.certificate))
+            private_key: ((tls.private_key))
+          log_level: info
+          encryption:
+            keys:
+              - provider_name: hsm-provider
+                encryption_key_name: com.example.key
+                active: true
+            providers:
+              - name: hsm-provider
+                type: hsm
+                host: 10.0.0.100
+                port: 1792
+                certificate: |
+                  -----BEGIN CERTIFICATE-----
+                  ...
+                  -----END CERTIFICATE-----
+                partition: partition-name
+                partition_password: example-password
+                client_certificate: |
+                  -----BEGIN CERTIFICATE-----
+                  ...
+                  -----END CERTIFICATE-----
+                client_key: |
+                  -----BEGIN RSA PRIVATE KEY-----
+                  ...
+                  -----END RSA PRIVATE KEY-----
