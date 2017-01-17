@@ -103,12 +103,14 @@ jobs:
     persistent_disk_pool: disks
     networks:
       - name: [[network-name]]
-        static_ips: [&local_ip 10.0.0.10]
+        static_ips: 
+        - &local_ip 10.0.0.10
         default:
           - dns
           - gateway
       - name: vip 
-        static_ips: [&external_ip [[external-ip]] ]
+        static_ips: 
+        - &external_ip [[external-ip]]
 
     templates:
     - name: credhub
@@ -183,7 +185,7 @@ jobs:
               authorized-grant-types: password,refresh_token
               scope: credhub.read,credhub.write
               authorities: uaa.resource
-              access-token-validity: 15
+              access-token-validity: 120
               refresh-token-validity: 86400
               secret: ""
             director_to_credhub:
@@ -211,7 +213,8 @@ jobs:
           port: 5432
           db_scheme: postgresql
           databases:
-          - {tag: uaa, name: uaa}
+          - tag: uaa
+            name: uaa
           roles:
           - tag: admin
             name: postgres
@@ -306,7 +309,6 @@ jobs:
           address: *local_ip
           domain_name: cf.internal 
           db: *db
-          recursor: 169.254.169.254
 
     - name: health_monitor
       release: bosh
@@ -351,3 +353,4 @@ cloud_provider:
     agent: {mbus: "https://mbus:((mbus))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
+    
