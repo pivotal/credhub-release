@@ -2,6 +2,7 @@
 
 This is a BOSH Release for [CredHub](https://github.com/pivotal-cf/sec-eng-credential-manager).
 
+* [Sample Deployment Manifests] (https://github.com/pivotal-cf/credhub-release/tree/master/sample-manifests)
 * [API Documentation] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Server-API)
 * [Integration with BOSH Director] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Integration-with-BOSH-Director-Configuration-Guide)
 * [Credential Types] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Credential-Types-and-How-to-Use-Them-in-a-Release)
