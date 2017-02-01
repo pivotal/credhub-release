@@ -48,10 +48,19 @@
 
   flyway_locations = ['classpath:/db/migration/common', "classpath:/db/migration/#{flyway_location}"]
 
-  active_keys = p('credhub.encryption.keys').select { |key| key['active'] }
-  raise ArgumentError,
-    "Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed." if active_keys.empty? or active_keys.size > 1
+  encryption_keys = p('credhub.encryption.keys')
+  active_keys = encryption_keys.select { |key| key['active'] }
   active_key = active_keys.first
+
+  if encryption_keys.collect{|e| e['provider_name']}.uniq.count > 1
+    raise ArgumentError,
+      "Data migration between encryption providers is not currently supported. Please update your manifest to use a single encryption provider."
+  end
+
+  if active_keys.empty? || active_keys.size > 1
+    raise ArgumentError,
+      "Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed."
+  end
 
   active_provider_name = active_key['provider_name']
   active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
@@ -67,7 +76,7 @@
   jwt_verification_key = { 'security' => { 'oauth2' => { 'resource' => { 'jwt' => { 'key-value' => p("credhub.user_management.uaa.verification_key") } } } } }.to_yaml
   jwt_verification_key = jwt_verification_key[length_of_leading_document_separator_to_yaml_adds, jwt_verification_key.length]
 
-  key_array = p('credhub.encryption.keys').map do |input_key|
+  key_array = encryption_keys.map do |input_key|
     {}.tap do |output_key|
       output_key['active'] = input_key['active'] if input_key['active']
       output_key['provider-name'] = input_key['provider_name'] if input_key['provider_name']

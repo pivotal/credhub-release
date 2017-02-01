@@ -7,8 +7,7 @@ require 'fileutils'
 
 def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil)
   tls_yaml ||= 'tls: { certificate: "foo", private_key: "bar" }'
-  keys_yaml ||= '[{provider_name: "old_hsm", encryption_key_name: "old_keyname"},
-                  {provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
+  keys_yaml ||= '[{provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
                   {provider_name: "active_hsm", encryption_key_name: "another_keyname"}]'
   log_level ||= 'info'
   option_yaml = <<-EOF
@@ -243,12 +242,23 @@ RSpec.describe 'the template' do
             .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
       end
 
-      it 'considers "false" to be false' do
+      it 'raises an error when keys from more than one provider are present' do
         expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
                                    nil,
                                    '[
                                       {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
                                       {provider_name: "old_hsm", encryption_key_name: "keyname2", active: false}
+                                   ]',
+                                   nil)}
+            .to raise_error('Data migration between encryption providers is not currently supported. Please update your manifest to use a single encryption provider.')
+      end
+
+      it 'considers "false" to be false' do
+        expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
+                                   nil,
+                                   '[
+                                      {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
+                                      {provider_name: "active_hsm", encryption_key_name: "keyname2", active: false}
                                    ]',
                                    nil)}
             .to_not raise_error
@@ -264,23 +274,18 @@ RSpec.describe 'the template' do
           expect(result['hsm']['partition']).to eq 'active_partition'
           expect(result['hsm']['partition-password']).to eq 'active_partpass'
 
-          expect(result['encryption']['keys'].length).to eq 3
+          expect(result['encryption']['keys'].length).to eq 2
 
           first_key = result['encryption']['keys'][0]
           second_key = result['encryption']['keys'][1]
-          third_key = result['encryption']['keys'][2]
 
-          expect(first_key['encryption-key-name']).to eq 'old_keyname'
-          expect(first_key['provider-name']).to eq 'old_hsm'
-          expect(first_key.has_key?('active')).to eq false
+          expect(first_key['encryption-key-name']).to eq 'active_keyname'
+          expect(first_key['provider-name']).to eq 'active_hsm'
+          expect(first_key['active']).to eq true
 
-          expect(second_key['encryption-key-name']).to eq 'active_keyname'
+          expect(second_key['encryption-key-name']).to eq 'another_keyname'
           expect(second_key['provider-name']).to eq 'active_hsm'
-          expect(second_key['active']).to eq true
-
-          expect(third_key['encryption-key-name']).to eq 'another_keyname'
-          expect(third_key['provider-name']).to eq 'active_hsm'
-          expect(third_key.has_key?('active')).to eq false
+          expect(second_key.has_key?('active')).to eq false
         end
       end
 
@@ -291,8 +296,6 @@ RSpec.describe 'the template' do
           credhub:
             encryption:
               keys:
-                - provider_name: old_dsm
-                  encryption_key_name: "1234abcd1234abcd1234abcd1234abcd"
                 - provider_name: active_dsm
                   encryption_key_name: "active_keyname"
                   active: true
@@ -329,23 +332,18 @@ RSpec.describe 'the template' do
 
           expect(result['encryption']['provider']).to eq 'dsm'
 
-          expect(result['encryption']['keys'].length).to eq 3
+          expect(result['encryption']['keys'].length).to eq 2
 
           first_key = result['encryption']['keys'][0]
           second_key = result['encryption']['keys'][1]
-          third_key = result['encryption']['keys'][2]
 
-          expect(first_key['encryption-key-name']).to eq '1234abcd1234abcd1234abcd1234abcd'
-          expect(first_key['provider-name']).to eq 'old_dsm'
-          expect(first_key.has_key?('active')).to eq false
+          expect(first_key['encryption-key-name']).to eq 'active_keyname'
+          expect(first_key['provider-name']).to eq 'active_dsm'
+          expect(first_key['active']).to eq true
 
-          expect(second_key['encryption-key-name']).to eq 'active_keyname'
+          expect(second_key['encryption-key-name']).to eq 'abcd1234abcd1234abcd1234abcd1234'
           expect(second_key['provider-name']).to eq 'active_dsm'
-          expect(second_key['active']).to eq true
-
-          expect(third_key['encryption-key-name']).to eq 'abcd1234abcd1234abcd1234abcd1234'
-          expect(third_key['provider-name']).to eq 'active_dsm'
-          expect(third_key.has_key?('active')).to eq false
+          expect(second_key.has_key?('active')).to eq false
         end
       end
 
@@ -359,12 +357,10 @@ RSpec.describe 'the template' do
                 - provider_name: active_dev
                   dev_key: "3456abcd1234abcd1234abcd1234abcd"
                   active: true
-                - provider_name: old_dev
+                - provider_name: active_dev
                   dev_key: "2345abcd1234abcd1234abcd1234abcd"
               providers:
                 - name: active_dev
-                  type: dev_internal
-                - name: old_dev
                   type: dev_internal
             port: 9000
             user_management:
