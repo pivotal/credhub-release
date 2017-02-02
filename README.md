@@ -30,3 +30,8 @@ See the `sec-eng-deployment-credential-manager` repo for instructions.
 ## Creating a final BOSH release for distribution
 
 See the `credhub-distribution` repo for instructions.
+
+## Development
+
+You can commit BOSH release related changes in this repo, but don't commit submodule updates. If you change the Java codebase, commit and push 
+in the submodule and CI will update this repository's reference after a green build.
