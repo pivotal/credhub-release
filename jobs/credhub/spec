@@ -50,14 +50,23 @@ properties:
     example:
       - name: hsm-example_provider
         type: hsm
-        host: 10.0.1.2
-        port: 1792
-        certificate: |
-          -----BEGIN CERTIFICATE-----
-          ...
-          -----END CERTIFICATE-----
         partition: my-hsm-partition
         partition_password: my-strong-password
+        servers:
+          - host: 10.0.1.1
+            port: 1792
+            partition_serial_number: 123123
+            certificate: |
+              -----BEGIN CERTIFICATE-----
+              ...
+              -----END CERTIFICATE-----
+          - host: 10.0.1.2
+            port: 1792
+            partition_serial_number: 456456
+            certificate: |
+              -----BEGIN CERTIFICATE-----
+              ...
+              -----END CERTIFICATE-----
         client_certificate: |
           -----BEGIN CERTIFICATE-----
           ...

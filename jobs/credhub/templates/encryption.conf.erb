@@ -35,13 +35,11 @@ LunaSA Client = {
   ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
   NetClient = 1;
   HtlDir = /var/vcap/packages/lunaclient/htl/;
-<% hsm_host = active_provider['host'] %>
-<% hsm_port = active_provider['port'] || 1792 %>
-<% if hsm_host %>
-  ServerName00 = <%= hsm_host %>;
+<% active_provider['servers'].each_with_index do |hsm_server, i| %>
+  ServerName0<%= i %> = <%= hsm_server['host'] %>;
+  ServerPort0<%= i %> = <%= hsm_server['port'] || 1792 %>;
+  ServerHtl0<%= i %> = 0;
 <% end %>
-  ServerPort00 = <%= hsm_port %>;
-  ServerHtl00 = 0;
 }
 
 <% elsif active_provider['type'] == 'dsm' %>
