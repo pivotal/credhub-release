@@ -17,9 +17,7 @@ def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
               providers:
                 - name: active_hsm
                   type: hsm
-                  servers:
-                  - certificate: "hsm_cert1"
-                  - certificate: "hsm_cert2"
+                  certificate: "cert"
                   client_certificate: "client_cert"
                   client_key: "key"
             #{tls_yaml.empty? ? '' : tls_yaml}
