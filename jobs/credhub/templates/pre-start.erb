@@ -134,7 +134,7 @@ EOL
     HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
 
     cat > $HOST_PRIVATE_KEY_FILE <<EOL
-    <%= server['ssh_private_key'] %>
+<%= server['ssh_private_key'] %>
     EOL
 
     chmod 400 $HOST_PRIVATE_KEY_FILE
