@@ -56,50 +56,102 @@ else
 fi
 
 <% if active_provider['type'] == 'hsm' %>
-cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
-<%= active_provider['certificate'] %>
+  cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
+  <% active_provider['servers'].each do |hsm| %>
+<%= hsm['certificate'] %>
+  <% end %>
 EOL
 
-cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
+  cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
 <%= active_provider['client_certificate'] %>
 EOL
 
-cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
+  cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
 <%= active_provider['client_key'] %>
 EOL
 
-ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
+  ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
 
-cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
-cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
+  cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
+  cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
+
+  PATH=$PATH:/var/vcap/packages/lunaclient/bin
+
+  <%
+    hsm_servers = active_provider['servers']
+    primary_server = hsm_servers.shift
+    primary_serial_number = primary_server['partition_serial_number']
+    ha_group_label = active_provider['partition']
+  %>
+  if [ $(vtl haAdmin show | grep -c '<%= ha_group_label %>') -eq 0 ]; then
+    echo "HSM HA appears to be uninitialized. Performing HA HSM setup."
+
+    echo "Creating new HSM HA group."
+
+    NEW_GROUP_OUTPUT=$(echo copy | vtl haAdmin newGroup -label "<%= ha_group_label %>" -serialNum <%= primary_serial_number %> -password <%= active_provider['partition_password'] %>)
+    GROUPID=$(echo $NEW_GROUP_OUTPUT | grep -o -E 'HA Group Number: .*' | awk '{print $4}')
+
+    echo "Adding members to HSM HA group."
+
+    <% hsm_servers.each do |hsm_server| %>
+      echo "Adding server with partition serial number <%= hsm_server['partition_serial_number'] %> to HSM HA group."
+
+      echo copy | vtl haAdmin addMember -group $GROUPID -serialNum <%= hsm_server['partition_serial_number'] %> -password <%= active_provider['partition_password'] %>
+    <% end %>
+
+    echo "Finished adding members to HSM HA group."
+
+    echo "Synchronizing HSM HA group."
+    vtl haAdmin synchronize -group $GROUPID -password <%= active_provider['partition_password'] %>
+
+    echo "Setting autorecovery retries to 1."
+    vtl haAdmin autoRecovery -retry -1
+
+    echo "Setting autorecovery interval to 60."
+    vtl haAdmin autoRecovery -interval 60
+
+    HA_LOG_DIR=/var/vcap/sys/log/credhub/
+    echo "Setting up HA logging. Log file will appear in $HA_LOG_DIR"
+    vtl haAdmin HALog -enable -path $HA_LOG_DIR
+
+    echo "Enabling 'HA only' mode."
+    vtl haAdmin haOnly -enable
+  else
+    echo "HSM HA appears to be initialized. Skipping HSM HA setup."
+  fi
 
 <% elsif active_provider['type'] == 'dsm' %>
-dpkg -i /var/vcap/packages/dsm-client/libapr1_1.5.0-1_amd64.deb
-dpkg -i /var/vcap/packages/dsm-client/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb
+  echo "DSM configuration detected, begin DSM setup."
 
-cp /usr/lib/dsm/dsm-advapi-1.0.jar $JAVA_HOME/jre/lib/ext/
+  dpkg -i /var/vcap/packages/dsm-client/libapr1_1.5.0-1_amd64.deb
+  dpkg -i /var/vcap/packages/dsm-client/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb
 
-ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/dsm/client.conf
-<% (active_provider['servers'] || []).each do |server| %>
-HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
+  cp /usr/lib/dsm/dsm-advapi-1.0.jar $JAVA_HOME/jre/lib/ext/
 
-cat > $HOST_PRIVATE_KEY_FILE <<EOL
-<%= server['ssh_private_key'] %>
-EOL
+  ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/dsm/client.conf
 
-chmod 400 $HOST_PRIVATE_KEY_FILE
+  <% (active_provider['servers'] || []).each do |server| %>
+    HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
 
-DSMUTIL_OUTPUT=$(ssh -oStrictHostKeyChecking=no -i $HOST_PRIVATE_KEY_FILE <%= server['user'] %>@<%= server['host'] %> "dsmutil agent create -u ${HOSTNAME} -p <%= server['partition'] %>")
+    cat > $HOST_PRIVATE_KEY_FILE <<EOL
+    <%= server['ssh_private_key'] %>
+    EOL
 
-if [[ "$DSMUTIL_OUTPUT" =~ ([0-9]+) ]]; then
-  PIN=${BASH_REMATCH[0]}
-else
-  exit 1
-fi
+    chmod 400 $HOST_PRIVATE_KEY_FILE
 
-dsmcl register -p "$PIN"
+    DSMUTIL_OUTPUT=$(ssh -oStrictHostKeyChecking=no -i $HOST_PRIVATE_KEY_FILE <%= server['user'] %>@<%= server['host'] %> "dsmutil agent create -u ${HOSTNAME} -p <%= server['partition'] %>")
 
-rm $HOST_PRIVATE_KEY_FILE
+    if [[ "$DSMUTIL_OUTPUT" =~ ([0-9]+) ]]; then
+      PIN=${BASH_REMATCH[0]}
+    else
+      exit 1
+    fi
 
-<% end %>
+    dsmcl register -p "$PIN"
+
+    rm $HOST_PRIVATE_KEY_FILE
+
+  <% end %>
+
+  echo "DSM setup finished."
 <% end %>
