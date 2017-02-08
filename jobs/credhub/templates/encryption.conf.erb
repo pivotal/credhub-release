@@ -42,6 +42,15 @@ LunaSA Client = {
 <% end %>
 }
 
+HAConfiguration = {
+   reconnAtt = -1;
+   AutoReconnectInterval = 60;
+   haLogPath = /var/vcap/sys/log/credhub;
+   logLen = 262144;
+   haLogStatus = enabled;
+   HAOnly = 1;
+}
+
 <% elsif active_provider['type'] == 'dsm' %>
 <% servers = active_provider['servers'] || [] %>
 servers=<%= servers.collect { |server| server['host'] }.join(',') %>

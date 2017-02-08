@@ -8,6 +8,7 @@ templates:
   # Other scripts
   ctl: bin/ctl
   install_crt.sh: bin/install_crt.sh
+  configure_hsm.erb: bin/configure_hsm
   # Config
   application.yml.erb: config/application.yml
   log4j2.properties.erb: config/log4j2.properties

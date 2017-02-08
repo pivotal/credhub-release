@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -eu
+
+<%
+  active_key = p('credhub.encryption.keys').find { |key| key.key?('active') }
+  active_provider_name = active_key['provider_name']
+  active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
+  hsm_servers = active_provider['servers']
+%>
+
+cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
+<%= active_provider['client_certificate'] %>
+EOL
+
+cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
+<%= active_provider['client_key'] %>
+EOL
+
+cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
+<% hsm_servers.each do |hsm| %>
+<%= hsm['certificate'] %>
+<% end %>
+EOL
+
+ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
+
+cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/jre/lib/ext/
+cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/jre/lib/ext/
+
+<%
+  primary_server = hsm_servers.shift
+  primary_serial_number = primary_server['partition_serial_number']
+  ha_group_label = active_provider['partition']
+%>
+
+PATH=$PATH:/var/vcap/packages/lunaclient/bin
+
+if [ $(vtl haAdmin show | grep -c '<%= ha_group_label %>') -eq 0 ]; then
+  echo "HSM HA appears to be uninitialized. Performing HA HSM setup."
+
+  echo "Creating new HSM HA group."
+
+  NEW_GROUP_OUTPUT=$(echo copy | vtl haAdmin newGroup -label "<%= ha_group_label %>" -serialNum <%= primary_serial_number %> -password <%= active_provider['partition_password'] %>)
+  GROUPID=$(echo $NEW_GROUP_OUTPUT | grep -o -E 'HA Group Number: .*' | awk '{print $4}')
+
+  echo "Adding members to HSM HA group."
+
+<% hsm_servers.each do |hsm_server| %>
+  echo "Adding server with partition serial number <%= hsm_server['partition_serial_number'] %> to HSM HA group."
+
+  echo copy | vtl haAdmin addMember -group $GROUPID -serialNum <%= hsm_server['partition_serial_number'] %> -password <%= active_provider['partition_password'] %>
+<% end %>
+
+echo "Finished adding members to HSM HA group."
+
+echo "Synchronizing HSM HA group."
+  vtl haAdmin synchronize -group $GROUPID -password <%= active_provider['partition_password'] %>
+else
+  echo "HSM HA appears to be initialized. Skipping HSM HA setup."
+fi
