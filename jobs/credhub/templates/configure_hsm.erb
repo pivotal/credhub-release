@@ -52,9 +52,9 @@ if [ $(vtl haAdmin show | grep -c '<%= ha_group_label %>') -eq 0 ]; then
   echo copy | vtl haAdmin addMember -group $GROUPID -serialNum <%= hsm_server['partition_serial_number'] %> -password <%= active_provider['partition_password'] %>
 <% end %>
 
-echo "Finished adding members to HSM HA group."
+  echo "Finished adding members to HSM HA group."
 
-echo "Synchronizing HSM HA group."
+  echo "Synchronizing HSM HA group."
   vtl haAdmin synchronize -group $GROUPID -password <%= active_provider['partition_password'] %>
 else
   echo "HSM HA appears to be initialized. Skipping HSM HA setup."

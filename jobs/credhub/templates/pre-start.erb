@@ -56,40 +56,9 @@ else
 fi
 
 <% if active_provider['type'] == 'hsm' %>
-/var/vcap/jobs/credhub/bin/configure_hsm
-
+/var/vcap/jobs/credhub/bin/configure_hsm.sh
 <% elsif active_provider['type'] == 'dsm' %>
-echo "DSM configuration detected, begin DSM setup."
-
-dpkg -i /var/vcap/packages/dsm-client/libapr1_1.5.0-1_amd64.deb
-dpkg -i /var/vcap/packages/dsm-client/dsm-client_1.2.10136.1262.DEBIAN_amd64.deb
-
-cp /usr/lib/dsm/dsm-advapi-1.0.jar $JAVA_HOME/jre/lib/ext/
-
-ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/dsm/client.conf
-
-<% (active_provider['servers'] || []).each do |server| %>
-HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
-
-cat > $HOST_PRIVATE_KEY_FILE <<EOL
-<%= server['ssh_private_key'] %>
-EOL
-
-chmod 400 $HOST_PRIVATE_KEY_FILE
-
-DSMUTIL_OUTPUT=$(ssh -oStrictHostKeyChecking=no -i $HOST_PRIVATE_KEY_FILE <%= server['user'] %>@<%= server['host'] %> "dsmutil agent create -u ${HOSTNAME} -p <%= server['partition'] %>")
-
-if [[ "$DSMUTIL_OUTPUT" =~ ([0-9]+) ]]; then
-  PIN=${BASH_REMATCH[0]}
-else
-  exit 1
-fi
-
-dsmcl register -p "$PIN"
-
-rm $HOST_PRIVATE_KEY_FILE
-
-  <% end %>
-
-echo "DSM setup finished."
+/var/vcap/jobs/credhub/bin/configure_dsm.sh
 <% end %>
+
+echo 'pre-start finished!'
