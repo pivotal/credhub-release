@@ -6,7 +6,11 @@ set -eu
 <% active_provider_name = active_key['provider_name'] %>
 <% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
 
-<% if active_provider['type'] == 'dsm' %>
+<% if active_provider['type'] == 'hsm' %>
+    <% ha_group_label = active_provider['partition'] %>
+    PATH=$PATH:/var/vcap/packages/lunaclient/bin
+    vtl haAdmin deleteGroup -group <%= ha_group_label %> -password <%= active_provider['partition_password'] %> > /dev/null
+<% elsif active_provider['type'] == 'dsm' %>
 <% (active_provider['servers'] || []).each do |server| %>
 
 HOST_PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/<%= server['host'] %>.pem
