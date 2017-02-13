@@ -6,7 +6,9 @@ set -eu
   active_key = p('credhub.encryption.keys').find { |key| key.key?('active') }
   active_provider_name = active_key['provider_name']
   active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
-  hsm_servers = active_provider['servers']
+  hsm_servers = active_provider['servers'] || []
+
+  if active_provider['type'] == 'hsm'
 %>
 
 cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
@@ -59,3 +61,5 @@ if [ $(vtl haAdmin show | grep -c '<%= ha_group_label %>') -eq 0 ]; then
 else
   echo "HSM HA appears to be initialized. Skipping HSM HA setup."
 fi
+
+<% end %>
