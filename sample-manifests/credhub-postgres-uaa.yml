@@ -100,7 +100,7 @@ instance_groups:
           host: 127.0.0.1
           port: 5432
           database: credhub
-        user_management:
+        authentication:
           uaa:
             url: *ext
             verification_key: ((uaa/jwt.public_key)) 

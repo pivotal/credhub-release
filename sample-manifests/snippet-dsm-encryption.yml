@@ -5,7 +5,7 @@
       properties:
         credhub:
           port: 8844
-          user_management:
+          authentication:
             uaa:
               url: *uaa_url
               verification_key: ((uaa-jwt.public_key))

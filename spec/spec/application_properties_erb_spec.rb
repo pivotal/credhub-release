@@ -25,7 +25,7 @@ def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_l
                   partition: "active_partition"
                   partition_password: "active_partpass"
             port: 9000
-            user_management:
+            authentication:
               uaa:
                 url: "my_uaa_url"
                 verification_key: |
@@ -307,7 +307,7 @@ RSpec.describe 'the template' do
                 - name: active_dsm
                   type: dsm
             port: 9000
-            user_management:
+            authentication:
               uaa:
                 url: "my_uaa_url"
                 verification_key: |
@@ -363,7 +363,7 @@ RSpec.describe 'the template' do
                 - name: active_dev
                   type: dev_internal
             port: 9000
-            user_management:
+            authentication:
               uaa:
                 url: "my_uaa_url"
                 verification_key: |

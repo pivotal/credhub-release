@@ -73,7 +73,7 @@
 
   length_of_leading_document_separator_to_yaml_adds = 4
 
-  jwt_verification_key = { 'security' => { 'oauth2' => { 'resource' => { 'jwt' => { 'key-value' => p("credhub.user_management.uaa.verification_key") } } } } }.to_yaml
+  jwt_verification_key = { 'security' => { 'oauth2' => { 'resource' => { 'jwt' => { 'key-value' => p("credhub.authentication.uaa.verification_key") } } } } }.to_yaml
   jwt_verification_key = jwt_verification_key[length_of_leading_document_separator_to_yaml_adds, jwt_verification_key.length]
 
   key_array = encryption_keys.map do |input_key|
@@ -112,7 +112,7 @@ server:
 
 <%= jwt_verification_key %>
 auth-server:
-  url: <%= p("credhub.user_management.uaa.url") %>
+  url: <%= p("credhub.authentication.uaa.url") %>
 
 spring:
   datasource:

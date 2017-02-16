@@ -47,7 +47,7 @@ instance_groups:
           database: credhub
           require_tls: true
           tls_ca: ((database-CA))
-        user_management:
+        authentication:
           uaa:
             url: ((uaa-url))
             verification_key: ((uaa-public-verification-key))
