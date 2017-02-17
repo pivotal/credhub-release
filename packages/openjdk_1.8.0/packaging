@@ -1,11 +1,11 @@
 set -ex
 
 cd ${BOSH_INSTALL_TARGET}
-mkdir jdk && tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/openjdk-*-x86_64-trusty.tar.gz -C jdk
+mkdir jre && tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/openjdk-*.tar.gz -C jre
 if [[ $? != 0 ]] ; then
-  echo "Cannot unpack JDK"
+  echo "Cannot unpack JRE"
   exit 1
 fi
 
-# latest JDK release didn't have correct permissions
-chmod -R a+r jdk
+# latest JRE release didn't have correct permissions
+chmod -R a+r jre

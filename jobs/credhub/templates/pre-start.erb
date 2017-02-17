@@ -6,7 +6,7 @@ CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
 PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
 DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
 KEYSTORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 
 chown -R vcap /var/vcap/jobs/credhub/config
 chmod 700 /var/vcap/jobs/credhub/config

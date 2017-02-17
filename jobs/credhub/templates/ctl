@@ -9,7 +9,7 @@ RUNAS=vcap
 
 mkdir -p /var/vcap/jobs/credhub/tmp
 
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jdk
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
 exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout)   | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${LOG_DIR}/credhub.stdout.log)
