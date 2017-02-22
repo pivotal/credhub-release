@@ -149,7 +149,7 @@ RSpec.describe 'the template' do
         result = render_erb_to_hash('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: false }')
         url = parse_database_url(result['spring']['datasource']['url'])
 
-        expect(url['scheme']).to eq 'jdbc:mysql://'
+        expect(url['scheme']).to eq 'jdbc:mariadb://'
         expect(url['host']).to eq 'my_host'
         expect(url['port']).to eq 1234
         expect(url['path']).to eq '/my_db_name'
@@ -169,7 +169,7 @@ RSpec.describe 'the template' do
         result = render_erb_to_hash('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", require_tls: true }')
         url = parse_database_url(result['spring']['datasource']['url'])
 
-        expect(url['scheme']).to eq 'jdbc:mysql://'
+        expect(url['scheme']).to eq 'jdbc:mariadb://'
         expect(url['host']).to eq 'my_host'
         expect(url['port']).to eq 1234
         expect(url['path']).to eq '/my_db_name'

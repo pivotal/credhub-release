@@ -27,7 +27,7 @@
       datasource_url = "jdbc:postgresql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
       flyway_location = 'postgres'
     when 'mysql'
-      datasource_url = "jdbc:mysql://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
+      datasource_url = "jdbc:mariadb://#{p("credhub.data_storage.host")}:#{p("credhub.data_storage.port")}/#{p("credhub.data_storage.database")}?autoReconnect=true"
       flyway_location = 'mysql'
 
       case p('credhub.data_storage.require_tls')
