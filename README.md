@@ -2,12 +2,11 @@
 
 This is a BOSH Release for [CredHub](https://github.com/pivotal-cf/credhub).
 
-* [Sample Deployment Manifests] (https://github.com/pivotal-cf/credhub-release/tree/master/sample-manifests)
-* [API Documentation] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Server-API)
-* [Integration with BOSH Director] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Integration-with-BOSH-Director-Configuration-Guide)
-* [Configuring a Luna HSM] (https://github.com/pivotal-cf/credhub-release/wiki/Configuring-a-Luna-SafeNet-HSM-for-CredHub)
-* [Credential Types] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Credential-Types-and-How-to-Use-Them-in-a-Release)
-* [Backup and Restore Recommendations] (https://github.com/pivotal-cf/credhub-release/wiki/CredHub-Backup-and-Restore-Recommendations)
+* [Sample Deployment Manifests] (sample-manifests/)
+* [Integration with BOSH Director] (docs/bosh-install-with-credhub.md)
+* [Configuring a Luna HSM] (docs/configure-luna-hsm.md)
+* [Backup and Restore Recommendations] (docs/backup-restore-recommendations.md)
+* [Deployment Troubleshooting Guide] (docs/deployment-troubleshooting-guide.md)
 
 
 
