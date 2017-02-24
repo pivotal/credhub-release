@@ -29,7 +29,9 @@ The dev_internal provider performs encryption and decryption operations using a 
 
 The Luna HSM is designed to not allow the removal of key material stored on the device. This security principal means a traditional data export is not possible with a Luna HSM. The two recommended options for data resiliency with a Luna HSM provider are to setup a redundant HSM configuration or to manage a 'Luna Backup HSM' device. 
 
-Additional information on creating a redundant HSM configuration can be [found here][1]. 
+Starting in v0.5.0, CredHub supports management and integration to an HA Luna HSM cluster. In this configuration, multiple (N) HSMs service requests using mirrored partitions, each containing a copy of the encryption key. This provides redundancy so that N–1 HSMs may fail without the loss availability or key material. 
+
+An example of an HA HSM configuration can be [found here][1]. 
 
 Additional information on backup and restore to a Luna Backup HSM can be [found here][2].
 
@@ -37,8 +39,7 @@ If you are using an Luna HSM from AWS, you may also refer to [their reference do
 
 [5]:http://docs.aws.amazon.com/cloudhsm/latest/userguide/configuring-ha.html
 
-
-[1]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/administration/ha_with_luna_sa.htm
+[1]:https://github.com/pivotal-cf/credhub-release/blob/master/sample-manifests/snippet-hsm-encryption.yml#L41-L55
 [2]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
 
 #### Dyadic DSM
