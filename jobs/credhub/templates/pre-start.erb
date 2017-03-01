@@ -24,7 +24,7 @@ if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/applicat
   echo "Key store appears to be initialized. Skipping key store and cert initialization."
 else
   echo "Key store appears to be uninitialized. Setting up key store and installing certs."
-  /var/vcap/jobs/credhub/bin/init_key_stores.erb
+  /var/vcap/jobs/credhub/bin/init_key_stores.sh
 fi
 
 <% if active_provider['type'] == 'hsm' %>

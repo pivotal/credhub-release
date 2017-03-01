@@ -7,7 +7,7 @@ templates:
   drain.erb: bin/drain
   # Other scripts
   ctl: bin/ctl
-  init_key_stores.erb: bin/init_key_stores.erb
+  init_key_stores.erb: bin/init_key_stores.sh
   configure_hsm.erb: bin/configure_hsm.sh
   configure_dsm.erb: bin/configure_dsm.sh
   # Config
