@@ -46,23 +46,6 @@ RSpec.describe "the template" do
         expect {render_pre_start_erb('{ }', '')}
             .to raise_error("credhub.tls.certificate and credhub.tls.private_key must both be set.")
       end
-
-      it "adds .pem files when both credhub.tls.certificate and credhub.tls.private_key are set" do
-        result = render_pre_start_erb('{ }', 'tls: { certificate: "foo", private_key: "bar" }')
-        expect(result).to include "cat > $CERT_FILE <<EOL"
-      end
-    end
-
-    context "with database storage properties" do
-      it "does not create a DB client certificate file when credhub.data_storage.tls_ca is missing" do
-        result = render_pre_start_erb('{ }', 'tls: { certificate: "foo", private_key: "bar" }')
-        expect(result).not_to include "cat > $DATABASE_CA_CERT <<EOL"
-      end
-
-      it "creates a DB client certificate file when credhub.data_storage.tls_ca is set" do
-        result = render_pre_start_erb('{ tls_ca: "my_tls_ca" }', 'tls: { certificate: "foo", private_key: "bar" }')
-        expect(result).to include "cat > $DATABASE_CA_CERT <<EOL"
-      end
     end
   end
 

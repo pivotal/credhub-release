@@ -2,10 +2,6 @@
 
 set -eu
 
-CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
-PRIV_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
-DATABASE_CA_CERT=/var/vcap/jobs/credhub/config/database_ca.crt
-KEY_STORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 
 chown -R vcap /var/vcap/jobs/credhub/config
@@ -24,35 +20,11 @@ chmod 700 /var/vcap/jobs/credhub/config
   end
 %>
 
-function init_key_store_and_certs() {
-  sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
-
-  rm -f $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT
-
-  cat > $CERT_FILE <<EOL
-<%= p('credhub.tls.certificate') %>
-EOL
-
-  cat > $PRIV_KEY_FILE <<EOL
-<%= p('credhub.tls.private_key') %>
-EOL
-
-  <% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
-
-  cat > $DATABASE_CA_CERT <<EOL
-<%= tls_ca %>
-EOL
-
-  <% end %>
-
-  /var/vcap/jobs/credhub/bin/install_crt.sh $CERT_FILE $PRIV_KEY_FILE $DATABASE_CA_CERT $KEY_STORE_PASSWORD
-}
-
 if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.yml | wc -l` -eq 0 ]; then
   echo "Key store appears to be initialized. Skipping key store and cert initialization."
 else
   echo "Key store appears to be uninitialized. Setting up key store and installing certs."
-  init_key_store_and_certs
+  /var/vcap/jobs/credhub/bin/install_crt.sh
 fi
 
 <% if active_provider['type'] == 'hsm' %>
