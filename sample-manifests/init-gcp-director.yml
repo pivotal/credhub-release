@@ -9,13 +9,13 @@ name: &name gcp-director-credhub
 
 releases:
 - name: bosh
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=260.3
-  sha1: 22c79db2a785efa9cbc32c62b8094500e952e170
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.2
+  sha1: d4635b4b82b0dc5fd083b83eb7e7405832f6654b
 - name: uaa
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=24
   sha1: d0feb5494153217f3d62b346f426ad2b2f43511a
 - name: credhub
-  url: file:///Users/example/BOSH Releases/credhub-0.4.0.tgz
+  url: file:///Users/example/BOSH Releases/credhub-0.5.1.tgz
 - name: bosh-google-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.6.0
   sha1: 3e01539a1228d62b8015feb388df2234978efaf6
