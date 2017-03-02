@@ -5,7 +5,7 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
-def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil)
+def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil, mtls_yaml = nil)
   tls_yaml ||= 'tls: { certificate: "foo", private_key: "bar" }'
   keys_yaml ||= '[{provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
                   {provider_name: "active_hsm", encryption_key_name: "another_keyname"}]'
@@ -31,6 +31,7 @@ def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_l
                 verification_key: |
                   line 1
                   line 2
+              #{mtls_yaml ? mtls_yaml : ''}
             #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage: #{data_storage_yaml}
             log_level: #{log_level}
@@ -43,8 +44,8 @@ def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_l
   renderer.render('../jobs/credhub/templates/application.yml.erb')
 end
 
-def render_erb_to_hash(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil)
-  rendered_application_yaml = render_erb_to_yaml(data_storage_yaml, tls_yaml, keys_yaml, log_level)
+def render_erb_to_hash(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil, mtls_yaml = nil)
+  rendered_application_yaml = render_erb_to_yaml(data_storage_yaml, tls_yaml, keys_yaml, log_level, mtls_yaml)
 
   YAML.load(rendered_application_yaml)
 end
@@ -213,12 +214,36 @@ RSpec.describe 'the template' do
     expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384'
   end
 
-  it 'adds mutual TLS properties' do
-    result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }')
+  describe 'when there is no mutual TLS section' do
+    it 'does not mutual TLS properties' do
+      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }')
 
-    expect(result['server']['ssl']['trust-store']).to eq '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
-    expect(result['server']['ssl']['trust-store-password']).to eq 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
-    expect(result['server']['ssl']['trust-store-type']).to eq 'JKS'
+      expect(result['server']['ssl']['trust-store']).to be_nil
+      expect(result['server']['ssl']['trust-store-password']).to be_nil
+      expect(result['server']['ssl']['trust-store-type']).to be_nil
+    end
+  end
+
+  describe 'when there are no trusted CAs for mutual TLS' do
+    it 'adds mutual TLS properties' do
+      mutual_tls = 'mutual_tls: { trusted_cas: [] }'
+      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, nil, nil, mutual_tls)
+
+      expect(result['server']['ssl']['trust-store']).to be_nil
+      expect(result['server']['ssl']['trust-store-password']).to be_nil
+      expect(result['server']['ssl']['trust-store-type']).to be_nil
+    end
+  end
+
+  describe 'when there is at least one trusted CA for mTLS' do
+    it 'adds mutual TLS properties' do
+      mutual_tls = 'mutual_tls: { trusted_cas: ["foo"] }'
+      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, nil, nil, mutual_tls)
+
+      expect(result['server']['ssl']['trust-store']).to eq '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
+      expect(result['server']['ssl']['trust-store-password']).to eq 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
+      expect(result['server']['ssl']['trust-store-type']).to eq 'JKS'
+    end
   end
 
   it 'does not configure Hibernate to destroy the customer data' do
