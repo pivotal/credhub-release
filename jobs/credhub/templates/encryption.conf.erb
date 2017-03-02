@@ -50,8 +50,4 @@ HAConfiguration = {
    haLogStatus = enabled;
    HAOnly = 1;
 }
-
-<% elsif active_provider['type'] == 'dsm' %>
-<% servers = active_provider['servers'] || [] %>
-servers=<%= servers.collect { |server| server['host'] }.join(',') %>
 <% end %>

@@ -29,8 +29,6 @@ fi
 
 <% if active_provider['type'] == 'hsm' %>
 /var/vcap/jobs/credhub/bin/configure_hsm.sh
-<% elsif active_provider['type'] == 'dsm' %>
-/var/vcap/jobs/credhub/bin/configure_dsm.sh
 <% end %>
 
 echo 'pre-start finished!'

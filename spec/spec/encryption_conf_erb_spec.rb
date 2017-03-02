@@ -79,30 +79,4 @@ RSpec.describe "the encryption config template" do
       expect(result).to include "ServerPort00 = 1792"
     end
   end
-
-  context "with dsm" do
-    it "renders the DSM client config" do
-      result = render(<<-EOF
-        properties:
-          credhub:
-            encryption:
-              keys:
-                - provider_name: dsm-provider
-                  encryption_key_name: test-key
-                  active: true
-              providers:
-                - name: dsm-provider
-                  type: dsm
-                  servers:
-                    - host: 1.2.3.4
-                      partition: fake-partition
-                      ssh_private_key: fake-private-key
-                    - host: 5.6.7.8
-                      partition: fake-partition
-                      ssh_private_key: fake-private-key
-      EOF
-)
-      expect(result).to include "servers=1.2.3.4,5.6.7.8"
-    end
-  end
 end

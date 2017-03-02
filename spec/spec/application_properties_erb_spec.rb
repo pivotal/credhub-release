@@ -322,64 +322,6 @@ RSpec.describe 'the template' do
         end
       end
 
-      context 'dsm encryption' do
-        let(:base_option_yaml) {
-          <<-EOF
-        properties:
-          credhub:
-            encryption:
-              keys:
-                - provider_name: active_dsm
-                  encryption_key_name: "active_keyname"
-                  active: true
-                - provider_name: active_dsm
-                  encryption_key_name: "abcd1234abcd1234abcd1234abcd1234"
-              providers:
-                - name: old_dsm
-                  type: dsm
-                - name: active_dsm
-                  type: dsm
-            port: 9000
-            authentication:
-              uaa:
-                url: "my_uaa_url"
-                verification_key: |
-                  line 1
-                  line 2
-            tls:
-              certificate: foo
-              private_key: bar
-            data_storage:
-              type: in-memory
-              database: my_db_name
-            log_level: info
-
-          EOF
-        }
-        let(:manifest_properties) { YAML.load(base_option_yaml) }
-
-        it 'should set the dsm properties correctly' do
-          options = {:context => manifest_properties.to_json}
-          renderer = Bosh::Template::Renderer.new(options)
-          result = YAML.load(renderer.render('../jobs/credhub/templates/application.yml.erb'))
-
-          expect(result['encryption']['provider']).to eq 'dsm'
-
-          expect(result['encryption']['keys'].length).to eq 2
-
-          first_key = result['encryption']['keys'][0]
-          second_key = result['encryption']['keys'][1]
-
-          expect(first_key['encryption-key-name']).to eq 'active_keyname'
-          expect(first_key['provider-name']).to eq 'active_dsm'
-          expect(first_key['active']).to eq true
-
-          expect(second_key['encryption-key-name']).to eq 'abcd1234abcd1234abcd1234abcd1234'
-          expect(second_key['provider-name']).to eq 'active_dsm'
-          expect(second_key.has_key?('active')).to eq false
-        end
-      end
-
       context 'dev_internal encryption' do
         let(:base_option_yaml) {
           <<-EOF

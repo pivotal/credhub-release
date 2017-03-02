@@ -42,11 +42,7 @@ If you are using an Luna HSM from AWS, you may also refer to [their reference do
 [1]:https://github.com/pivotal-cf/credhub-release/blob/master/sample-manifests/snippet-hsm-encryption.yml#L41-L55
 [2]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
 
-#### Dyadic DSM
-
-Follow Dyadic's backup and restore procedures described in the Administrator Guide.
-
-##### Frequency
+#### Frequency
 The backup frequency of the encryption key must match the frequency with which you rotate this key so that you always have access to the latest value. 
 
 It is also recommended that you maintain historical encryption key values equivalent to the length of time that you maintain database backups for CredHub. For example, if you maintain CredHub database backups for 1 year, you must maintain the previous 1 year of encryption keys so that you are able to access the data in the backups with the point-in-time active encryption key. 
