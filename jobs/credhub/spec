@@ -132,6 +132,20 @@ properties:
   credhub.authentication.uaa.verification_key:
     description: "The public key for verifying tokens issued by the UAA instance"
 
+  # Mutual TLS
+  credhub.authentication.mutual_tls.trusted_cas:
+    description: "List of certificates for accepted CAs trusted for signing mutual TLS certificates"
+    default: []
+    example:
+    - |
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+    - |
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
+
   # Logging
   credhub.log_level:
     description: "Log level. Available levels are none, error, warn, info, debug"

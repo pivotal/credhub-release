@@ -213,6 +213,14 @@ RSpec.describe 'the template' do
     expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384'
   end
 
+  it 'adds mutual TLS properties' do
+    result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }')
+
+    expect(result['server']['ssl']['trust-store']).to eq '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
+    expect(result['server']['ssl']['trust-store-password']).to eq 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
+    expect(result['server']['ssl']['trust-store-type']).to eq 'JKS'
+  end
+
   it 'does not configure Hibernate to destroy the customer data' do
     result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }')
 
