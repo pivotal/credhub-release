@@ -4,5 +4,3 @@ blobstore:
   provider: s3
   options:
     bucket_name: credhub-release-blobs
-    access_key_id: AKIAI4YSZY45KSFS2HBQ
-    secret_access_key: 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
