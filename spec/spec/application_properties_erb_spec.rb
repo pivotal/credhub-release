@@ -221,6 +221,7 @@ RSpec.describe 'the template' do
       expect(result['server']['ssl']['trust-store']).to be_nil
       expect(result['server']['ssl']['trust-store-password']).to be_nil
       expect(result['server']['ssl']['trust-store-type']).to be_nil
+      expect(result['server']['ssl']['client-auth']).to be_nil
     end
   end
 
@@ -232,6 +233,7 @@ RSpec.describe 'the template' do
       expect(result['server']['ssl']['trust-store']).to be_nil
       expect(result['server']['ssl']['trust-store-password']).to be_nil
       expect(result['server']['ssl']['trust-store-type']).to be_nil
+      expect(result['server']['ssl']['client-auth']).to be_nil
     end
   end
 
@@ -243,6 +245,7 @@ RSpec.describe 'the template' do
       expect(result['server']['ssl']['trust-store']).to eq '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
       expect(result['server']['ssl']['trust-store-password']).to eq 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
       expect(result['server']['ssl']['trust-store-type']).to eq 'JKS'
+      expect(result['server']['ssl']['client-auth']).to eq 'want'
     end
   end
 

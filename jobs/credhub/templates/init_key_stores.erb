@@ -70,7 +70,7 @@ cat > ${MTLS_CA_CERT_FILE} <<EOL
 EOL
 
 <%=
-"${JAVA_HOME}/bin/keytool -import -noprompt \
+"${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts \
   -keystore ${MTLS_TRUST_STORE_PATH} \
   -storepass ${MTLS_TRUST_STORE_PASSWORD} \
   -alias ${MTLS_CA_ALIAS}#{index} \

@@ -115,6 +115,7 @@ server:
     key-alias: credhub_tls_cert
     ciphers: ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384
     <% if supports_mtls %>
+    client-auth: want
     trust-store: /var/vcap/jobs/credhub/config/mtls_trust_store.jks
     trust-store-password: MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER
     trust-store-type: JKS
