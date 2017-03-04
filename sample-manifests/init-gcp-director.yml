@@ -1,9 +1,8 @@
 ## This manifest initializes a new BOSH Director on Google Cloud Platform with co-located PostgreSQL database, UAA and CredHub.
 ##
-## All values containing [[variable]] syntax must be replaced with valid configurations. Variables of the same name should be replaced with the same value.
+## Deployment-specific configuration should be done in file 'init-gcp-director-config.yml'. This manifest may be modified, but modification is not required.
 ##
-## It is recommended that you use the BOSH v2 CLI to automatically generate the variables with syntax ((variable)). If you chose not to use the v2 CLI, you must replace all ((variables)) with accurate values before deployment.
-## To deploy - `bosh create-env init-gcp-director.yml --vars-store generated-credentials.yml`
+## To deploy (requires BOSH v2 CLI) - `bosh create-env init-gcp-director.yml --vars-store init-gcp-director-config.yml`
 ---
 name: &name gcp-director-credhub
 
@@ -15,19 +14,20 @@ releases:
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=24
   sha1: d0feb5494153217f3d62b346f426ad2b2f43511a
 - name: credhub
-  url: file:///Users/example/BOSH Releases/credhub-0.5.1.tgz
+  url: https://github.com/pivotal-cf/credhub-release/releases/download/0.5.1/credhub-0.5.1.tgz
+  sha1: fcfa37835c813b175defe01d8fae7d57e7ef669c
 - name: bosh-google-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.6.0
   sha1: 3e01539a1228d62b8015feb388df2234978efaf6
 
 resource_pools:
   - name: vms
-    network: [[network-name]]
+    network: private
     stemcell:
       url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3312.12
       sha1: 3a2c407be6c1b3d04bb292ceb5007159100c85d7
     cloud_properties:
-      zone: [[gcp-zone]]
+      zone: ((gcp-zone))
       machine_type: n1-standard-2
       root_disk_size_gb: 40
       root_disk_type: pd-ssd
@@ -39,17 +39,17 @@ disk_pools:
       type: pd-ssd
 
 networks:
-  - name: vip
+  - name: public
     type: vip
-  - name: [[network-name]]
+  - name: private
     type: manual
     subnets:
     - range: 10.0.0.0/24
       gateway: 10.0.0.1
-      static: [10.0.0.3-10.0.0.10]
+#      static: [10.0.0.3-10.0.0.10]
       cloud_properties:
-        network_name: [[gcp-network-name]]
-        subnetwork_name: [[gcp-subnet-name]]
+        network_name: ((gcp-network-name))
+        subnetwork_name: ((gcp-subnet-name))
         ephemeral_external_ip: false
 
 variables: 
@@ -62,10 +62,10 @@ variables:
   type: certificate
   options: 
     ca: tls-ca
-    common_name: *external_ip
+    common_name: ((external-ip))
     alternative_names: 
-    - *external_ip
-    - *local_ip
+    - ((external-ip))
+    - ((internal-ip))
     - 127.0.0.1
 - name: uaa-jwt
   type: rsa 
@@ -102,15 +102,15 @@ jobs:
     resource_pool: vms
     persistent_disk_pool: disks
     networks:
-      - name: [[network-name]]
+      - name: private
         static_ips: 
-        - &local_ip 10.0.0.10
+        - ((internal-ip)) 
         default:
           - dns
           - gateway
-      - name: vip 
+      - name: public
         static_ips: 
-        - &external_ip [[external-ip]]
+        - ((external-ip))
 
     templates:
     - name: credhub
@@ -136,7 +136,7 @@ jobs:
           encryption:
             keys:
             - provider_name: internal
-              dev_key: [[encryption-key]]
+              dev_key: ((credhub-encryption-key))
               active: true
             providers:
             - name: internal
@@ -158,7 +158,7 @@ jobs:
       release: uaa
       properties:
         uaa:
-          url: &uaa_url "https://[[external-ip]]:8443"
+          url: &uaa_url "https://((external-ip)):8443"
           scim:
             users:
             - name: admin
@@ -230,7 +230,7 @@ jobs:
       release: bosh
       properties:
         director: &director
-          address: *external_ip
+          address: ((external-ip))
           name: *name
           config_server:
             enabled: true
@@ -256,11 +256,11 @@ jobs:
             key: ((tls.private_key))
           trusted_certs: ((tls.ca))
         agent: &agent
-          mbus: nats://nats:((nats))@10.0.0.10:4222
+          mbus: nats://nats:((nats))@((internal-ip)):4222
           ntp: *ntp
           blobstore:
              options:
-               endpoint: http://10.0.0.10:25250
+               endpoint: http://((internal-ip)):25250
                user: agent
                password: ((blobstore-agent))
         ntp: *ntp
@@ -271,8 +271,8 @@ jobs:
       release: bosh
       properties:
         registry: &registry
-          address: *local_ip
-          host: *local_ip
+          address: ((internal-ip))
+          host: ((internal-ip))
           db: *db
           http: {user: admin, password: ((registry-admin)), port: 25777}
           username: admin
@@ -292,7 +292,7 @@ jobs:
       release: bosh
       properties:
         blobstore: &blobstore
-          address: *local_ip
+          address: ((internal-ip))
           port: 25250
           provider: dav
           director:
@@ -306,7 +306,7 @@ jobs:
       release: bosh
       properties:
         dns:
-          address: *local_ip
+          address: ((internal-ip))
           domain_name: cf.internal 
           db: *db
 
@@ -327,7 +327,7 @@ jobs:
       properties:
         google: &google_properties
           project: cf-security-credhub-main
-          json_key: [[escaped-gcp-json-key]] 
+          json_key: ((escaped-gcp-json-key))
         ntp: &ntp
           - 0.pool.ntp.org
           - 1.pool.ntp.org
@@ -341,12 +341,12 @@ cloud_provider:
     release: bosh-google-cpi
 
   ssh_tunnel:
-    host: *external_ip
+    host: ((external-ip))
     port: 22
-    user: [[ssh-username]]
-    private_key: [[path-to-ssh-key]]
+    user: ((ssh-username))
+    private_key: ((path-to-ssh-private-key))
 
-  mbus: https://mbus:((mbus))@[[external-ip]]:6868
+  mbus: https://mbus:((mbus))@((external-ip)):6868
 
   properties:
     google: *google_properties
