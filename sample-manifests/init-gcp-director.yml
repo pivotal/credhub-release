@@ -28,13 +28,13 @@ resource_pools:
       sha1: 3a2c407be6c1b3d04bb292ceb5007159100c85d7
     cloud_properties:
       zone: ((gcp-zone))
-      machine_type: n1-standard-2
-      root_disk_size_gb: 40
+      machine_type: n1-standard-4
+      root_disk_size_gb: 100
       root_disk_type: pd-ssd
 
 disk_pools:
   - name: disks
-    disk_size: 32_768
+    disk_size: 25_000
     cloud_properties:
       type: pd-ssd
 
@@ -46,7 +46,6 @@ networks:
     subnets:
     - range: 10.0.0.0/24
       gateway: 10.0.0.1
-#      static: [10.0.0.3-10.0.0.10]
       cloud_properties:
         network_name: ((gcp-network-name))
         subnetwork_name: ((gcp-subnet-name))
@@ -78,10 +77,6 @@ variables:
 - name: uaa-admin
   type: password
 - name: uaa-login
-  type: password
-- name: bosh-users-admin
-  type: password
-- name: bosh-users-hm
   type: password
 - name: nats
   type: password
@@ -120,7 +115,7 @@ jobs:
           port: 8844
           authentication:
             uaa:
-              url: *uaa_url
+              url: *uaa-url
               verification_key: ((uaa-jwt.public_key))
           data_storage:
             type: postgres
@@ -158,7 +153,7 @@ jobs:
       release: uaa
       properties:
         uaa:
-          url: &uaa_url "https://((external-ip)):8443"
+          url: &uaa-url "https://((external-ip)):8443"
           scim:
             users:
             - name: admin
@@ -167,6 +162,8 @@ jobs:
                 - scim.write
                 - scim.read
                 - bosh.admin
+                - credhub.read
+                - credhub.write
             - name: hm
               password: ((uaa-users-hm))
               groups:
@@ -178,15 +175,15 @@ jobs:
               scope: openid,bosh.admin,bosh.*.admin
               authorities: uaa.none
               access-token-validity: 120
-              refresh-token-validity: 86400
+              refresh-token-validity: 43200
               secret: ""
             credhub_cli:
               override: true
               authorized-grant-types: password,refresh_token
               scope: credhub.read,credhub.write
               authorities: uaa.resource
-              access-token-validity: 120
-              refresh-token-validity: 86400
+              access-token-validity: 30
+              refresh-token-validity: 3600
               secret: ""
             director_to_credhub:
               override: true
@@ -237,7 +234,7 @@ jobs:
             url: "https://127.0.0.1:8844/api/"
             ca_cert: ((tls.ca))
             uaa:
-              url: *uaa_url
+              url: *uaa-url
               client_id: director_to_credhub
               client_secret: ((uaa-clients-director-to-credhub))
               ca_cert: ((tls.ca))
@@ -245,12 +242,11 @@ jobs:
           cpi_job: google_cpi
           max_threads: 10
           enable_snapshots: false
-          authentication:
-            provider: local
-            local:
-              users:
-              - {name: admin, password: ((bosh-users-admin))}
-              - {name: hm, password: ((bosh-users-hm))}
+          user_management:
+            provider: uaa
+            uaa:
+              url: *uaa-url
+              public_key: ((uaa-jwt.public_key))
           ssl:
             cert: ((tls.certificate))
             key: ((tls.private_key))
@@ -316,7 +312,7 @@ jobs:
         hm:
           director_account:
             user: hm
-            password: ((bosh-users-hm))
+            password: ((uaa-users-hm))
             ca_cert: ((tls.ca))
           resurrector_enabled: true
         director: *director
@@ -327,7 +323,7 @@ jobs:
       properties:
         google: &google_properties
           project: cf-security-credhub-main
-          json_key: ((escaped-gcp-json-key))
+          json_key: ((gcp-escaped-json-key))
         ntp: &ntp
           - 0.pool.ntp.org
           - 1.pool.ntp.org
@@ -344,7 +340,7 @@ cloud_provider:
     host: ((external-ip))
     port: 22
     user: ((ssh-username))
-    private_key: ((path-to-ssh-private-key))
+    private_key: ((ssh-path-to-private-key))
 
   mbus: https://mbus:((mbus))@((external-ip)):6868
 

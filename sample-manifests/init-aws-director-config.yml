@@ -18,7 +18,7 @@ external-ip:
 credhub-encryption-key: 
 
 # Key name and local path to SSH key
-aws-default-key-name: 
+aws-ssh-key-name: 
 ssh-username: 
-path-to-ssh-private-key: 
+ssh-path-to-private-key: 
 

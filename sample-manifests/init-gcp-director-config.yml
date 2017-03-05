@@ -7,15 +7,16 @@ gcp-network-name:
 gcp-subnet-name: 
 
 # Service account JSON key escaped in string format
-escaped-gcp-json-key:
+gcp-escaped-json-key: 
 
 # Manifest assumes 10.0.0.0/24 subnet
 internal-ip: 
 external-ip: 
 
 # Format is 32 character length hexadecimal string
-credhub-encryption-key:
+credhub-encryption-key: 
 
 # SSH username and local path to SSH key
 ssh-username: 
-path-to-ssh-private-key:
+ssh-path-to-private-key: 
+
