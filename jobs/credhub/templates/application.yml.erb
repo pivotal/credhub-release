@@ -89,6 +89,14 @@
           output_key['dev-key'] = input_key['dev_key']
         end
       end
+
+      if input_key.has_key?('encryption_password')
+        if input_key['encryption_password'].nil? || input_key['encryption_password'].empty?
+          raise ArgumentError, "credhub.encryption.encryption_password is not valid (must not be empty if provided)."
+        else
+          output_key['encryption_password'] = input_key['encryption_password']
+        end
+      end
     end
   end
 

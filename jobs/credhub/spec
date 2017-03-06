@@ -28,7 +28,12 @@ properties:
   credhub.encryption.keys:
     description: |
       A list of active and inactive encryption keys, specifying the provider name and the encryption key name or value.
-      Key values for dev_internal providers must be valid, hex-encoded 128-bit AES keys.
+      Key values for dev_internal providers may be:
+          * a password (via `encryption_password`) that will be converted into an AES key using PBKDF2
+          * *OR*
+          * a valid hex-encoded 128-bit AES key (via `dev_key`).
+              end
+              end
       One key must be marked active.
       See below for examples of keys for each supported provider type.
     example:
@@ -39,6 +44,8 @@ properties:
         encryption_key_name: inactive-hsm-key-name
       - provider_name: dev_internal
         dev_key: ABCDEF0123456789ABCDEF0123456789
+      - provider_name: dev_internal
+        encryption_password: creddymccredhubface
 
   credhub.encryption.providers:
     description: |
