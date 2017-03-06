@@ -38,7 +38,7 @@ cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/lib/ext/
 
 PATH=$PATH:/var/vcap/packages/lunaclient/bin
 
-if [ $(vtl haAdmin show | grep -c '<%= ha_group_label %>') -eq 0 ]; then
+if [ $(vtl haAdmin show | egrep -c 'HA Group Label:\s+<%= ha_group_label %>(\s|$)') -eq 0 ]; then
   echo "HSM HA appears to be uninitialized. Performing HA HSM setup."
 
   echo "Creating new HSM HA group."
