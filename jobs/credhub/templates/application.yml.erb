@@ -82,6 +82,10 @@
       output_key['provider-name'] = input_key['provider_name'] if input_key['provider_name']
       output_key['encryption-key-name'] = input_key['encryption_key_name'] if input_key['encryption_key_name']
 
+      if input_key.has_key?('dev_key') && input_key.has_key?('encryption_password')
+        raise ArgumentError, "You must specify either an encryption_password or dev_key, not both. Please update your manifest and retry your request."
+      end
+
       if input_key.has_key?('dev_key')
         if invalid_dev_key?(input_key['dev_key'])
           raise ArgumentError, "credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string)."

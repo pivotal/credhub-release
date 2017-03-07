@@ -326,6 +326,50 @@ RSpec.describe 'the template' do
       end
 
       context 'dev_internal encryption' do
+        context 'validation' do
+          let(:bad_base_option_yaml) {
+            <<-EOF
+        properties:
+          credhub:
+            encryption:
+              keys:
+                - provider_name: active_dev
+                  encryption_password: creddymccredhubface
+                  dev_key: "3456abcd1234abcd1234abcd1234abcd"
+                  active: true
+              providers:
+                - name: active_dev
+                  type: dev_internal
+            port: 9000
+            authentication:
+              uaa:
+                url: "my_uaa_url"
+                verification_key: |
+                  line 1
+                  line 2
+            tls:
+              certificate: foo
+              private_key: bar
+            data_storage:
+              type: in-memory
+              database: my_db_name
+            log_level: info
+
+            EOF
+          }
+
+          let(:bad_manifest_properties) { YAML.load(bad_base_option_yaml) }
+
+          it 'should not allow both dev_key and encryption_password' do
+            options = {:context => bad_manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
+
+            expect {
+              renderer.render('../jobs/credhub/templates/application.yml.erb')
+            }.to raise_error(ArgumentError, 'You must specify either an encryption_password or dev_key, not both. Please update your manifest and retry your request.')
+          end
+        end
+
         context 'with a password' do
           let(:password_base_option_yaml) {
             <<-EOF
