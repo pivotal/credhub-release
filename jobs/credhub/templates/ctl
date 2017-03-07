@@ -25,6 +25,7 @@ case $1 in
 
     cd /var/vcap/packages/credhub
     exec chpst -u $RUNAS:$RUNAS java \
+        -Dspring.profiles.active=prod \
         -Dspring.config.location=/var/vcap/jobs/credhub/config/application.yml \
         -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \
         -Djava.security.egd=file:/dev/urandom \
