@@ -227,3 +227,61 @@ credhub:
 	        certificate: [hsm-certificate]
 	        partition_serial_number: [partition-serial-number]
 ```
+
+## Renew or Rotate a Client Certificate 
+
+The generated client certificate has a fixed expiration date after which it will no longer be accepted by the HSM. You may rotate or renew this certificate at any time by following the steps detailed below.
+
+1. Generate a new certificate for the client
+
+  ```sh
+  openssl req \
+    -x509   \
+    -newkey rsa:4096 \
+    -days   <num_of_days> \
+    -sha256 \
+    -nodes  \
+    -subj   "/CN=<client_hostname_or_ip>" \
+    -keyout <client_hostname_or_ip>Key.pem \
+    -out    <client_hostname_or_ip>.pem
+  ```
+
+1. Copy the client certificate to each HSM
+
+  ```sh
+  scp -i path/to/ssh-key.pem \
+    <client_hostname_or_ip>.pem \
+    manager@<hsm_ip>:<client_hostname_or_ip>.pem
+  ```
+
+1. (Optional) Review the client's partition assignments 
+
+  ```sh
+  lunash:> client show -client <client_name>
+  ```
+  
+1. Remove the existing client. _Note: All partition assignments will be deleted_
+
+  ```sh
+  lunash:> client delete -client <client_name>
+  ```
+  
+1. Re-register the client
+
+  ```sh
+  lunash:> client register -client <client_name> -ip <client_ip>
+  ```
+  
+1. Re-assign partition assignments
+
+  ```sh
+  lunash:> client assignPartition -client <client_name> -partition <partition_name>
+  ```
+  
+1. (Optional) Validate new certificate fingerprint
+
+  ```sh
+  lunash:> client fingerprint -client <client_name>
+  ```
+
+This fingerprint may be compared to your locally stored certificate with the command `openssl x509 -in clientcert.pem -outform DER | md5sum`.
