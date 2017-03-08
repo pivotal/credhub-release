@@ -190,7 +190,7 @@ Validate:
 * The machine must be able to reach the HSM
  * The deployed machine must be able to reach the HSM. You may validate this by ssh'ing into the deployment machine and attempting to connect to the HSM from that location with the command `nc -v 10.0.0.10 1792`. It should print `Connection to 10.0.0.10 1792 port [tcp/*] succeeded!` if successful. If you are unable to connect from the deployment machine, you should validate the ingress and egress rules of the machine and targeted HSM. 
 * The certificate and client certificate must be not be expired
- * You may check the certificate expiration with the OpenSSL command `openssl x509 -text -noout -in cert.pem` 
+ * You may check the certificate expiration with the OpenSSL command `openssl x509 -text -noout -in cert.pem`. Instructions on how to renew the client certificate can be [found here](configure-luna-hsm.md#renew-or-rotate-a-client-certificate).
 * The certificate, client certificate and client key must be valid
  * You may check the certificates with the above command and the private key with the command `openssl rsa -text -noout -in key.pem`
 * The client certificate and key must correspond to each other
