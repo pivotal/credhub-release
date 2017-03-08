@@ -2,7 +2,8 @@
 
 CredHub release provides a BOSH Release for [CredHub](https://github.com/cloudfoundry-incubator/credhub).
 
-* [CredHub Tracker](https://www.pivotaltracker.com/n/projects/1977341)
+* [CredHub Tracker][1]
+[1]:https://www.pivotaltracker.com/n/projects/1977341
 
 See additional repos for more info:
 
