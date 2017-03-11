@@ -45,10 +45,13 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
     releases:
     - name: bosh
       url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.2
+      version: 261.2
       sha1: d4635b4b82b0dc5fd083b83eb7e7405832f6654b
     # ...
     - name: credhub # <---
-      url: file:///Users/Example/Releases/credhub-0.5.1.tgz
+      url: https://github.com/pivotal-cf/credhub-release/releases/download/0.5.1/credhub-0.5.1.tgz
+      version: 0.5.1
+      sha1: fcfa37835c813b175defe01d8fae7d57e7ef669c
     ```
 
 1. Co-locate CredHub next to the Director:
