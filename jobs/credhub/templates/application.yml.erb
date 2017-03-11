@@ -97,6 +97,8 @@
       if input_key.has_key?('encryption_password')
         if input_key['encryption_password'].nil? || input_key['encryption_password'].empty?
           raise ArgumentError, "credhub.encryption.encryption_password is not valid (must not be empty if provided)."
+        elsif input_key['encryption_password'].length < 20
+          raise ArgumentError, "The encryption_password value must be at least 20 characters in length. Please update and redeploy."
         else
           output_key['encryption_password'] = input_key['encryption_password']
         end

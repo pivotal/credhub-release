@@ -378,7 +378,7 @@ RSpec.describe 'the template' do
             encryption:
               keys:
                 - provider_name: active_dev
-                  encryption_password: creddymccredhubface
+                  encryption_password: mrcreddymccredhubface
                   active: true
               providers:
                 - name: active_dev
@@ -404,11 +404,10 @@ RSpec.describe 'the template' do
           let(:password_manifest_properties) { YAML.load(password_base_option_yaml) }
 
           it 'should populate encryption_password' do
-            password_manifest_properties['properties']['credhub']['encryption']['keys'].first['encryption_password'] = 'asdf'
             options = {:context => password_manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
 
-            expect(renderer.render('../jobs/credhub/templates/application.yml.erb')).to include('encryption_password: asdf')
+            expect(renderer.render('../jobs/credhub/templates/application.yml.erb')).to include('encryption_password: mrcreddymccredhubface')
           end
 
           it 'should not allow empty string' do
@@ -431,6 +430,17 @@ RSpec.describe 'the template' do
             expect {
               renderer.render('../jobs/credhub/templates/application.yml.erb')
             }.to_not raise_error
+          end
+
+          it 'should throw an error if encryption_password is < 20 characters' do
+            password_manifest_properties['properties']['credhub']['encryption']['keys'].first['encryption_password'] = 'nineteen_not_twenty'
+
+            options = {:context => password_manifest_properties.to_json}
+            renderer = Bosh::Template::Renderer.new(options)
+
+            expect {
+              renderer.render('../jobs/credhub/templates/application.yml.erb')
+            }.to raise_error(ArgumentError, 'The encryption_password value must be at least 20 characters in length. Please update and redeploy.')
           end
         end
 
