@@ -1,20 +1,20 @@
 The following guide provides details on how to deploy a BOSH Director with CredHub so that you may use credential variables in your deployments manifests. Once configured, any variable in a BOSH deployment manifest with the syntax ((variable)) will cause the Director to retrieve the variable value at deploy-time from CredHub.
 
-If you use [bosh-deployment][7] to deploy your director, including the ops file `credhub.yml` will enable CredHub on the director. 
-[7]:https://github.com/cloudfoundry/bosh-deployment
+If you use [bosh-deployment][1] to deploy your director, including the ops file `credhub.yml` will enable CredHub on the director. 
+[1]:https://github.com/cloudfoundry/bosh-deployment
 
 ---
 ## <a id="setup"></a> Setup Before Deployment
 
 1. Setup a BOSH Director
 
-  The following configuration steps assume that you have an existing BOSH Director. If you do not have a running director, you may reference [this BOSH initialization guide][1] for more details. 
-  [1]:https://bosh.io/docs/init.html
+  The following configuration steps assume that you have an existing BOSH Director. If you do not have a running director, you may reference [this BOSH initialization guide][2] for more details. 
+  [2]:https://bosh.io/docs/init.html
 
 1. Configure UAA on your Director 
 
-  UAA is used by CredHub for user and client authentication. A UAA server must be configured on the director to enable CredHub. You may read more on how to provision UAA on the Director [in the following guide][2].
-  [2]:https://bosh.io/docs/director-users-uaa.html 
+  UAA is used by CredHub for user and client authentication. A UAA server must be configured on the director to enable CredHub. You may read more on how to provision UAA on the Director [in the following guide][3].
+  [3]:https://bosh.io/docs/director-users-uaa.html 
 
 1. Generate TLS keys for the API
 
@@ -26,8 +26,8 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
 
 1. [Optional] Configure a Luna SafeNet HSM
 
-  In the recommended production configuration, cryptographic operations are performed for CredHub via an external Luna SafeNet hardware security module (HSM). The HSM must be configured to allow access from the deployed CredHub instance and the operator must have all of the required credentials from the HSM. For more information on the required HSM values and how to configure an HSM, see the [configuring a Luna HSM][8] document.
-  [8]:https://github.com/pivotal-cf/credhub-release/blob/master/docs/configure-luna-hsm.md
+  In the recommended production configuration, cryptographic operations are performed for CredHub via an external Luna SafeNet hardware security module (HSM). The HSM must be configured to allow access from the deployed CredHub instance and the operator must have all of the required credentials from the HSM. For more information on the required HSM values and how to configure an HSM, see the [configuring a Luna HSM][4] document.
+  [4]:https://github.com/pivotal-cf/credhub-release/blob/master/docs/configure-luna-hsm.md
 
 1. [Optional] Configure an external database
 
@@ -38,8 +38,8 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
 
 1. Update the deployment manifest to include the CredHub release:
 
-  You may obtain the latest CredHub release at the [following location][6].
-[6]:https://github.com/pivotal-cf/credhub-release/releases
+  You may obtain the latest CredHub release at the [following location][5].
+  [5]:https://github.com/pivotal-cf/credhub-release/releases
 
     ```yaml
     releases:
@@ -148,9 +148,8 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
     ...
     ```
 
-    For a list of the full CredHub properties and default values, visit [the job spec properties][3] page.
-
-[3]:https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/spec
+    For a list of the full CredHub properties and default values, visit [the job spec properties][6] page.
+    [6]:https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/spec
 
 1. Add CredHub CLI and Director/CredHub UAA clients: 
 
@@ -172,7 +171,7 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
             scope: uaa.none
             authorities: credhub.read,credhub.write
             access-token-validity: 43200
-            secret: client-secret # <--- Replace with custom client secret
+            secret: example-secret # <--- Replace with custom client secret
     ```
 
 1. Configure the Director to utilize CredHub for manifest variables:
@@ -195,7 +194,7 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
           uaa:
             url: "https://127.0.0.1:8443"
             client_id: director_to_credhub
-            client_secret: client-secret
+            client_secret: example-secret
             ca_cert: |
               -----BEGIN CERTIFICATE-----
               ...
@@ -245,12 +244,13 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
 
 1. Create CredHub users in UAA:
 
-  To authenticate with CredHub to manage credentials, you must have a UAA user account with the scopes `credhub.read, credhub.write`. You may create users manually in UAA, [as described here][4], or you may configure UAA with an external LDAP provider.
+  To authenticate with CredHub to manage credentials, you must have a UAA user account with the scopes credhub.read, credhub.write. You may create users manually in UAA, as [described here][7], or you may configure UAA with an external LDAP provider.
+  [7]:https://docs.pivotal.io/pivotalcf/1-9/adminguide/uaa-user-management.html
 
   A sample process for creating a user in UAA is below:
 
   ```
-  user$ uaac token client get admin -s password
+  user$ uaac token client get admin -s example-password
     Successfully fetched token via client credentials grant.
     Target: https://uaa.example.com:8443
     Context: admin, from client admin
@@ -266,23 +266,23 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
   user$ uaac member add credhub.write username
     success
   ```
-  [4]:https://docs.pivotal.io/pivotalcf/1-7/adminguide/uaa-user-management.html
 
 1. Install CredHub CLI:
 
-  CredHub CLI offers a simple interface to manage credentials and CAs. You can download the [latest release here.][5]
-  [5]: https://github.com/pivotal-cf/credhub-cli/releases
+  CredHub CLI offers a simple interface to manage credentials and CAs. You can download the [latest release here.][8]
+  [8]:https://github.com/cloudfoundry-incubator/credhub-cli/releases
   
 1. Place or generate some credentials in CredHub using the CLI:
 
   ```
-  credhub set -t password -n /shell/password
-  credhub generate -t ssh -n /shell/pivotal/ssh_key
+  credhub set --type ssh --name /static/ssh_key --public ~/ssh.pub --private ~/ssh.key
+  credhub generate --type ssh --name /static/ssh_key
   ```
 
-4. Update BOSH deployment manifests:
+1. Update BOSH deployment manifests:
 
-  Now that you have a Director that integrates with CredHub, you can update your deployment manifests to leverage this feature. An example is shown below of a deployment manifest using credentials stored in CredHub. 
+  Now that you have a Director that integrates with CredHub, you can update your deployment manifests to leverage this feature. An example is shown below of a deployment manifest using two credentials - one stored and one generated by CredHub. Credentials that you wish to be generated automatically should be defined in the `variables` section with their desired generation parameters. More information on automatic generation can be [found here][9].
+  [9]:https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/credential-types.md#enabling-credhub-automatic-generation-in-releases
 
   ```yaml 
   name: Sample-Manifest
@@ -293,11 +293,13 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
     sha1: 893b10af531a7519da99bb8656cc07b8277d1692
   
   #...
+
+  variables: 
+  - name: generated/ssh_key
+    type: ssh
   
   jobs:
     - name: shell
-      templates:
-        - { release: shell, name: shell }
       instances: 1
       persistent_disk: 0
       resource_pool: vms
@@ -305,10 +307,14 @@ If you use [bosh-deployment][7] to deploy your director, including the ops file 
         - name: private
           static_ips: 10.0.0.100
           default: [dns, gateway]
-      properties:
-        shell:
-          users:
-            - name: pivotal
-              ssh_keys:
-                - ((/shell/pivotal/ssh_key))
+      templates:
+        - name: shell
+          release: shell
+          properties:
+            shell:
+              users:
+                - name: shell
+                  ssh_keys:
+                    - ((/static/ssh_key))
+                    - ((generated/ssh_key))
   ```
