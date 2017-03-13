@@ -149,7 +149,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
     ```
 
     For a list of the full CredHub properties and default values, visit [the job spec properties][6] page.
-    [6]:https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/spec
+  [6]:https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/spec
 
 1. Add CredHub CLI and Director/CredHub UAA clients: 
 
