@@ -49,6 +49,9 @@ networks:
     cloud_properties: 
       subnet: ((aws-subnet-id))
 
+external-ip: &external-ip ((external-ip))
+internal-ip: &internal-ip ((internal-ip))
+
 variables:
 - name: tls-ca
   type: certificate
@@ -59,10 +62,10 @@ variables:
   type: certificate
   options: 
     ca: tls-ca
-    common_name: ((external-ip))
+    common_name: *external-ip
     alternative_names: 
-    - ((external-ip))
-    - ((internal-ip))
+    - *external-ip
+    - *internal-ip
     - 127.0.0.1
 - name: uaa-jwt
   type: rsa 
