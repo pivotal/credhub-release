@@ -5,23 +5,25 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
-def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil, mtls_yaml = nil)
+def render_erb_to_yaml(data_storage_yaml, tls_yaml: nil, keys_yaml: nil, log_level: nil, mtls_yaml: nil, option_yaml: nil, provider_type_yaml: nil)
+  data_storage_yaml ||= '{ type: "in-memory", database: "my_db_name" }'
   tls_yaml ||= 'tls: { certificate: "foo", private_key: "bar" }'
   keys_yaml ||= '[{provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
                   {provider_name: "active_hsm", encryption_key_name: "another_keyname"}]'
   log_level ||= 'info'
-  option_yaml = <<-EOF
+  provider_type_yaml ||= 'hsm'
+  option_yaml ||= <<-EOF
         properties:
           credhub:
             encryption:
               keys: #{keys_yaml}
               providers:
                 - name: old_hsm
-                  type: hsm
+                  type: #{provider_type_yaml}
                   partition: "old_partition"
                   partition_password: "old_partpass"
                 - name: active_hsm
-                  type: hsm
+                  type: #{provider_type_yaml}
                   partition: "active_partition"
                   partition_password: "active_partpass"
             port: 9000
@@ -44,8 +46,8 @@ def render_erb_to_yaml(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_l
   renderer.render('../jobs/credhub/templates/application.yml.erb')
 end
 
-def render_erb_to_hash(data_storage_yaml, tls_yaml = nil, keys_yaml = nil, log_level = nil, mtls_yaml = nil)
-  rendered_application_yaml = render_erb_to_yaml(data_storage_yaml, tls_yaml, keys_yaml, log_level, mtls_yaml)
+def render_erb_to_hash(data_storage_yaml, **kwargs)
+  rendered_application_yaml = render_erb_to_yaml(data_storage_yaml, **kwargs)
 
   YAML.load(rendered_application_yaml)
 end
@@ -228,7 +230,7 @@ RSpec.describe 'the template' do
   describe 'when there are no trusted CAs for mutual TLS' do
     it 'adds mutual TLS properties' do
       mutual_tls = 'mutual_tls: { trusted_cas: [] }'
-      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, nil, nil, mutual_tls)
+      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', mtls_yaml: mutual_tls)
 
       expect(result['server']['ssl']['trust-store']).to be_nil
       expect(result['server']['ssl']['trust-store-password']).to be_nil
@@ -240,7 +242,7 @@ RSpec.describe 'the template' do
   describe 'when there is at least one trusted CA for mTLS' do
     it 'adds mutual TLS properties' do
       mutual_tls = 'mutual_tls: { trusted_cas: ["foo"] }'
-      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, nil, nil, mutual_tls)
+      result = render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', mtls_yaml: mutual_tls)
 
       expect(result['server']['ssl']['trust-store']).to eq '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
       expect(result['server']['ssl']['trust-store-password']).to eq 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
@@ -263,40 +265,34 @@ RSpec.describe 'the template' do
   describe '`encryption:` section' do
     describe '`keys:` section' do
       it 'raises an error when no key has been set active' do
-        expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', nil, '[{provider_name: "active_hsm", encryption_key_name: "keyname"}]', nil)}
+        expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }', keys_yaml: '[{provider_name: "active_hsm", encryption_key_name: "keyname"}]')}
             .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
       end
 
       it 'raises an error when more than one key has been set active' do
         expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
-                                   nil,
-                                   '[
+                                   keys_yaml: '[
                                       {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
                                       {provider_name: "active_hsm", encryption_key_name: "keyname2", active: true}
-                                   ]',
-                                   nil)}
+                                   ]')}
             .to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
       end
 
       it 'raises an error when keys from more than one provider are present' do
         expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
-                                   nil,
-                                   '[
+                                   keys_yaml: '[
                                       {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
                                       {provider_name: "old_hsm", encryption_key_name: "keyname2", active: false}
-                                   ]',
-                                   nil)}
+                                   ]')}
             .to raise_error('Data migration between encryption providers is not currently supported. Please update your manifest to use a single encryption provider.')
       end
 
       it 'considers "false" to be false' do
         expect {render_erb_to_hash('{ type: "in-memory", database: "my_db_name" }',
-                                   nil,
-                                   '[
+                                   keys_yaml: '[
                                       {provider_name: "active_hsm", encryption_key_name: "keyname1", active: true},
                                       {provider_name: "active_hsm", encryption_key_name: "keyname2", active: false}
-                                   ]',
-                                   nil)}
+                                   ]')}
             .to_not raise_error
       end
     end
@@ -322,6 +318,15 @@ RSpec.describe 'the template' do
           expect(second_key['encryption-key-name']).to eq 'another_keyname'
           expect(second_key['provider-name']).to eq 'active_hsm'
           expect(second_key.has_key?('active')).to eq false
+        end
+
+        it 'only allows provider types of "internal", "hsm", and "dsm"' do
+          expect {render_erb_to_hash(nil, provider_type_yaml: 'dev_internal')}
+              .to raise_error('The provided encryption provider type is not valid. Valid provider types are "hsm", "dsm", and "internal".')
+
+          %w[hsm dsm internal].each do |valid_type|
+            expect { render_erb_to_hash(nil, provider_type_yaml: valid_type) }.to_not raise_error
+          end
         end
       end
 

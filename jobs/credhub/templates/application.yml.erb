@@ -62,6 +62,13 @@
       "Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed."
   end
 
+  p('credhub.encryption.providers').each do |provider|
+    if !%w[hsm dsm internal].include?(provider['type'])
+      raise ArgumentError,
+        'The provided encryption provider type is not valid. Valid provider types are "hsm", "dsm", and "internal".'
+    end
+  end
+
   active_provider_name = active_key['provider_name']
   active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
 
