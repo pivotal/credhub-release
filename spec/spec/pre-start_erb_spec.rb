@@ -49,7 +49,7 @@ RSpec.describe "the template" do
     end
   end
 
-  context "with dev_internal" do
+  context "with internal" do
     it "skips hsm setup" do
       option_yaml = <<-EOF
         properties:
@@ -61,7 +61,7 @@ RSpec.describe "the template" do
                   dev_key: test-key
               providers:
                 - name: dev-key
-                  type: dev_internal
+                  type: internal
             tls:
               certificate: foo
               private_key: bar

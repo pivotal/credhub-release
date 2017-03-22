@@ -21,9 +21,9 @@ Every new revision of the deployment manifest should be backed up. It may be app
 
 The process for backing up the CredHub encryption key differs based on the encryption provider enabled. The following list includes recommendations for each supported type. 
 
-#### dev_internal
+#### internal
 
-The dev_internal provider performs encryption and decryption operations using a symmetrical AES key. This key, which is a hexadecimal value provided to the application during deployment, should be stored in a secure place so that it can be provided in a future recovery deployment. 
+The internal provider performs encryption and decryption operations using a symmetrical AES key. This key, which is a hexadecimal value provided to the application during deployment, should be stored in a secure place so that it can be provided in a future recovery deployment. 
 
 #### Luna HSM
 

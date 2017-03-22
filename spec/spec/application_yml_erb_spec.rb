@@ -325,7 +325,7 @@ RSpec.describe 'the template' do
         end
       end
 
-      context 'dev_internal encryption' do
+      context 'internal encryption' do
         context 'validation' do
           let(:bad_base_option_yaml) {
             <<-EOF
@@ -339,7 +339,7 @@ RSpec.describe 'the template' do
                   active: true
               providers:
                 - name: active_dev
-                  type: dev_internal
+                  type: internal
             port: 9000
             authentication:
               uaa:
@@ -382,7 +382,7 @@ RSpec.describe 'the template' do
                   active: true
               providers:
                 - name: active_dev
-                  type: dev_internal
+                  type: internal
             port: 9000
             authentication:
               uaa:
@@ -458,7 +458,7 @@ RSpec.describe 'the template' do
                   dev_key: "2345abcd1234abcd1234abcd1234abcd"
               providers:
                 - name: active_dev
-                  type: dev_internal
+                  type: internal
             port: 9000
             authentication:
               uaa:

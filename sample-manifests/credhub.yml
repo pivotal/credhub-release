@@ -61,5 +61,5 @@ instance_groups:
             active: true
           providers: 
           - name: internal 
-            type: dev_internal
+            type: internal
         log_level: info

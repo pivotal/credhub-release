@@ -141,7 +141,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
       encryption:
         providers: 
         - name: dev
-          type: dev_internal
+          type: internal
         keys: 
         - provider_name: dev
           dev_key: D673ACD01DA091B08144FBC8C0B5F524
