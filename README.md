@@ -12,11 +12,11 @@ See additional repos for more info:
 
 ## Deployment documentation
 
-* [Sample Deployment Manifests] (sample-manifests/)
-* [Integration with BOSH Director] (docs/bosh-install-with-credhub.md)
-* [Configuring a Luna HSM] (docs/configure-luna-hsm.md)
-* [Backup and Restore Recommendations] (docs/backup-restore-recommendations.md)
-* [Deployment Troubleshooting Guide] (docs/deployment-troubleshooting-guide.md)
+* [Sample Deployment Manifests](sample-manifests/)
+* [Integration with BOSH Director](docs/bosh-install-with-credhub.md)
+* [Configuring a Luna HSM](docs/configure-luna-hsm.md)
+* [Backup and Restore Recommendations](docs/backup-restore-recommendations.md)
+* [Deployment Troubleshooting Guide](docs/deployment-troubleshooting-guide.md)
 
 ## Updating this repo's submodule before a BOSH release
 
