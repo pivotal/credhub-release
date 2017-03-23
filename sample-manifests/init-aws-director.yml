@@ -136,7 +136,7 @@ jobs:
               active: true
             providers:
             - name: internal
-              type: internal
+              type: dev_internal
     
     - name: postgres
       release: bosh 
