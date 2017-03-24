@@ -162,6 +162,11 @@ This error indicates that a required property has not been defined in the deploy
 The referenced line may not point exactly to the missing value. For instance, an error may point to the line `<% if active_provider['type'] == 'hsm' %>` when it cannot properly resolve the provider of the active key. You should validate the configuration of the entire section that holds the value for these errors, e.g. the encryption section for an error involving active_provider['type'].
 
 ***
+#### [Configuration error] Error: Failed to obtain valid token from UAA
+
+This error indicates that the director was unable to obtain a token from the UAA server to authenticate with CredHub. This may be caused by an invalid client name or secret in the `director.config_server.uaa` configuration or a network issue that prevents the director from reaching UAA at the configured location. 
+
+***
 #### [Pre-start error] keytool error: java.lang.Exception: Input not an X.509 certificate
 
 This error indicates that CredHub was unable to load either the database CA or TLS certificate from the manifest into a Java KeyStore. You may validate that the provided certificates are valid with the command `openssl x509 -text -noout -in cert.pem`. You should also validate that the indentation and formatting of the certificates is as expected in the manifest.
