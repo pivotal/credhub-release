@@ -1,0 +1,5 @@
+---
+builds:
+  fb40deff-b429-4a82-b6dd-b69e5f7a0d2d:
+    version: 0.6.0
+format-version: '2'

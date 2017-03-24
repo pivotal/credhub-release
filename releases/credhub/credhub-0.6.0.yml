@@ -1,0 +1,31 @@
+---
+packages:
+- name: credhub
+  version: f795d1170f9aec29f1ed7b62afab028a5cda31d6
+  fingerprint: f795d1170f9aec29f1ed7b62afab028a5cda31d6
+  sha1: 6a5d490955040d77baa2bf20e28e33794ffdbb04
+  dependencies:
+  - openjdk_1.8.0
+- name: lunaclient
+  version: b922e045db5246ec742f0c4d1496844942d6167a
+  fingerprint: b922e045db5246ec742f0c4d1496844942d6167a
+  sha1: 84355cd3e736944c91af8e4f492973caf5d635be
+  dependencies: []
+- name: openjdk_1.8.0
+  version: 6b146d674953d7546b9f3d6f869bb848d4e58f77
+  fingerprint: 6b146d674953d7546b9f3d6f869bb848d4e58f77
+  sha1: b8166fcd17828569bfea7cef9e2f27f353f91115
+  dependencies: []
+jobs:
+- name: credhub
+  version: f19acdc47abf02e08cfbb44a3a104b96c78ca686
+  fingerprint: f19acdc47abf02e08cfbb44a3a104b96c78ca686
+  sha1: d9ef1f2d1dddb6e822b4619019fc9a188a746938
+license:
+  version: '08f2aa9f376c717e823b012885bc61cecf8c816e'
+  fingerprint: '08f2aa9f376c717e823b012885bc61cecf8c816e'
+  sha1: a712018cf0d024dae909cdd472b49bf6bd95135b
+commit_hash: 3821acae
+uncommitted_changes: true
+name: credhub
+version: 0.6.0
