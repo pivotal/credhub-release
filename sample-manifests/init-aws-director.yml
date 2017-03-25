@@ -8,24 +8,24 @@ name: &name aws-director-credhub
 
 releases:
 - name: bosh
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.2
-  sha1: d4635b4b82b0dc5fd083b83eb7e7405832f6654b
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
+  sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
 - name: uaa
-  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=24
-  sha1: d0feb5494153217f3d62b346f426ad2b2f43511a
+  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=28
+  sha1: f31f4358664cb067587143848a85f0e6f7a45485
 - name: credhub
-  url: https://github.com/pivotal-cf/credhub-release/releases/download/0.5.1/credhub-0.5.1.tgz
-  sha1: fcfa37835c813b175defe01d8fae7d57e7ef669c
+  url: https://github.com/pivotal-cf/credhub-release/releases/download/0.6.0/credhub-0.6.0.tgz
+  sha1: 0170bfa35e05e37d76c389e24bf5c339a871c1ac
 - name: bosh-aws-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=56
-  sha1: 2b85e1bdc31f41a26b454f4731bf2d1df2ea17de
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=62
+  sha1: f36967927ceae09e5663a41fdda199edfe649dc6
 
 resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3312.7
-    sha1: e11da993d8bad4305e4bc51117f1de88a63f76bb
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3363.12
+    sha1: 3f4251c27a1173812199ae6301dc968660d8ae8b
   cloud_properties:
     instance_type: m3.xlarge
     ephemeral_disk: {size: 25000, type: gp2}
@@ -34,14 +34,14 @@ resource_pools:
 disk_pools:
 - name: disks
   disk_size: 100000
-  cloud_properties: 
+  cloud_properties:
     type: gp2
 
 networks:
 - name: public
   type: vip
 - name: private
-  type: manual 
+  type: manual
   subnets:
   - range: 10.0.0.0/24
     gateway: 10.0.0.1
@@ -53,24 +53,36 @@ external-ip: &external-ip ((external-ip))
 internal-ip: &internal-ip ((internal-ip))
 
 variables:
-- name: tls-ca
+- name: credhub-mtls-ca
   type: certificate
-  options: 
+  options:
+    common_name: 'CredHub mTLS CA'
+    is_ca: true
+- name: bosh-ca
+  type: certificate
+  options:
     common_name: 'BOSH Director CA'
     is_ca: true
-- name: tls
+- name: credhub-tls
   type: certificate
-  options: 
-    ca: tls-ca
+  options:
+    ca: bosh-ca
     common_name: *external-ip
-    alternative_names: 
+    alternative_names:
+    - *external-ip
+    - *internal-ip
+    - 127.0.0.1
+- name: uaa-tls
+  type: certificate
+  options:
+    ca: bosh-ca
+    common_name: *external-ip
+    alternative_names:
     - *external-ip
     - *internal-ip
     - 127.0.0.1
 - name: uaa-jwt
   type: rsa 
-- name: postgres-admin
-  type: password
 - name: uaa-users-admin
   type: password
 - name: uaa-users-hm
@@ -91,6 +103,10 @@ variables:
   type: password
 - name: mbus
   type: password
+- name: database-admin
+  type: password
+- name: credhub-encryption-password
+  type: password
 
 jobs:
   - name: *name
@@ -104,7 +120,7 @@ jobs:
         default:
         - dns
         - gateway
-      - name: public 
+      - name: public
         static_ips: 
         - ((external-ip))
 
@@ -118,36 +134,39 @@ jobs:
             uaa:
               url: *uaa-url
               verification_key: ((uaa-jwt.public_key))
+            mutual_tls:
+              trusted_cas:
+              - ((credhub-mtls-ca.certificate))
           data_storage:
             type: postgres
             host: 127.0.0.1
             port: 5432
-            username: postgres
-            password: ((postgres-admin))
+            username: admin
+            password: ((database-admin))
             database: credhub
-          tls:
-            certificate: ((tls.certificate))
-            private_key: ((tls.private_key))
+          tls: ((credhub-tls))
           log_level: info
           encryption:
             keys:
-            - provider_name: internal
-              dev_key: ((credhub-encryption-key))
+            - provider_name: int
+              encryption_password: ((credhub-encryption-password))
               active: true
             providers:
-            - name: internal
-              type: dev_internal
-    
+            - name: int
+              type: internal
+
     - name: postgres
-      release: bosh 
-      properties: 
+      release: bosh
+      properties:
         postgres: &db
           host: 127.0.0.1
           port: 5432
-          user: postgres
-          password: ((postgres-admin))
+          user: admin
+          password: ((database-admin))
           database: bosh
-          additional_databases: [uaa, credhub]
+          additional_databases: 
+          - uaa
+          - credhub
           adapter: postgres
 
     - name: uaa
@@ -160,15 +179,15 @@ jobs:
             - name: admin
               password: ((uaa-users-admin))
               groups:
-                - scim.write
-                - scim.read
-                - bosh.admin
-                - credhub.read
-                - credhub.write
+              - scim.write
+              - scim.read
+              - bosh.admin
+              - credhub.read
+              - credhub.write
             - name: hm
               password: ((uaa-users-hm))
               groups:
-                - bosh.admin
+              - bosh.admin
           clients:
             bosh_cli:
               override: true
@@ -196,8 +215,8 @@ jobs:
           admin: {client_secret: ((uaa-admin))}
           login: {client_secret: ((uaa-login))}
           zones: {internal: {hostnames: []}}
-          sslCertificate: ((tls.certificate))
-          sslPrivateKey: ((tls.private_key))
+          sslCertificate: ((uaa-tls.certificate))
+          sslPrivateKey: ((uaa-tls.private_key))
           jwt:
             revocable: true
             policy:
@@ -215,8 +234,8 @@ jobs:
             name: uaa
           roles:
           - tag: admin
-            name: postgres
-            password: ((postgres-admin))
+            name: admin
+            password: ((database-admin))
 
         login:
           saml:
@@ -233,12 +252,12 @@ jobs:
           config_server:
             enabled: true
             url: "https://127.0.0.1:8844/api/"
-            ca_cert: ((tls.ca))
+            ca_cert: ((credhub-tls.ca))
             uaa:
               url: *uaa-url
               client_id: director_to_credhub
               client_secret: ((uaa-clients-director-to-credhub))
-              ca_cert: ((tls.ca))
+              ca_cert: ((uaa-tls.ca))
           db: *db
           cpi_job: aws_cpi
           max_threads: 10
@@ -251,7 +270,7 @@ jobs:
           ssl:
             cert: ((tls.certificate))
             key: ((tls.private_key))
-          trusted_certs: ((tls.ca))
+          trusted_certs: ((bosh-ca.certificate))
         agent: &agent
           mbus: nats://nats:((nats))@((internal-ip)):4222
           ntp: *ntp
@@ -298,14 +317,6 @@ jobs:
             user: agent
             password: ((blobstore-agent))
 
-    - name: powerdns
-      release: bosh
-      properties:
-        dns:
-          address: ((internal-ip))
-          domain_name: cf.internal 
-          db: *db
-
     - name: health_monitor
       release: bosh
       properties:
@@ -333,8 +344,8 @@ jobs:
         - 1.pool.ntp.org
         registry: *registry
         blobstore: *blobstore
-        nats: *nats
         agent: *agent
+        nats: *nats
 
 cloud_provider:
   template:

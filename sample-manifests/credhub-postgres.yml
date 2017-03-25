@@ -26,22 +26,31 @@ update:
   canary_watch_time: 10000-120000
 
 variables:
-- name: credhub/encrypt-key
+- name: credhub-encryption-password
   type: password
-  options: 
-    only_hex: true
-    length: 32
-- name: credhub/tls
-  type: certificate 
-  options: 
-    common_name: *ext
-    alternative_names: 
-    - *ext
-- name: database/admin
+  options:
+    length: 40
+- name: credhub-mtls-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: 'CredHub mTLS CA'
+- name: credhub-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub CA
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternative_names:
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
+- name: database-admin
   type: password
-  options: 
-    length: 30
-    exclude_special: true
 
 instance_groups: 
 - name: credhub-postgres
@@ -51,39 +60,40 @@ instance_groups:
   stemcell: default
   networks:
   - name: west
+    static_ips: [((internal-ip-address))]
     default: [dns, gateway]
   - name: public
-    static_ips: [*ext]
-
-  external_ip: &ext "198.51.100.100"
-  uaa_url: &uaa "https://uaa.example.com:8443" 
+    static_ips: [((external-ip-address))]
 
   jobs:
   - name: credhub
     release: credhub
-    properties: 
+    properties:
       credhub:
         port: 8844
         data_storage:
           type: postgres
-          username: credhub
-          password: ((database/admin))
+          username: admin
+          password: ((database-admin))
           host: 127.0.0.1
           port: 5432
           database: credhub
         authentication:
           uaa:
-            url: *uaa
-            verification_key: ((/uaa/jwt.public_key)) 
-        tls: ((credhub/tls)) 
+            url: ((uaa-url))
+            verification_key: ((uaa-jwt.public_key))
+          mutual_tls:
+            trusted_cas:
+            - ((credhub-mtls-ca.certificate))
+        tls: ((credhub-tls))
         encryption:
           keys: 
-          - provider_name: internal
-            dev_key: ((credhub/encrypt-key))  
+          - provider_name: int
+            encryption_password: ((credhub-encryption-password))
             active: true
           providers: 
-          - name: internal 
-            type: dev_internal
+          - name: int
+            type: internal
         log_level: info
 
   - name: postgres
@@ -95,5 +105,5 @@ instance_groups:
         databases: 
         - name: credhub
         roles: 
-        - name: credhub 
-          password: ((database/admin))
+        - name: admin
+          password: ((database-admin))

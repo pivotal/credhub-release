@@ -14,9 +14,6 @@ aws-default-security-group:
 internal-ip: 
 external-ip: 
 
-# Format is 32 character length hexadecimal string
-credhub-encryption-key: 
-
 # Key name and local path to SSH key
 aws-ssh-key-name: 
 ssh-username: 

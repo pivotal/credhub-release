@@ -9,6 +9,9 @@
             uaa:
               url: *uaa_url
               verification_key: ((uaa-jwt.public_key))
+            mutual_tls:
+              trusted_cas:
+              - ((credhub-mtls-ca.certificate))
           data_storage:
             type: mysql
             host: 10.0.0.20
@@ -16,9 +19,9 @@
             username: admin
             password: ((mysql-admin))
             database: credhub
-          tls:
-            certificate: ((tls.certificate))
-            private_key: ((tls.private_key))
+            require_tls: true
+            tls_ca: ((database-CA))
+          tls: ((tls))
           log_level: info
           encryption:
             keys:

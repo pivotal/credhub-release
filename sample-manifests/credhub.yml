@@ -19,6 +19,31 @@ update:
   update_watch_time: 10000-120000
   canary_watch_time: 10000-120000
 
+variables:
+- name: credhub-encryption-password
+  type: password
+  options:
+    length: 40
+- name: credhub-mtls-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub mTLS CA
+- name: credhub-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub CA
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternative_names:
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
+
 instance_groups: 
 - name: credhub
   instances: 1
@@ -50,16 +75,19 @@ instance_groups:
         authentication:
           uaa:
             url: ((uaa-url))
-            verification_key: ((uaa-public-verification-key))
+            verification_key: ((uaa-jwt.public_key))
+          mutual_tls:
+            trusted_cas:
+            - ((credhub-mtls-ca.certificate))
         tls: 
-          certificate: ((credhub-tls-certificate)) 
-          private_key: ((credhub-tls-private-key)) 
+          certificate: ((credhub-tls.certificate)) 
+          private_key: ((credhub-tls.private_key)) 
         encryption:
           keys: 
-          - provider_name: internal
-            dev_key: ((encryption-key-value)) 
+          - provider_name: int
+            encryption_password: ((credhub-encryption-password))
             active: true
           providers: 
-          - name: internal 
-            type: dev_internal
+          - name: int
+            type: internal
         log_level: info

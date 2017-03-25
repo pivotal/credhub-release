@@ -28,49 +28,48 @@ update:
   canary_watch_time: 10000-120000
 
 variables:
-- name: credhub/encrypt-key
+- name: credhub-encryption-password
   type: password
   options:
-    only_hex: true
-    length: 32
-- name: credhub/tls
+    length: 40
+- name: credhub-mtls-ca
   type: certificate
   options:
-    ca: TeamCA
-    common_name: *ext
-    alternative_names:
-    - *ext
-- name: uaa/tls
+    is_ca: true
+    common_name: CredHub mTLS CA
+- name: credhub-ca
   type: certificate
   options:
-    ca: TeamCA
-    common_name: *ext
+    is_ca: true
+    common_name: CredHub CA
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
     alternative_names:
-    - *ext
-- name: uaa/jwt
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
+- name: uaa-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternatiive_names:
+    - ((external-ip-address))
+- name: uaa-jwt
   type: rsa
   options:
     key_length: 4096
-- name: uaa/users/admin
+- name: uaa-users-admin
   type: password
-  options: 
-    length: 30
-    exclude_special: true
-- name: uaa/admin
+- name: uaa-admin
   type: password
-  options: 
-    length: 30
-    exclude_special: true
-- name: uaa/login
+- name: uaa-login
   type: password
-  options: 
-    length: 30
-    exclude_special: true
-- name: database/admin
+- name: database-admin
   type: password
-  options: 
-    length: 30
-    exclude_special: true
 
 instance_groups: 
 - name: credhub-postgres-uaa
@@ -80,39 +79,40 @@ instance_groups:
   stemcell: default
   networks:
   - name: west
+    static_ips: [((internal-ip-address))]
     default: [dns, gateway]
   - name: public
-    static_ips: [*ext]
-
-  external_ip: &ext "198.51.100.100"
-  uaa_url: &uaa "https://uaa.example.com:8443"
+    static_ips: [((external-ip-address))]
 
   jobs:
   - name: credhub
     release: credhub
-    properties: 
+    properties:
       credhub:
         port: 8844
         data_storage:
           type: postgres
           username: admin
-          password: ((database/admin))
+          password: ((database-admin))
           host: 127.0.0.1
           port: 5432
           database: credhub
         authentication:
           uaa:
-            url: *ext
-            verification_key: ((uaa/jwt.public_key)) 
-        tls: ((credhub/tls))
+            url: *uaa-url
+            verification_key: ((uaa-jwt.public_key))
+          mutual_tls:
+            trusted_cas:
+            - ((credhub-mtls-ca.certificate))
+        tls: ((credhub-tls))
         encryption:
           keys: 
-          - provider_name: internal
-            dev_key: ((credhub/encrypt-key)) 
+          - provider_name: int
+            encryption_password: ((credhub-encryption-password))
             active: true
           providers: 
-          - name: internal 
-            type: dev_internal
+          - name: int
+            type: internal
         log_level: info
 
   - name: postgres
@@ -125,55 +125,58 @@ instance_groups:
         - name: credhub
         - name: uaa
         roles: 
-        - name: admin 
-          password: ((database/admin))
+        - name: admin
+          password: ((database-admin))
 
   - name: uaa
     release: uaa
     properties:
       uaa:
-        url: *uaa 
+        url: &uaa-url https://((external-ip-address)):8443 
         scim:
           users:
           - name: admin
-            password: ((uaa/users/admin))
+            password: ((uaa-users-admin))
             groups:
               - scim.write
               - scim.read
               - bosh.admin
+              - credhub.read
+              - credhub.write
         clients:
           credhub_cli:
             override: true
             authorized-grant-types: password,refresh_token
             scope: credhub.read,credhub.write
             authorities: uaa.resource
-            access-token-validity: 120
-            refresh-token-validity: 86400
+            access-token-validity: 30
+            refresh-token-validity: 3600
             secret: ""
-        admin: {client_secret: ((uaa/admin))}
-        login: {client_secret: ((uaa/login))}
+        admin: {client_secret: ((uaa-admin))}
+        login: {client_secret: ((uaa-login))}
         zones: {internal: {hostnames: []}}
-        sslCertificate: ((uaa/tls.certificate))
-        sslPrivateKey: ((uaa/tls.private_key))
+        sslCertificate: ((uaa-tls.certificate))
+        sslPrivateKey: ((uaa-tls.private_key))
         jwt:
           revocable: true
           policy:
             active_key_id: key-1
             keys:
               key-1:
-                signingKey: ((uaa/jwt.private_key))
+                signingKey: ((uaa-jwt.private_key))
       uaadb:
         address: 127.0.0.1
         port: 5432
         db_scheme: postgresql
         databases:
-        - {tag: uaa, name: uaa}
+        - tag: uaa
+          name: uaa
         roles:
         - tag: admin
           name: admin
-          password: ((database/admin))
+          password: ((database-admin))
       login:
         saml:
-          serviceProviderCertificate: ((uaa/tls.certificate))
-          serviceProviderKey: ((uaa/tls.private_key))
+          serviceProviderCertificate: ((uaa-tls.certificate))
+          serviceProviderKey: ((uaa-tls.private_key))
           serviceProviderKeyPassword: ""

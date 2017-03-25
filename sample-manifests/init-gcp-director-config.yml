@@ -13,9 +13,6 @@ gcp-escaped-json-key:
 internal-ip: 
 external-ip: 
 
-# Format is 32 character length hexadecimal string
-credhub-encryption-key: 
-
 # SSH username and local path to SSH key
 ssh-username: 
 ssh-path-to-private-key: 
