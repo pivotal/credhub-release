@@ -5,10 +5,10 @@ The Luna HSM is designed to not allow the removal of key material stored on the 
 The two recommended options for data resiliency with a Luna HSM provider are to setup a redundant HSM configuration or to manage a 'Luna Backup HSM' device.
 
 Starting in v0.5.0, CredHub supports management and integration to an HA Luna HSM cluster. In this configuration, multiple (N) HSMs service requests using mirrored partitions, each containing a copy of the encryption key. This provides redundancy so that N–1 HSMs may fail without the loss availability or key material. For more information on how to configure multiple Luna HSMs in a high-availability architecture, see the [Configure Luna HSM][1] documentation.
+
 [1]:configure-luna-hsm.md
 
-Additional information on backup and restore to a Luna Backup HSM can be [found here][2].
-[2]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
+Additional information on backup and restore to a Luna Backup HSM can be [found here.](http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm)
 
 ### Safety Controls 
 
@@ -31,6 +31,7 @@ Caution:  You have only TWO HSM Admin logins attempts left (including
 ```
 
 [Per Luna documentation][3], the threshold number cannot be adjusted and this feature cannot be turned off. It should be noted that this only applies to administrative login attempts in the Luna console after a successful SSH into the HSM. This requirement will prevent a non-authenticated user from maliciously triggering this threshold, however, extra care should be exercised in handling the HSM SSH credentials with this in mind. 
+
 [3]:https://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/administration/failed_logins.htm
 
 #### Partition Owner

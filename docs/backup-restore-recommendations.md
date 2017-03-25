@@ -35,12 +35,11 @@ An example of an HA HSM configuration can be [found here][1].
 
 Additional information on backup and restore to a Luna Backup HSM can be [found here][2].
 
-If you are using an Luna HSM from AWS, you may also refer to [their reference documentation][5] on HA and backup. 
-
-[5]:http://docs.aws.amazon.com/cloudhsm/latest/userguide/configuring-ha.html
+If you are using an Luna HSM from AWS, you may also refer to [their reference documentation][3] on HA and backup. 
 
 [1]:https://github.com/pivotal-cf/credhub-release/blob/master/sample-manifests/snippet-hsm-encryption.yml#L41-L55
 [2]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
+[3]:http://docs.aws.amazon.com/cloudhsm/latest/userguide/configuring-ha.html
 
 #### Frequency
 The backup frequency of the encryption key must match the frequency with which you rotate this key so that you always have access to the latest value. 
@@ -56,10 +55,8 @@ If you are using PCF MySQL, we suggest following their [backup and restore guide
 
 For more information about database backups:
 
-[MySQL][3]
-[3]:http://dev.mysql.com/doc/refman/5.7/en/backup-and-recovery.html
-[Postgres][4]
-[4]:https://www.postgresql.org/docs/9.5/static/backup.html
+[MySQL](http://dev.mysql.com/doc/refman/5.7/en/backup-and-recovery.html)
+[Postgres](https://www.postgresql.org/docs/9.5/static/backup.html)
 
 ##### Frequency
 If you choose to only perform periodic backups, or your HA configuration has completely failed, the data loss incurred will be any actions performed in CredHub since the previous backup. 

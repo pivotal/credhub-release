@@ -1,5 +1,4 @@
-This guide provides instructions to create new AWS CloudHSM devices and configure them to work with CredHub. If you choose to use a Luna SafeNet HSM that is not provided by AWS, you may skip over the device allocation portion to [initialize and configured your HSMs.][1]
-[1]:#initialize-and-configure-new-hsms
+This guide provides instructions to create new AWS CloudHSM devices and configure them to work with CredHub. If you choose to use a Luna SafeNet HSM that is not provided by AWS, you may skip over the device allocation portion to [initialize and configured your HSMs.](#initialize-and-configure-new-hsms)
 
 It is recommended that you configure at least two HSMs if the data stored in CredHub is critical. Appropriately configured HSMs allow key replication which provides redundancy of the key material in the event of an HSM device failure. If you choose to run a single HSM, your CredHub data will not be accessible in the event of a device failure. 
 
@@ -189,16 +188,11 @@ When generating a new key, it is recommended that you review the list of keys on
 
 After completing the above steps, you should have the following information for the CredHub deployment manifest:
 
-1. [Encryption Key Name][2]
-1. [HSM Certificate][3]
-1. [Partition name and password][4]
-1. [Client certificate and private key][5]
-1. [Partition serial numbers][6]
-[2]:#encryption-keys-on-the-hsm
-[3]:#retrieve-hsm-certificate
-[4]:#create-hsm-partition
-[5]:#establish-a-network-trust-link-between-the-client-and-the-hsms
-[6]:#create-hsm-partition
+1. [Encryption Key Name](#encryption-keys-on-the-hsm)
+1. [HSM Certificate](#retrieve-hsm-certificate)
+1. [Partition name and password](#create-hsm-partition)
+1. [Client certificate and private key](#establish-a-network-trust-link-between-the-client-and-the-hsms)
+1. [Partition serial numbers](#create-hsm-partition)
 
 These should be entered in the manifest as shown below - 
 
@@ -206,26 +200,26 @@ These should be entered in the manifest as shown below -
 credhub: 
   properties: 
     encryption:
-	  keys:
-	    - provider_name: primary
-	      encryption_key_name: [encryption-key-name]
-	      active: true
-	  providers:
-	    - name: primary
-	      type: hsm
-	      partition: [partition-name]
-	      partition_password: [partition-password]
-	      client_certificate: [client-certificate]
-	      client_key: [client-private-key]
-	      servers: 
-	      - host: 10.0.0.1
-	        port: 1792
-	        certificate: [hsm-certificate]
-	        partition_serial_number: [partition-serial-number]
-	      - host: 10.0.0.10
-	        port: 1792
-	        certificate: [hsm-certificate]
-	        partition_serial_number: [partition-serial-number]
+      keys:
+        - provider_name: primary
+          encryption_key_name: [encryption-key-name]
+          active: true
+      providers:
+        - name: primary
+          type: hsm
+          partition: [partition-name]
+          partition_password: [partition-password]
+          client_certificate: [client-certificate]
+          client_key: [client-private-key]
+          servers: 
+          - host: 10.0.0.1
+            port: 1792
+            certificate: [hsm-certificate]
+            partition_serial_number: [partition-serial-number]
+          - host: 10.0.0.10
+            port: 1792
+            certificate: [hsm-certificate]
+            partition_serial_number: [partition-serial-number]
 ```
 
 ## Renew or Rotate a Client Certificate 
