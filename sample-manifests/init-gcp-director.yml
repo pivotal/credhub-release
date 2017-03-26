@@ -74,6 +74,15 @@ variables:
     - *external-ip
     - *internal-ip
     - 127.0.0.1
+- name: director-tls
+  type: certificate
+  options:
+    ca: bosh-ca
+    common_name: *external-ip
+    alternative_names:
+    - *external-ip
+    - *internal-ip
+    - 127.0.0.1
 - name: uaa-tls
   type: certificate
   options:
@@ -110,240 +119,240 @@ variables:
 - name: credhub-encryption-password
   type: password
 
-jobs:
-  - name: *name
-    instances: 1
-    resource_pool: vms
-    persistent_disk_pool: disks
-    networks:
-      - name: private
-        static_ips: 
-        - ((internal-ip))
-        default:
-        - dns
-        - gateway
-      - name: public
-        static_ips: 
-        - ((external-ip))
+instance_groups:
+- name: *name
+  instances: 1
+  resource_pool: vms
+  persistent_disk_pool: disks
+  networks:
+    - name: private
+      static_ips: 
+      - ((internal-ip))
+      default:
+      - dns
+      - gateway
+    - name: public
+      static_ips: 
+      - ((external-ip))
 
-    templates:
-    - name: credhub
-      release: credhub
-      properties:
-        credhub:
-          port: 8844
-          authentication:
-            uaa:
-              url: *uaa-url
-              verification_key: ((uaa-jwt.public_key))
-            mutual_tls:
-              trusted_cas:
-              - ((credhub-mtls-ca.certificate))
-          data_storage:
-            type: postgres
-            host: 127.0.0.1
-            port: 5432
-            username: admin
-            password: ((database-admin))
-            database: credhub
-          tls: ((credhub-tls))
-          log_level: info
-          encryption:
-            keys:
-            - provider_name: int
-              encryption_password: ((credhub-encryption-password))
-              active: true
-            providers:
-            - name: int
-              type: internal
-
-    - name: postgres
-      release: bosh
-      properties:
-        postgres: &db
+  jobs:
+  - name: credhub
+    release: credhub
+    properties:
+      credhub:
+        port: 8844
+        authentication:
+          uaa:
+            url: *uaa-url
+            verification_key: ((uaa-jwt.public_key))
+          mutual_tls:
+            trusted_cas:
+            - ((credhub-mtls-ca.certificate))
+        data_storage:
+          type: postgres
           host: 127.0.0.1
           port: 5432
-          user: admin
-          password: ((database-admin))
-          database: bosh
-          additional_databases: 
-          - uaa
-          - credhub
-          adapter: postgres
-
-    - name: uaa
-      release: uaa
-      properties:
-        uaa:
-          url: &uaa-url "https://((external-ip)):8443"
-          scim:
-            users:
-            - name: admin
-              password: ((uaa-users-admin))
-              groups:
-              - scim.write
-              - scim.read
-              - bosh.admin
-              - credhub.read
-              - credhub.write
-            - name: hm
-              password: ((uaa-users-hm))
-              groups:
-              - bosh.admin
-          clients:
-            bosh_cli:
-              override: true
-              authorized-grant-types: password,refresh_token
-              scope: openid,bosh.admin,bosh.*.admin
-              authorities: uaa.none
-              access-token-validity: 120
-              refresh-token-validity: 43200
-              secret: ""
-            credhub_cli:
-              override: true
-              authorized-grant-types: password,refresh_token
-              scope: credhub.read,credhub.write
-              authorities: uaa.resource
-              access-token-validity: 30
-              refresh-token-validity: 3600
-              secret: ""
-            director_to_credhub:
-              override: true
-              authorized-grant-types: client_credentials
-              scope: uaa.none
-              authorities: credhub.read,credhub.write
-              access-token-validity: 43200
-              secret: ((uaa-clients-director-to-credhub))
-          admin: {client_secret: ((uaa-admin))}
-          login: {client_secret: ((uaa-login))}
-          zones: {internal: {hostnames: []}}
-          sslCertificate: ((uaa-tls.certificate))
-          sslPrivateKey: ((uaa-tls.private_key))
-          jwt:
-            revocable: true
-            policy:
-              active_key_id: key-1
-              keys:
-                key-1:
-                  signingKey: ((uaa-jwt.private_key))
-  
-        uaadb:
-          address: 127.0.0.1
-          port: 5432
-          db_scheme: postgresql
-          databases:
-          - tag: uaa
-            name: uaa
-          roles:
-          - tag: admin
-            name: admin
-            password: ((database-admin))
-
-        login:
-          saml:
-            serviceProviderCertificate: ((tls.certificate))
-            serviceProviderKey: ((tls.private_key))
-            serviceProviderKeyPassword: ""
-
-    - name: director
-      release: bosh
-      properties:
-        director: &director
-          address: ((external-ip))
-          name: *name
-          config_server:
-            enabled: true
-            url: "https://127.0.0.1:8844/api/"
-            ca_cert: ((credhub-tls.ca))
-            uaa:
-              url: *uaa-url
-              client_id: director_to_credhub
-              client_secret: ((uaa-clients-director-to-credhub))
-              ca_cert: ((uaa-tls.ca))
-          db: *db
-          cpi_job: google_cpi
-          max_threads: 10
-          enable_snapshots: false
-          user_management:
-            provider: uaa
-            uaa:
-              url: *uaa-url
-              public_key: ((uaa-jwt.public_key))
-          ssl:
-            cert: ((tls.certificate))
-            key: ((tls.private_key))
-          trusted_certs: ((bosh-ca.certificate))
-        agent: &agent
-          mbus: nats://nats:((nats))@((internal-ip)):4222
-          ntp: *ntp
-          blobstore:
-             options:
-               endpoint: http://((internal-ip)):25250
-               user: agent
-               password: ((blobstore-agent))
-        ntp: *ntp
-        nats: *nats
-        blobstore: *blobstore
-
-    - name: registry
-      release: bosh
-      properties:
-        registry: &registry
-          address: ((internal-ip))
-          host: ((internal-ip))
-          db: *db
-          http: {user: admin, password: ((registry-admin)), port: 25777}
           username: admin
-          password: ((registry-admin))
-          port: 25777
-          use_gce_metadata: false
+          password: ((database-admin))
+          database: credhub
+        tls: ((credhub-tls))
+        log_level: info
+        encryption:
+          keys:
+          - provider_name: int
+            encryption_password: ((credhub-encryption-password))
+            active: true
+          providers:
+          - name: int
+            type: internal
 
-    - name: nats
-      release: bosh
-      properties:
-        nats: &nats
-          address: 127.0.0.1
-          user: nats
-          password: ((nats))
+  - name: postgres
+    release: bosh
+    properties:
+      postgres: &db
+        host: 127.0.0.1
+        port: 5432
+        user: admin
+        password: ((database-admin))
+        database: bosh
+        additional_databases: 
+        - uaa
+        - credhub
+        adapter: postgres
 
-    - name: blobstore
-      release: bosh
-      properties:
-        blobstore: &blobstore
-          address: ((internal-ip))
-          port: 25250
-          provider: dav
-          director:
-            user: director
-            password: ((blobstore-director))
-          agent:
-            user: agent
-            password: ((blobstore-agent))
-
-    - name: health_monitor
-      release: bosh
-      properties:
-        hm:
-          director_account:
-            user: hm
+  - name: uaa
+    release: uaa
+    properties:
+      uaa:
+        url: &uaa-url "https://((external-ip)):8443"
+        scim:
+          users:
+          - name: admin
+            password: ((uaa-users-admin))
+            groups:
+            - scim.write
+            - scim.read
+            - bosh.admin
+            - credhub.read
+            - credhub.write
+          - name: hm
             password: ((uaa-users-hm))
-            ca_cert: ((tls.ca))
-          resurrector_enabled: true
-        director: *director
-        nats: *nats
+            groups:
+            - bosh.admin
+        clients:
+          bosh_cli:
+            override: true
+            authorized-grant-types: password,refresh_token
+            scope: openid,bosh.admin,bosh.*.admin
+            authorities: uaa.none
+            access-token-validity: 120
+            refresh-token-validity: 43200
+            secret: ""
+          credhub_cli:
+            override: true
+            authorized-grant-types: password,refresh_token
+            scope: credhub.read,credhub.write
+            authorities: uaa.resource
+            access-token-validity: 30
+            refresh-token-validity: 3600
+            secret: ""
+          director_to_credhub:
+            override: true
+            authorized-grant-types: client_credentials
+            scope: uaa.none
+            authorities: credhub.read,credhub.write
+            access-token-validity: 43200
+            secret: ((uaa-clients-director-to-credhub))
+        admin: {client_secret: ((uaa-admin))}
+        login: {client_secret: ((uaa-login))}
+        zones: {internal: {hostnames: []}}
+        sslCertificate: ((uaa-tls.certificate))
+        sslPrivateKey: ((uaa-tls.private_key))
+        jwt:
+          revocable: true
+          policy:
+            active_key_id: key-1
+            keys:
+              key-1:
+                signingKey: ((uaa-jwt.private_key))
 
-    - name: google_cpi
-      release: bosh-google-cpi
-      properties:
-        google: &google_properties
-          project: cf-security-credhub-main
-          json_key: ((gcp-escaped-json-key))
-        ntp: &ntp
-        - 0.pool.ntp.org
-        - 1.pool.ntp.org
-        registry: *registry
-        blobstore: *blobstore
-        agent: *agent
+      uaadb:
+        address: 127.0.0.1
+        port: 5432
+        db_scheme: postgresql
+        databases:
+        - tag: uaa
+          name: uaa
+        roles:
+        - tag: admin
+          name: admin
+          password: ((database-admin))
+
+      login:
+        saml:
+          serviceProviderCertificate: ((tls.certificate))
+          serviceProviderKey: ((tls.private_key))
+          serviceProviderKeyPassword: ""
+
+  - name: director
+    release: bosh
+    properties:
+      director: &director
+        address: ((external-ip))
+        name: *name
+        config_server:
+          enabled: true
+          url: "https://127.0.0.1:8844/api/"
+          ca_cert: ((credhub-tls.ca))
+          uaa:
+            url: *uaa-url
+            client_id: director_to_credhub
+            client_secret: ((uaa-clients-director-to-credhub))
+            ca_cert: ((uaa-tls.ca))
+        db: *db
+        cpi_job: google_cpi
+        max_threads: 10
+        enable_snapshots: false
+        user_management:
+          provider: uaa
+          uaa:
+            url: *uaa-url
+            public_key: ((uaa-jwt.public_key))
+        ssl:
+          cert: ((director-tls.certificate))
+          key: ((director-tls.private_key))
+        trusted_certs: ((bosh-ca.certificate))
+      agent: &agent
+        mbus: nats://nats:((nats))@((internal-ip)):4222
+        ntp: *ntp
+        blobstore:
+           options:
+             endpoint: http://((internal-ip)):25250
+             user: agent
+             password: ((blobstore-agent))
+      ntp: *ntp
+      nats: *nats
+      blobstore: *blobstore
+
+  - name: registry
+    release: bosh
+    properties:
+      registry: &registry
+        address: ((internal-ip))
+        host: ((internal-ip))
+        db: *db
+        http: {user: admin, password: ((registry-admin)), port: 25777}
+        username: admin
+        password: ((registry-admin))
+        port: 25777
+        use_gce_metadata: false
+
+  - name: nats
+    release: bosh
+    properties:
+      nats: &nats
+        address: 127.0.0.1
+        user: nats
+        password: ((nats))
+
+  - name: blobstore
+    release: bosh
+    properties:
+      blobstore: &blobstore
+        address: ((internal-ip))
+        port: 25250
+        provider: dav
+        director:
+          user: director
+          password: ((blobstore-director))
+        agent:
+          user: agent
+          password: ((blobstore-agent))
+
+  - name: health_monitor
+    release: bosh
+    properties:
+      hm:
+        director_account:
+          user: hm
+          password: ((uaa-users-hm))
+          ca_cert: ((tls.ca))
+        resurrector_enabled: true
+      director: *director
+      nats: *nats
+
+  - name: google_cpi
+    release: bosh-google-cpi
+    properties:
+      google: &google_properties
+        project: cf-security-credhub-main
+        json_key: ((gcp-escaped-json-key))
+      ntp: &ntp
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org
+      registry: *registry
+      blobstore: *blobstore
+      agent: *agent
 
 cloud_provider:
   template:
