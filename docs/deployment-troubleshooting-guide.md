@@ -74,6 +74,7 @@ You may narrow down the missing or invalid value for this type of error by check
 ### Pre-Start Error
 
 Pre-start errors occur when CredHub is unable to perform its [pre-start tasks][6]. This is expressed with the following deployment error. 
+
 [6]:https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/templates/pre-start.erb
 
 ```

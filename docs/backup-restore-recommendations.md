@@ -55,7 +55,7 @@ If you are using PCF MySQL, we suggest following their [backup and restore guide
 
 For more information about database backups:
 
-[MySQL](http://dev.mysql.com/doc/refman/5.7/en/backup-and-recovery.html)
+[MySQL](http://dev.mysql.com/doc/refman/5.7/en/backup-and-recovery.html) <br>
 [Postgres](https://www.postgresql.org/docs/9.5/static/backup.html)
 
 ##### Frequency
