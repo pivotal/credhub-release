@@ -189,7 +189,7 @@ RSpec.describe 'the template' do
         url = parse_database_url(result['spring']['datasource']['url'])
 
         expect(url['query_params']['trustCertificateKeyStorePassword']).to eq ['KEY_STORE_PASSWORD_PLACEHOLDER']
-        expect(url['query_params']['trustCertificateKeyStoreUrl']).to eq ['file:///var/vcap/jobs/credhub/config/db_trust_store.jks']
+        expect(url['query_params']['trustCertificateKeyStoreUrl']).to eq ['/var/vcap/jobs/credhub/config/db_trust_store.jks']
       end
 
       it 'prints error when require_tls is not a boolean type' do

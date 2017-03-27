@@ -35,7 +35,7 @@
           datasource_url << "&useSSL=true&requireSSL=true&verifyServerCertificate=true"
           if have_tls_ca
             datasource_url << "&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER"
-            datasource_url << "&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/db_trust_store.jks"
+            datasource_url << "&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/db_trust_store.jks"
           end
         when false
           # no op
