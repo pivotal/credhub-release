@@ -37,7 +37,7 @@ Additional information on backup and restore to a Luna Backup HSM can be [found 
 
 If you are using an Luna HSM from AWS, you may also refer to [their reference documentation][3] on HA and backup. 
 
-[1]:../sample-manifests/snippet-hsm-encryption.yml#L41-L55
+[1]:https://github.com/pivotal-cf/credhub-release/blob/0.6.1/sample-manifests/snippet-hsm-encryption.yml#L26-L58
 [2]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
 [3]:http://docs.aws.amazon.com/cloudhsm/latest/userguide/configuring-ha.html
 

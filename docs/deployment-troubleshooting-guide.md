@@ -69,7 +69,7 @@ Updating deployment:
 Exit code 1
 ```
 
-You may narrow down the missing or invalid value for this type of error by checking the specified line number of the template indicated. For example, the above `template 'pre-start.erb' (line 15` can be found [here.](https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/templates/pre-start.erb#L15)
+You may narrow down the missing or invalid value for this type of error by checking the specified line number of the template indicated. For example, the above `template 'pre-start.erb' (line 15` can be found [here.](https://github.com/pivotal-cf/credhub-release/blob/0.4.0/jobs/credhub/templates/pre-start.erb#L15)
 
 ### Pre-Start Error
 
