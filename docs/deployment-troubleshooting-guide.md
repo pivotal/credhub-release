@@ -148,7 +148,7 @@ Other errors provide a generic message that may indicate any number of failures.
 
 #### [Configuration error] Can't find property '["credhub.data_storage.type"]'
 
-This error can be resolved by adding the missing property identified in the error. You can review all of the expected manifest configurations in the [CredHub release spec](https://github.com/pivotal-cf/credhub-release/blob/master/jobs/credhub/spec).
+This error can be resolved by adding the missing property identified in the error. You can review all of the expected manifest configurations in the [CredHub release spec](https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release).
 
 ***
 #### [Configuration error] Evaluating manifest: yaml: line 54: did not find expected key` or `yaml: line 53: mapping values are not allowed in this context
