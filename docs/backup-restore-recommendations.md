@@ -51,6 +51,8 @@ It is also recommended that you maintain historical encryption key values equiva
 
 The majority of stateful data for CredHub is stored in the configured database. This database is not deployed or managed by CredHub, so backup procedures will differ based on the selected database provider. Regardless of provider, it is recommended that you configure your database server to be highly available and redundant in addition to performing periodic backups. 
 
+Note: After rotating your encryption key, it is recommended that you verify a backup with the latest encryption key, then destroy prior backups. This procedure will ensure that the disclosure of an prior encryption key does provide the ability to access data stored in backups.
+
 If you are using PCF MySQL, we suggest following their [backup and restore guidelines](http://docs.pivotal.io/p-mysql/1-8/backup.html).
 
 For more information about database backups:
