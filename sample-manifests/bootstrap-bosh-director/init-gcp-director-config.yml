@@ -13,7 +13,3 @@ gcp-escaped-json-key:
 internal-ip: 
 external-ip: 
 
-# SSH username and local path to SSH key
-ssh-username: 
-ssh-path-to-private-key: 
-

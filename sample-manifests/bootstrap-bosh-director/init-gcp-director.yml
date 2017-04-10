@@ -11,8 +11,8 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
   sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
 - name: uaa
-  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=28
-  sha1: f31f4358664cb067587143848a85f0e6f7a45485
+  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=29
+  sha1: 6d97f83aaf5d2ec26c7592aafc111625b4bb37ed
 - name: credhub
   url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.6.1
   sha1: 5ab4c4ef3d67f8ea07d78b1a87707e7520a97ab7
@@ -24,8 +24,8 @@ resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3363.12
-    sha1: bac9d0aeaf52e244b138967cb50bf0094815f2b7
+    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3363.15
+    sha1: 7da87c147d0149b6db4c0f0d482775955bfcac5c
   cloud_properties:
     zone: ((gcp-zone))
     machine_type: n1-standard-4
@@ -250,8 +250,8 @@ instance_groups:
 
       login:
         saml:
-          serviceProviderCertificate: ((tls.certificate))
-          serviceProviderKey: ((tls.private_key))
+          serviceProviderCertificate: ((uaa-tls.certificate))
+          serviceProviderKey: ((uaa-tls.private_key))
           serviceProviderKeyPassword: ""
 
   - name: director
@@ -336,7 +336,7 @@ instance_groups:
         director_account:
           user: hm
           password: ((uaa-users-hm))
-          ca_cert: ((tls.ca))
+          ca_cert: ((director-tls.ca))
         resurrector_enabled: true
       director: *director
       nats: *nats
@@ -358,12 +358,6 @@ cloud_provider:
   template:
     name: google_cpi
     release: bosh-google-cpi
-
-  ssh_tunnel:
-    host: ((external-ip))
-    port: 22
-    user: ((ssh-username))
-    private_key: ((ssh-path-to-private-key))
 
   mbus: https://mbus:((mbus))@((external-ip)):6868
 

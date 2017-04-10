@@ -14,8 +14,6 @@ aws-default-security-group:
 internal-ip: 
 external-ip: 
 
-# Key name and local path to SSH key
+# Key name to provision on created VM
 aws-ssh-key-name: 
-ssh-username: 
-ssh-path-to-private-key: 
 
