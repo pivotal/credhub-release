@@ -28,7 +28,7 @@ variables:
   type: certificate
   options:
     is_ca: true
-    common_name: CredHub mTLS CA
+    common_name: 'CredHub mTLS CA'
 - name: credhub-ca
   type: certificate
   options:
@@ -63,6 +63,17 @@ instance_groups:
     properties:
       credhub:
         port: 8844
+        tls:
+          certificate: ((credhub-tls.certificate))
+          private_key: ((credhub-tls.private_key))
+        log_level: info
+        authentication:
+          uaa:
+            url: ((uaa-url))
+            verification_key: ((uaa-jwt.public_key))
+          mutual_tls:
+            trusted_cas:
+            - ((credhub-mtls-ca.certificate))
         data_storage:
           type: ((mysql | postgres))
           username: ((database-username))
@@ -72,16 +83,6 @@ instance_groups:
           database: credhub
           require_tls: true
           tls_ca: ((database-CA))
-        authentication:
-          uaa:
-            url: ((uaa-url))
-            verification_key: ((uaa-jwt.public_key))
-          mutual_tls:
-            trusted_cas:
-            - ((credhub-mtls-ca.certificate))
-        tls: 
-          certificate: ((credhub-tls.certificate)) 
-          private_key: ((credhub-tls.private_key)) 
         encryption:
           keys: 
           - provider_name: int
@@ -90,4 +91,3 @@ instance_groups:
           providers: 
           - name: int
             type: internal
-        log_level: info

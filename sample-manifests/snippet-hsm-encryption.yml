@@ -5,6 +5,8 @@
       properties:
         credhub:
           port: 8844
+          tls: ((tls))
+          log_level: info
           authentication:
             uaa:
               url: *uaa_url
@@ -21,8 +23,6 @@
             database: credhub
             require_tls: true
             tls_ca: ((database-CA))
-          tls: ((tls))
-          log_level: info
           encryption:
             keys:
               - provider_name: hsm-provider

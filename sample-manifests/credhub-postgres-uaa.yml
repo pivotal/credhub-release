@@ -36,7 +36,7 @@ variables:
   type: certificate
   options:
     is_ca: true
-    common_name: CredHub mTLS CA
+    common_name: 'CredHub mTLS CA'
 - name: credhub-ca
   type: certificate
   options:
@@ -51,6 +51,8 @@ variables:
     - ((external-ip-address))
     - ((internal-ip-address))
     - 127.0.0.1
+- name: database-admin
+  type: password
 - name: uaa-tls
   type: certificate
   options:
@@ -67,8 +69,6 @@ variables:
 - name: uaa-admin
   type: password
 - name: uaa-login
-  type: password
-- name: database-admin
   type: password
 
 instance_groups: 
@@ -90,13 +90,8 @@ instance_groups:
     properties:
       credhub:
         port: 8844
-        data_storage:
-          type: postgres
-          username: admin
-          password: ((database-admin))
-          host: 127.0.0.1
-          port: 5432
-          database: credhub
+        tls: ((credhub-tls))
+        log_level: info
         authentication:
           uaa:
             url: *uaa-url
@@ -104,7 +99,13 @@ instance_groups:
           mutual_tls:
             trusted_cas:
             - ((credhub-mtls-ca.certificate))
-        tls: ((credhub-tls))
+        data_storage:
+          type: postgres
+          username: admin
+          password: ((database-admin))
+          host: 127.0.0.1
+          port: 5432
+          database: credhub
         encryption:
           keys: 
           - provider_name: int
@@ -113,7 +114,6 @@ instance_groups:
           providers: 
           - name: int
             type: internal
-        log_level: info
 
   - name: postgres
     release: postgres
