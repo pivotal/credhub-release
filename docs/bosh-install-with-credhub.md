@@ -11,7 +11,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
 
     The following configuration steps assume that you have an existing BOSH Director. If you do not have a running director, you may reference [this BOSH initialization guide][2] for more details. You may also choose to use one of the sample manifests (init-aws-director.yml or init-gcp-director.yml) [shown here.](../sample-manifests/)
     
-[2]:https://bosh.io/docs/init.html
+    [2]:https://bosh.io/docs/init.html
 
 1. Configure UAA on your Director 
 
@@ -25,7 +25,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
 
     In the recommended production configuration, cryptographic operations are performed for CredHub via an external Luna SafeNet hardware security module (HSM). The HSM must be configured to allow access from the deployed CredHub instance and the operator must have all of the required credentials from the HSM. For more information on the required HSM values and how to configure an HSM, see the [configuring a Luna HSM][4] document.
     
-[4]:configure-luna-hsm.md
+    [4]:configure-luna-hsm.md
 
 
 ---
@@ -35,7 +35,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
 
     You may obtain the latest CredHub release at the [following location][5].
  
-[5]:https://bosh.io/releases/github.com/pivotal-cf/credhub-release?all=1
+    [5]:https://bosh.io/releases/github.com/pivotal-cf/credhub-release?all=1
 
     ```yaml
     releases:
@@ -92,7 +92,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
       type: password
     ```      
 
-[3]:https://github.com/cloudfoundry/bosh-cli
+    [3]:https://github.com/cloudfoundry/bosh-cli
 
 1. Add CredHub properties to the deployment manifest
 
@@ -174,7 +174,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
 
     For the full list of CredHub properties and default values, visit [the job spec properties][6] page.
   
-[6]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release
+    [6]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release
 
 1. Add CredHub CLI and Director/CredHub UAA clients
 
@@ -271,7 +271,7 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
 
     To authenticate with CredHub to manage credentials, you must have a UAA user account with the scopes credhub.read and credhub.write. You may create users manually in UAA, as [described here][7], or you may configure UAA with an [external LDAP provider.](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-LDAP.md)
   
-[7]:https://docs.pivotal.io/pivotalcf/1-9/adminguide/uaa-user-management.html
+    [7]:https://docs.pivotal.io/pivotalcf/1-9/adminguide/uaa-user-management.html
 
     A sample process for creating 2 users in UAA is shown below.
 
