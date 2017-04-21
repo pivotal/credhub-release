@@ -16,13 +16,18 @@ This architecture benefits from low latency and simplicity for a single consumer
 
 Additional information on deploying a BOSH Director with CredHub can be [found here](bosh-install-with-credhub.md) or you may review the [sample manifests.](../sample-manifests/bootstrap-bosh-director/)
 
-#### Service
+<br>
+<img align="left" src="images/service-deployment.png">
 
-<img align="right" src="images/service-deployment.png">
+#### Service
 
 CredHub can also be deployed as an independent service on one or more VMs. The application does not hold state, so it may be scaled to multiple instances that share a common database cluster and encryption provider. 
 
 This architecture benefits from high availability and scale, however, the additional cost and complexity may not be suitable for a single or small number of consumers. Sample manifests that deploy dedicated CredHub instances can be [found here.](../sample-manifests/)
+
+<br>
+<br>
+<br>
 
 ### Troubleshooting
 
