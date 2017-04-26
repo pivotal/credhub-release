@@ -39,6 +39,17 @@
     }
   }
 
+  acls_enabled = false
+  if_p('credhub.authorization.acls.enabled') do |are_acls_enabled|
+    acls_enabled = are_acls_enabled
+  end
+
+  application_config['security']['authorization'] = {
+    'acls' => {
+      'enabled' => acls_enabled
+    }
+  }
+
   # Auth Server
   application_config['auth_server'] = {
     'url' => p('credhub.authentication.uaa.url')

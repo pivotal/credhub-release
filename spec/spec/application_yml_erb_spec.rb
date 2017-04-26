@@ -5,13 +5,21 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
-def render_erb_to_yaml(data_storage_yaml, tls_yaml: nil, keys_yaml: nil, log_level: nil, mtls_yaml: nil, option_yaml: nil, provider_type_yaml: nil)
+def render_erb_to_yaml(data_storage_yaml,
+                       tls_yaml: nil,
+                       keys_yaml: nil,
+                       log_level: nil,
+                       mtls_yaml: nil,
+                       option_yaml: nil,
+                       provider_type_yaml: nil,
+                       acls_enabled: false)
   data_storage_yaml ||= '{ type: "in-memory", database: "my_db_name" }'
   tls_yaml ||= 'tls: { certificate: "foo", private_key: "bar" }'
   keys_yaml ||= '[{provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
                   {provider_name: "active_hsm", encryption_key_name: "another_keyname"}]'
   log_level ||= 'info'
   provider_type_yaml ||= 'hsm'
+  acls_enabled ||= false
   option_yaml ||= <<-EOF
         properties:
           credhub:
@@ -34,6 +42,9 @@ def render_erb_to_yaml(data_storage_yaml, tls_yaml: nil, keys_yaml: nil, log_lev
                   line 1
                   line 2
               #{mtls_yaml ? mtls_yaml : ''}
+            authorization:
+              acls:
+                enabled: #{acls_enabled}
             #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage: #{data_storage_yaml}
             log_level: #{log_level}
@@ -79,6 +90,18 @@ RSpec.describe 'the template' do
     it 'sets uaa as the auth server' do
       result = render_erb_to_hash('{ type: "in-memory" }')
       expect(result['auth_server']['url']).to eq 'my_uaa_url'
+    end
+  end
+
+  describe 'authorization' do
+    it 'disables ACLs by default' do
+      result = render_erb_to_hash('{ type: "in-memory" }', acls_enabled: false)
+      expect(result['security']['authorization']['acls']['enabled']).to eq false
+    end
+
+    it 'enables ACLs when credhub.authorization.acls.enabled is set to true' do
+      result = render_erb_to_hash('{ type: "in-memory" }', acls_enabled: true)
+      expect(result['security']['authorization']['acls']['enabled']).to eq true
     end
   end
 

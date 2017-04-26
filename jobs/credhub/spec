@@ -112,7 +112,7 @@ properties:
   credhub.data_storage.tls_ca:
     description: "Certificate that database must supply when validation is required."
 
-  # UAA
+  # Authentication
   credhub.authentication.uaa.url:
     description: "URL of UAA instance for client to contact"
   credhub.authentication.uaa.verification_key:
@@ -131,6 +131,11 @@ properties:
       -----BEGIN CERTIFICATE-----
       ...
       -----END CERTIFICATE-----
+
+  # Authorization
+  credhub.authorization.acls.enabled:
+    description: "Whether to enable or disable ACL support"
+    default: false
 
   # Logging
   credhub.log_level:
