@@ -134,7 +134,7 @@ properties:
 
   # Authorization
   credhub.authorization.acls.enabled:
-    description: "Whether to enable or disable ACL support"
+    description: "Whether to enable or disable ACL enforcement"
     default: false
 
   # Logging
