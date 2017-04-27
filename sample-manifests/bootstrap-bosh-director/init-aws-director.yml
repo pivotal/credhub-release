@@ -333,7 +333,7 @@ instance_groups:
         director_account:
           user: hm
           password: ((uaa-users-hm))
-          ca_cert: ((director-tls.ca))
+          ca_cert: ((uaa-tls.ca))
         resurrector_enabled: true
       director: *director
       nats: *nats
