@@ -166,7 +166,7 @@ instance_groups:
           - name: int
             type: internal
 
-  - name: postgres
+  - name: postgres-9.4
     release: bosh
     properties:
       postgres: &db
