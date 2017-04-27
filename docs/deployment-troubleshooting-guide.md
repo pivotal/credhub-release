@@ -224,6 +224,10 @@ This failure indicates that the active encryption provider type has not be defin
 
 This failure indicates that the provided encryption key(s) provided in the deployment manifest cannot access any of the data stored in the database. You must update your encryption keys in the deployment manifest and redeploy. 
 
+#### [Post-start error] Migration failed ERROR: syntax error at or near "CONSTRAINT"
+
+This failure indicates an inability to successfully perform the required database migrations. The specific error citing a syntax error near CONSTRAINT occurs when a non-supported version of PostgreSQL, e.g. 9.0, is deployed. CredHub requires PostgreSQL version 9.4 or greater.   
+
 ## Usability Failures
 
 Usability failures occur after a successful deployment of CredHub. These errors are primarily related to the server's ability to reach dependent components. 
