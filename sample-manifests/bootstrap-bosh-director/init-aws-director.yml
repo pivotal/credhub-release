@@ -1,5 +1,5 @@
 ## This manifest initializes a new BOSH Director on Amazon Web Services with co-located PostgreSQL database, UAA and CredHub.
-## 
+##
 ## Deployment-specific configuration should be done in file 'init-aws-director-config.yml'. This manifest may be modified, but modification is not required. 
 ##
 ## To deploy (requires BOSH v2 CLI) - `bosh create-env init-aws-director.yml --vars-store init-aws-director-config.yml`
@@ -11,21 +11,21 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
   sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
 - name: uaa
-  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=29
-  sha1: 6d97f83aaf5d2ec26c7592aafc111625b4bb37ed
+  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=34
+  sha1: dcb2a2911c1592b2c582237e801fb5d0c7639674
 - name: credhub
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.6.1
-  sha1: 5ab4c4ef3d67f8ea07d78b1a87707e7520a97ab7
+  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.7.0
+  sha1: c1d0eb7e0b1a03831cd102b740b47673cda9b350
 - name: bosh-aws-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=62
-  sha1: f36967927ceae09e5663a41fdda199edfe649dc6
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=64
+  sha1: 7fc8ac0f06999b73e426d8baa0345eacaad1d4c7
 
 resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3363.15
-    sha1: 4a1eed3037a88a2b6516133d823cdb71bc9291c4
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3363.20
+    sha1: 16f1aa2a272befe87a9f0805ae9d367c8e2802ea
   cloud_properties:
     instance_type: m3.xlarge
     ephemeral_disk: {size: 25000, type: gp2}
@@ -361,6 +361,12 @@ cloud_provider:
     name: aws_cpi
     release: bosh-aws-cpi
 
+  ssh_tunnel:
+    host: ((external-ip))
+    port: 22
+    user: vcap
+    private_key: ((ssh-path-to-private-key))
+
   mbus: https://mbus:((mbus))@((external-ip)):6868
 
   properties:
@@ -368,4 +374,5 @@ cloud_provider:
     agent: {mbus: "https://mbus:((mbus))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
+    registry: *registry
 

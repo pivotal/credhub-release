@@ -40,14 +40,14 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
     ```yaml
     releases:
     - name: bosh
-      url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.2
-      version: 261.2
-      sha1: d4635b4b82b0dc5fd083b83eb7e7405832f6654b
+      url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
+      version: 261.4
+      sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
     # ...
     - name: credhub # <---
-      url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.6.1
-      version: 0.6.1
-      sha1: 5ab4c4ef3d67f8ea07d78b1a87707e7520a97ab7
+      url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.7.0
+      version: 0.7.0
+      sha1: c1d0eb7e0b1a03831cd102b740b47673cda9b350
     ```
 
 1. Add the CredHub job to the Director instance
