@@ -168,6 +168,7 @@ instance_groups:
     release: bosh
     properties:
       postgres: &db
+        listen_address: 127.0.0.1
         host: 127.0.0.1
         port: 5432
         user: admin
