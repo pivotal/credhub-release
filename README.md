@@ -29,6 +29,16 @@ releases:
 [2]:https://bosh.io/releases/github.com/pivotal-cf/credhub-release?all=1
 [3]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release&version=0.6.1
 
+## Reporting a Vulnerability
+
+We strongly encourage people to report security vulnerabilities privately to our security team before disclosing them in a public forum.
+
+Please note that the e-mail address below should only be used for reporting undisclosed security vulnerabilities in Pivotal products and managing the process of fixing such vulnerabilities. We cannot accept regular bug reports or other security-related queries at this address.
+
+The e-mail address to use to contact the Pivotal Application Security Team is security@pivotal.io.
+
+Our public PGP key can be obtained from a public key server such as [pgp.mit.edu](https://pgp.mit.edu). Its fingerprint is: 16F6 51BF 4637 F486 C5E2 4635 19BB 5184 0191 92ED. More information can be found at [pivotal.io/security](https://pivotal.io/security/).
+
 ## Development 
 
 ### Updating this repo's submodule before a BOSH release
