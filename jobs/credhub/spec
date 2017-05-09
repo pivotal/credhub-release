@@ -24,6 +24,15 @@ properties:
     description: "Port for the CredHub server to listen on"
     default: 8844
 
+  # /info endpoint metadata
+  credhub.info.name:
+    description: "The application name reported by the /info endpoint"
+    default: "CredHub"
+
+  credhub.info.version:
+    description: "The application version reported by the /info endpoint"
+    default: "Unknown as the version was not specified. Please check your credhub-release or deployment manifest."
+
   # Encryption properties
   credhub.encryption.keys:
     description: |
