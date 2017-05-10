@@ -23,13 +23,14 @@ def render_b_backup_erb(dbtype="postgres")
   return renderer.render("../jobs/credhub/templates/b-backup.erb")
 end
 
-RSpec.describe "the template", focus: true do
+RSpec.describe "the template" do
   context "when db is postgres" do
     it "includes the pgdump command" do
       result = render_b_backup_erb()
-      expect(result).to include('export PGVERSION="9.6.2"')
+      expect(result).to include('source /var/vcap/jobs/postgres/bin/pgconfig.sh')      
+      expect(result).to include('export PG_PKG_DIR="${PACKAGE_DIR}"')
       expect(result).to include('export PGPASSWORD="example_password"')
-      expect(result).to include "/var/vcap/packages/postgres-${PGVERSION}/bin/pg_dump \\\n" +
+      expect(result).to include "${PG_PKG_DIR}/bin/pg_dump \\\n" +
       '  --user="example_username" \\' + "\n" +
       '  --host="127.0.0.1" \\' + "\n" +
       '  --port="5432" \\' + "\n" +
