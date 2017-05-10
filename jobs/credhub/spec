@@ -5,6 +5,8 @@ templates:
   pre-start.erb: bin/pre-start
   post-start.erb: bin/post-start
   drain.erb: bin/drain
+  # bbr scripts
+  b-backup.erb: bin/b-backup
   # Other scripts
   ctl: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh

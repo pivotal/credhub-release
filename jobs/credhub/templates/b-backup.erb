@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+<%
+dbusername = p('credhub.data_storage.username')
+dbpassword = p('credhub.data_storage.password')
+dbtype = p('credhub.data_storage.type')
+dbhost = p('credhub.data_storage.host')
+dbport = p('credhub.data_storage.port')
+dbname = p('credhub.data_storage.database')
+%>
+
+set -eu
+
+<% if dbtype == "postgres" %>
+export PGVERSION="9.6.2"
+export PGPASSWORD="<%= dbpassword %>"
+
+/var/vcap/packages/postgres-${PGVERSION}/bin/pg_dump \
+  --user="<%= dbusername %>" \
+  --host="<%= dbhost %>" \
+  --port="<%= dbport %>" \
+  --format="custom" \
+  "<%= dbname %>" > "$ARTIFACT_DIRECTORY"/credhubdb_dump
+
+<% else %>
+echo "Skipping backup, as database is not Postgres"
+<% end %>
