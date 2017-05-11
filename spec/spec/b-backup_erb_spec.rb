@@ -35,7 +35,7 @@ RSpec.describe "the template" do
       '  --host="127.0.0.1" \\' + "\n" +
       '  --port="5432" \\' + "\n" +
       '  --format="custom" \\' + "\n" +
-      '  "example_credhub" > "$ARTIFACT_DIRECTORY"/credhubdb_dump'
+      '  "example_credhub" > "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
     end
   end
   context "when db is not postgres" do

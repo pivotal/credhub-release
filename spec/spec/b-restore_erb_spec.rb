@@ -37,7 +37,7 @@ RSpec.describe "the template" do
       '  --format="custom" \\' + "\n" +
       '  --schema="public" \\' + "\n" +
       '  --clean \\' + "\n" +
-      '  --dbname="example_credhub" "$ARTIFACT_DIRECTORY"/credhubdb_dump'
+      '  --dbname="example_credhub" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
     end
   end
   context "when db is not postgres" do
