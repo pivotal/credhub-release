@@ -1,6 +1,6 @@
-## This configuration file should be used with 'init-gcp-director.yml' for deployment. Generated values will be added to this file on first deployment.
+## This configuration file should be used with 'gcp-director.yml' for deployment. Generated values will be added to 'gcp-director-credentials.yml' on first deployment.
 ##
-## To deploy (requires BOSH v2 CLI) - `bosh create-env init-gcp-director.yml --vars-store init-gcp-director-config.yml`
+## To deploy (requires BOSH v2 CLI) - `bosh create-env gcp-director.yml --vars-file gcp-director-config.yml --vars-store gcp-director-credentials.yml`
 
 gcp-zone: 
 gcp-network-name: 
