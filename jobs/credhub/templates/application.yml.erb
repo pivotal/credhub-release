@@ -122,7 +122,8 @@
   end
 
   application_config['flyway'] = {
-    'locations' => flyway_locations
+    'locations' => flyway_locations,
+    'enabled' => !!spec.bootstrap
   }
 
   # Encryption Config

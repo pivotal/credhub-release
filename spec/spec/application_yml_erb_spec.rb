@@ -120,6 +120,11 @@ RSpec.describe 'the template' do
     end
   end
 
+  it 'specifies whether flyway should be enabled' do
+    result = render_erb_to_hash('{ type: "in-memory" }')
+    expect(result['flyway']['enabled']).to eq false
+  end
+
   describe 'setting the database type' do
     context 'with in-memory' do
       it 'sets does not include username, password, database, host and port properties' do
