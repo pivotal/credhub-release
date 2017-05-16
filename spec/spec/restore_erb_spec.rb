@@ -5,7 +5,7 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
-def render_b_backup_erb(dbtype="postgres")
+def render_restore_erb(dbtype="postgres")
   option_yaml = <<-EOF
         properties:
           credhub:
@@ -20,30 +20,31 @@ def render_b_backup_erb(dbtype="postgres")
 
   options = {:context => YAML.load(option_yaml).to_json}
   renderer = Bosh::Template::Renderer.new(options)
-  return renderer.render("../jobs/credhub/templates/b-backup.erb")
+  return renderer.render("../jobs/credhub/templates/restore.erb")
 end
 
 RSpec.describe "the template" do
   context "when db is postgres" do
-    it "includes the pgdump command" do
-      result = render_b_backup_erb()
-      expect(result).to include('source /var/vcap/jobs/postgres/bin/pgconfig.sh')      
+    it "includes the pgrestore command" do
+      result = render_restore_erb()
+      expect(result).to include('source /var/vcap/jobs/postgres/bin/pgconfig.sh')
       expect(result).to include('export PG_PKG_DIR="${PACKAGE_DIR}"')
       expect(result).to include('export PGPASSWORD="example_password"')
-      expect(result).to include "${PG_PKG_DIR}/bin/pg_dump \\\n" +
+      expect(result).to include "${PG_PKG_DIR}/bin/pg_restore \\\n" +
       '  --user="example_username" \\' + "\n" +
       '  --host="127.0.0.1" \\' + "\n" +
       '  --port="5432" \\' + "\n" +
       '  --format="custom" \\' + "\n" +
-      '  "example_credhub" > "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
+      '  --schema="public" \\' + "\n" +
+      '  --clean \\' + "\n" +
+      '  --dbname="example_credhub" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
     end
   end
   context "when db is not postgres" do
-    it "logs that it skips this backup," do
-      result = render_b_backup_erb("NOT_PG")
-      expect(result).to_not include "/var/vcap/packages/postgres-${PGVERSION}/bin/pg_dump \\\n"
-      expect(result).to include 'Skipping backup, as database is not Postgres'
+    it "logs that it skips this restore," do
+      result = render_restore_erb("NOT_PG")
+      expect(result).to_not include "${PG_PKG_DIR}/bin/pg_dump \\\n"
+      expect(result).to include 'Skipping restore, as database is not Postgres'
     end
   end
 end
-
