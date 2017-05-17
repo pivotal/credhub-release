@@ -23,9 +23,6 @@ def render_erb_to_yaml(data_storage_yaml,
   option_yaml ||= <<-EOF
         properties:
           credhub:
-            info:
-              name: Test CredHub
-              version: "99.9.9"
             encryption:
               keys: #{keys_yaml}
               providers:
@@ -79,18 +76,6 @@ def parse_database_url(url_string)
 end
 
 RSpec.describe 'the template' do
-  describe 'app /info metadata' do
-    it 'sets the app name' do
-      result = render_erb_to_hash('{ type: "in-memory" }')
-      expect(result['credhub']['info']['name']).to eq 'Test CredHub'
-    end
-
-    it 'sets the app version' do
-      result = render_erb_to_hash('{ type: "in-memory" }')
-      expect(result['credhub']['info']['version']).to eq '99.9.9'
-    end
-  end
-
   it 'sets the CredHub port correctly' do
     result = render_erb_to_hash('{ type: "in-memory" }')
     expect(result['server']['port']).to eq 9000
@@ -371,9 +356,6 @@ RSpec.describe 'the template' do
             <<-EOF
         properties:
           credhub:
-            info:
-              name: Name ignored in this test
-              version: Version ignored in this test
             encryption:
               keys:
                 - provider_name: active_dev
@@ -418,9 +400,6 @@ RSpec.describe 'the template' do
             <<-EOF
         properties:
           credhub:
-            info:
-              name: Name ignored in this test
-              version: Version ignored in this test
             encryption:
               keys:
                 - provider_name: active_dev
@@ -495,9 +474,6 @@ RSpec.describe 'the template' do
           <<-EOF
         properties:
           credhub:
-            info:
-              name: Name ignored in this test
-              version: Version ignored in this test
             encryption:
               keys:
                 - provider_name: active_dev
