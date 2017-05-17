@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+<%
+dbusername = p('credhub.data_storage.username')
+dbpassword = p('credhub.data_storage.password')
+dbtype = p('credhub.data_storage.type')
+dbhost = p('credhub.data_storage.host')
+dbport = p('credhub.data_storage.port')
+dbname = p('credhub.data_storage.database')
+%>
+
+set -eu
+
+<% if dbtype == "postgres" %>
+source /var/vcap/jobs/postgres/bin/pgconfig.sh
+export PG_PKG_DIR="${PACKAGE_DIR}"
+export PGPASSWORD="<%= dbpassword %>"
+
+${PG_PKG_DIR}/bin/pg_restore \
+  --user="<%= dbusername %>" \
+  --host="<%= dbhost %>" \
+  --port="<%= dbport %>" \
+  --format="custom" \
+  --schema="public" \
+  --clean \
+  --dbname="<%= dbname %>" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump
+
+<% else %>
+echo "Skipping restore, as database is not Postgres"
+<% end %>
