@@ -1,8 +1,8 @@
 ## This manifest initializes a new BOSH Director on Google Cloud Platform with co-located PostgreSQL database, UAA and CredHub.
 ##
-## Deployment-specific configuration should be done in file 'init-gcp-director-config.yml'. This manifest may be modified, but modification is not required.
+## Deployment-specific configuration should be done in file 'gcp-director-config.yml'. This manifest may be modified, but modification is not required.
 ##
-## To deploy (requires BOSH v2 CLI) - `bosh create-env init-gcp-director.yml --vars-store init-gcp-director-config.yml`
+## To deploy (requires BOSH v2 CLI) - `bosh create-env gcp-director.yml --vars-file gcp-director-config.yml --vars-store gcp-director-credentials.yml`
 ---
 name: &name gcp-director-credhub
 
@@ -73,7 +73,6 @@ variables:
     alternative_names:
     - *external-ip
     - *internal-ip
-    - 127.0.0.1
 - name: director-tls
   type: certificate
   options:
@@ -81,8 +80,6 @@ variables:
     common_name: *external-ip
     alternative_names:
     - *external-ip
-    - *internal-ip
-    - 127.0.0.1
 - name: uaa-tls
   type: certificate
   options:
@@ -90,8 +87,6 @@ variables:
     common_name: *external-ip
     alternative_names:
     - *external-ip
-    - *internal-ip
-    - 127.0.0.1
 - name: uaa-jwt
   type: rsa 
 - name: uaa-users-admin
@@ -263,7 +258,7 @@ instance_groups:
         name: *name
         config_server:
           enabled: true
-          url: "https://127.0.0.1:8844/api/"
+          url: https://((external-ip)):8844/api/
           ca_cert: ((credhub-tls.ca))
           uaa:
             url: *uaa-url

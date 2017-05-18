@@ -1,0 +1,19 @@
+## This configuration file should be used with 'aws-director.yml' for deployment. Generated values will be added to 'aws-director-credentials.yml' on first deployment. 
+##
+## To deploy (requires BOSH v2 CLI) - `bosh create-env aws-director.yml --vars-file aws-director-config.yml --vars-store aws-director-credentials.yml`
+
+aws-region: 
+aws-availability-zone: 
+aws-subnet-id: 
+
+aws-access-key-id: 
+aws-secret-access-key: 
+aws-default-security-group: 
+ 
+# Manifest assumes 10.0.0.0/24 subnet
+internal-ip: 
+external-ip: 
+
+# Key name to provision on created VM and local path to key for SSH tunnel
+aws-ssh-key-name: 
+ssh-path-to-private-key:

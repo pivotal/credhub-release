@@ -1,0 +1,15 @@
+## This configuration file should be used with 'gcp-director.yml' for deployment. Generated values will be added to 'gcp-director-credentials.yml' on first deployment.
+##
+## To deploy (requires BOSH v2 CLI) - `bosh create-env gcp-director.yml --vars-file gcp-director-config.yml --vars-store gcp-director-credentials.yml`
+
+gcp-zone: 
+gcp-network-name: 
+gcp-subnet-name: 
+
+# Service account JSON key escaped in string format
+gcp-escaped-json-key: 
+
+# Manifest assumes 10.0.0.0/24 subnet
+internal-ip: 
+external-ip: 
+
