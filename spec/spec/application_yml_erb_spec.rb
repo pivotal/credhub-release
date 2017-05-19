@@ -340,11 +340,11 @@ RSpec.describe 'the template' do
           expect(second_key.has_key?('active')).to eq false
         end
 
-        it 'only allows provider types of "internal", "hsm", and "dsm"' do
+        it 'only allows provider types of "internal" and "hsm"' do
           expect {render_erb_to_hash(nil, provider_type_yaml: 'dev_internal')}
-              .to raise_error('The provided encryption provider type is not valid. Valid provider types are "hsm", "dsm", and "internal".')
+              .to raise_error('The provided encryption provider type is not valid. Valid provider types are "hsm" and "internal".')
 
-          %w[hsm dsm internal].each do |valid_type|
+          %w[hsm internal].each do |valid_type|
             expect { render_erb_to_hash(nil, provider_type_yaml: valid_type) }.to_not raise_error
           end
         end

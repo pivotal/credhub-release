@@ -135,8 +135,8 @@
 
   provider_types = encryption_providers.collect{|p| p['type']}.uniq
 
-  if provider_types.any? { |p| !['internal', 'hsm', 'dsm'].include?(p) }
-    raise 'The provided encryption provider type is not valid. Valid provider types are "hsm", "dsm", and "internal".'
+  if provider_types.any? { |p| !['internal', 'hsm'].include?(p) }
+    raise 'The provided encryption provider type is not valid. Valid provider types are "hsm" and "internal".'
   end
 
   def invalid_dev_key?(dev_key)
