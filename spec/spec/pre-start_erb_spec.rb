@@ -58,7 +58,7 @@ RSpec.describe "the template" do
               keys:
                 - provider_name: dev-key
                   active: true
-                  dev_key: test-key
+                  encryption_password: test-encryption-password
               providers:
                 - name: dev-key
                   type: internal

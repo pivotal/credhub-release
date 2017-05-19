@@ -139,19 +139,10 @@
     raise 'The provided encryption provider type is not valid. Valid provider types are "hsm" and "internal".'
   end
 
-  def invalid_dev_key?(dev_key)
-    return false if dev_key.nil?
-    dev_key[/\H/] || dev_key.size != 32
-  end
-
   active_provider = encryption_providers.select {|p| p['name'] == active_key['provider_name']}.first
 
   keys = encryption_keys.each do |k|
     k.delete 'provider_name'
-
-    if k.has_key?('dev_key') && k.has_key?('encryption_password')
-      raise 'You must specify either an encryption_password or dev_key, not both. Please update your manifest and retry your request.'
-    end
 
     if k.key?('encryption_password')
       if k['encryption_password'].nil? || k['encryption_password'].empty?
@@ -164,9 +155,7 @@
     end
 
     if k.key?('dev_key')
-      if invalid_dev_key?(k['dev_key'])
-        raise 'credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).'
-      end
+      raise 'The key `dev_key` is not supported. You must rotate to using an `encryption_password` prior to upgrading to this version.'
     end
   end
 

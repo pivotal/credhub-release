@@ -351,50 +351,6 @@ RSpec.describe 'the template' do
       end
 
       context 'internal encryption' do
-        context 'validation' do
-          let(:bad_base_option_yaml) {
-            <<-EOF
-        properties:
-          credhub:
-            encryption:
-              keys:
-                - provider_name: active_dev
-                  encryption_password: creddymccredhubface
-                  dev_key: "3456abcd1234abcd1234abcd1234abcd"
-                  active: true
-              providers:
-                - name: active_dev
-                  type: internal
-            port: 9000
-            authentication:
-              uaa:
-                url: "my_uaa_url"
-                verification_key: |
-                  line 1
-                  line 2
-            tls:
-              certificate: foo
-              private_key: bar
-            data_storage:
-              type: in-memory
-              database: my_db_name
-            log_level: info
-
-            EOF
-          }
-
-          let(:bad_manifest_properties) { YAML.load(bad_base_option_yaml) }
-
-          it 'should not allow both dev_key and encryption_password' do
-            options = {:context => bad_manifest_properties.to_json}
-            renderer = Bosh::Template::Renderer.new(options)
-
-            expect {
-              renderer.render('../jobs/credhub/templates/application.yml.erb')
-            }.to raise_error('You must specify either an encryption_password or dev_key, not both. Please update your manifest and retry your request.')
-          end
-        end
-
         context 'with a password' do
           let(:password_base_option_yaml) {
             <<-EOF
@@ -470,105 +426,48 @@ RSpec.describe 'the template' do
         end
 
         context 'with hex keys' do
-        let(:base_option_yaml) {
-          <<-EOF
-        properties:
-          credhub:
-            encryption:
-              keys:
-                - provider_name: active_dev
-                  dev_key: "3456abcd1234abcd1234abcd1234abcd"
-                  active: true
-                - provider_name: active_dev
-                  dev_key: "2345abcd1234abcd1234abcd1234abcd"
-              providers:
-                - name: active_dev
-                  type: internal
-            port: 9000
-            authentication:
-              uaa:
-                url: "my_uaa_url"
-                verification_key: |
-                  line 1
-                  line 2
-            tls:
-              certificate: foo
-              private_key: bar
-            data_storage:
-              type: in-memory
-              database: my_db_name
-            log_level: info
+          let(:base_option_yaml) {
+            <<-EOF
+          properties:
+            credhub:
+              encryption:
+                keys:
+                  - provider_name: active_dev
+                    dev_key: "3456abcd1234abcd1234abcd1234abcd"
+                    active: true
+                  - provider_name: active_dev
+                    dev_key: "2345abcd1234abcd1234abcd1234abcd"
+                providers:
+                  - name: active_dev
+                    type: internal
+              port: 9000
+              authentication:
+                uaa:
+                  url: "my_uaa_url"
+                  verification_key: |
+                    line 1
+                    line 2
+              tls:
+                certificate: foo
+                private_key: bar
+              data_storage:
+                type: in-memory
+                database: my_db_name
+              log_level: info
 
-          EOF
-        }
+            EOF
+          }
 
-        let(:manifest_properties) { YAML.load(base_option_yaml) }
+          let(:manifest_properties) { YAML.load(base_option_yaml) }
 
-        context 'validating the dev_key' do
-          it 'should be valid hexadecimal' do
-            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = 'xyz'
-
+          it 'fails with a reasonable error message' do
             options = {:context => manifest_properties.to_json}
             renderer = Bosh::Template::Renderer.new(options)
 
             expect {
               renderer.render('../jobs/credhub/templates/application.yml.erb')
-            }.to raise_error('credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
+            }.to raise_error('The key `dev_key` is not supported. You must rotate to using an `encryption_password` prior to upgrading to this version.')
           end
-
-          it 'should be 32 characters' do
-            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '3456abcd1234abcd1234abcd1234ab'
-
-            options = {:context => manifest_properties.to_json}
-            renderer = Bosh::Template::Renderer.new(options)
-
-            expect {
-              renderer.render('../jobs/credhub/templates/application.yml.erb')
-            }.to raise_error('credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
-          end
-
-          it 'should not allow empty string' do
-            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = ''
-
-            options = {:context => manifest_properties.to_json}
-            renderer = Bosh::Template::Renderer.new(options)
-
-            expect {
-              renderer.render('../jobs/credhub/templates/application.yml.erb')
-            }.to raise_error('credhub.encryption.dev_key is not valid (must be 128 bit hexadecimal string).')
-          end
-
-          it 'should allow the dev_key to be omitted' do
-            manifest_properties['properties']['credhub']['encryption']['keys'].first.delete('dev_key')
-
-            options = {:context => manifest_properties.to_json}
-            renderer = Bosh::Template::Renderer.new(options)
-
-            expect {
-              renderer.render('../jobs/credhub/templates/application.yml.erb')
-            }.to_not raise_error
-          end
-        end
-
-        context 'when the user provides a dev key' do
-          it 'sets the provider and dev key correctly' do
-            manifest_properties['properties']['credhub']['encryption']['keys'].first['dev_key'] = '1234abcd1234abcd1234abcd1234abcd'
-            options = {:context => manifest_properties.to_json}
-            renderer = Bosh::Template::Renderer.new(options)
-            result = YAML.load(renderer.render('../jobs/credhub/templates/application.yml.erb'))
-
-            expect(result['encryption']['keys'].length).to eq 2
-
-            first_key = result['encryption']['keys'].first
-            second_key = result['encryption']['keys'].last
-
-            expect(first_key['dev_key']).to eq '1234abcd1234abcd1234abcd1234abcd'
-            expect(first_key['active']).to eq true
-
-            expect(second_key['dev_key']).to eq '2345abcd1234abcd1234abcd1234abcd'
-            expect(second_key.has_key?('active')).to eq false
-          end
-        end
         end
       end
     end

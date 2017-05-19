@@ -213,7 +213,7 @@ Validate:
 ***
 #### [Post-start error] Error creating bean with name 'encryptionKeyService' or 'encryptionKeyCanaryMapper' or Failed to instantiate [io.pivotal.security.service.BCEncryptionService]
 
-This failure indicates that CredHub was unable to start its data encryption service from the provided configuration. This is caused by a configuration of the keys and/or providers section of the manifest. Validate that the specified `encryption.keys` contain valid values for `dev_key` or `encryption_key_name`. Also validate that the `encryption.providers` specified include valid values.
+This failure indicates that CredHub was unable to start its data encryption service from the provided configuration. This is caused by a configuration of the keys and/or providers section of the manifest. Validate that the specified `encryption.keys` contain valid values for `encryption_password` or `encryption_key_name`. Also validate that the `encryption.providers` specified include valid values.
 
 ***
 #### [Post-start error] io.pivotal.security.service.EncryptionKeyCanaryMapper required a bean of type 'io.pivotal.security.service.EncryptionService' that could not be found

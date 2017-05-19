@@ -32,7 +32,7 @@ properties:
     description: |
       A list of active and inactive encryption keys, specifying the provider name and the encryption key name or value. One key must be marked as active.
       See below for example keys for each supported provider type.
-      The internal provider accepts either an encryption_password (minimum length 20) or dev_key (32 character hexadecimal string).
+      The internal provider accepts an encryption_password (minimum length 20).
     example:
       - provider_name: hsm-provider
         encryption_key_name: active-hsm-key-name
@@ -41,8 +41,6 @@ properties:
         encryption_key_name: inactive-hsm-key-name
       - provider_name: internal-provider
         encryption_password: example-encryption-password
-      - provider_name: internal-provider
-        dev_key: ABCDEF0123456789ABCDEF0123456789
 
   credhub.encryption.providers:
     description: |
