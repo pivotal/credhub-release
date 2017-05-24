@@ -22,7 +22,7 @@ delete_timestamp_files() {
   echo "$scriptName - cleaned up timestamp files"
 }
 
-touch -d "120 seconds" $WHEN_FINISH
+touch -d "600 seconds" $WHEN_FINISH
 touch $WHEN_NOW
 EXPIRATION=`ls -la --full-time $WHEN_FINISH |awk '{print $6 " " $7}'`
 echo "$scriptName - performing post start healthcheck until $EXPIRATION"
