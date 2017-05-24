@@ -1,9 +1,10 @@
----
 builds:
-  fb40deff-b429-4a82-b6dd-b69e5f7a0d2d:
-    version: 0.6.0
-  c95c1163-83ce-4a9c-8f05-64885f77521e:
-    version: 0.6.1
   1eb85367-6f3d-4a56-9d4c-0a076a4d3c19:
     version: 0.7.0
-format-version: '2'
+  c95c1163-83ce-4a9c-8f05-64885f77521e:
+    version: 0.6.1
+  ebd738b0-163c-46fc-5918-03829c418bfc:
+    version: 0.8.0
+  fb40deff-b429-4a82-b6dd-b69e5f7a0d2d:
+    version: 0.6.0
+format-version: "2"
