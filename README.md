@@ -27,7 +27,7 @@ releases:
 
 [1]:https://github.com/cloudfoundry-incubator/credhub
 [2]:https://bosh.io/releases/github.com/pivotal-cf/credhub-release?all=1
-[3]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release&version=0.6.1
+[3]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release
 
 ## Reporting a Vulnerability
 
