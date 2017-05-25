@@ -14,8 +14,8 @@ releases:
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=34
   sha1: dcb2a2911c1592b2c582237e801fb5d0c7639674
 - name: credhub
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.7.0
-  sha1: c1d0eb7e0b1a03831cd102b740b47673cda9b350
+  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.8.0
+  sha1: 0bd0058486fe1d650b42406834fc57349063bf71
 - name: bosh-aws-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=64
   sha1: 7fc8ac0f06999b73e426d8baa0345eacaad1d4c7

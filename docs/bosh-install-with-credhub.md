@@ -45,9 +45,9 @@ If you use [bosh-deployment][1] to deploy your director, including the ops file 
       sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
     # ...
     - name: credhub # <---
-      url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.7.0
-      version: 0.7.0
-      sha1: c1d0eb7e0b1a03831cd102b740b47673cda9b350
+      url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=0.8.0
+      version: 0.8.0
+      sha1: 0bd0058486fe1d650b42406834fc57349063bf71
     ```
 
 1. Add the CredHub job to the Director instance
