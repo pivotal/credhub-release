@@ -82,4 +82,8 @@ EOL
 # remove intermediate files
 rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE} ${MTLS_CA_CERT_FILE}
 
+# restrict file permissions
+chown vcap /var/vcap/jobs/credhub/config/*.jks
+chmod 600 /var/vcap/jobs/credhub/config/*.jks
+
 ## END CERTIFICATE INSTALLATION

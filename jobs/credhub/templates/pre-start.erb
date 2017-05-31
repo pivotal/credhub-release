@@ -5,7 +5,7 @@ set -eu
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 
 chown -R vcap /var/vcap/jobs/credhub/config
-chmod 700 /var/vcap/jobs/credhub/config
+chmod 600 /var/vcap/jobs/credhub/config/*
 
 <% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
 <% active_provider_name = active_key['provider_name'] %>
