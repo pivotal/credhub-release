@@ -235,6 +235,7 @@ RSpec.describe 'the template' do
     expect(result['server']['ssl']['key_password']).to eq 'KEY_STORE_PASSWORD_PLACEHOLDER'
     expect(result['server']['ssl']['key_alias']).to eq 'credhub_tls_cert'
     expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384'
+    expect(result['server']['ssl']['enabled_protocols']).to eq 'TLSv1.2'
   end
 
   describe 'when there is no mutual TLS section' do

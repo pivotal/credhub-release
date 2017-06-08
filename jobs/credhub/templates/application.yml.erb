@@ -12,7 +12,8 @@
       'key_store' => "#{credhub_conf_dir}/cacerts.jks",
       'key_password' => 'KEY_STORE_PASSWORD_PLACEHOLDER',
       'key_alias' => 'credhub_tls_cert',
-      'ciphers' => 'ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384'
+      'ciphers' => 'ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384',
+      'enabled_protocols' => 'TLSv1.2'
     }
   }
 
