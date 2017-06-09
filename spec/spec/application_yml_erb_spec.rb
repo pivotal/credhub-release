@@ -234,7 +234,7 @@ RSpec.describe 'the template' do
     expect(result['server']['ssl']['key_store']).to eq '/var/vcap/jobs/credhub/config/cacerts.jks'
     expect(result['server']['ssl']['key_password']).to eq 'KEY_STORE_PASSWORD_PLACEHOLDER'
     expect(result['server']['ssl']['key_alias']).to eq 'credhub_tls_cert'
-    expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES128-GCM-SHA256,ECDHE-RSA-AES256-GCM-SHA384'
+    expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA'
     expect(result['server']['ssl']['enabled_protocols']).to eq 'TLSv1.2'
   end
 
