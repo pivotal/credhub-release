@@ -29,6 +29,19 @@ releases:
 [2]:https://bosh.io/releases/github.com/pivotal-cf/credhub-release?all=1
 [3]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release
 
+## [Release Lifecycle](#release-lifecycle) 
+
+CredHub issues frequent minor releases containing new features. If you wish to receive the latest new features, the most recent release should be used. If you choose to use the latest release line, you must update to a subsequent patch or minor release - which may contain new features - to receive security patches and bug fixes. 
+
+If you wish to use a stable version with a less frequent feature release cycle, you may use a long term support version. LTS versions are patched for security vulnerabilities and bugs, but do not contain new features. New LTS versions are released quarterly. Patches are issued for LTS versions for 9 months following release (current–2 structure). 
+
+Current long term support versions
+
+| Version | Released    | End of Patch Releases |
+|---------|-------------|------------------------|
+| 1.0.x   | Jun-15-2017 | Mar-15-2018            |
+ 
+
 ## Reporting a Vulnerability
 
 We strongly encourage people to report security vulnerabilities privately to our security team before disclosing them in a public forum.
