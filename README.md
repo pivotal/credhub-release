@@ -29,7 +29,7 @@ releases:
 [2]:https://bosh.io/releases/github.com/pivotal-cf/credhub-release?all=1
 [3]:https://bosh.io/jobs/credhub?source=github.com/pivotal-cf/credhub-release
 
-## [Release Lifecycle](#release-lifecycle) 
+## Release Lifecycle
 
 CredHub issues frequent minor releases containing new features. If you wish to receive the latest new features, the most recent release should be used. If you choose to use the latest release line, you must update to a subsequent patch or minor release - which may contain new features - to receive security patches and bug fixes. 
 
