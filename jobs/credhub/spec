@@ -9,7 +9,7 @@ templates:
   backup.erb: bin/bbr/backup
   restore.erb: bin/bbr/restore
   # Other scripts
-  ctl.erb: bin/ctl
+  ctl: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh
   configure_hsm.erb: bin/configure_hsm.sh
   # Config
@@ -142,8 +142,3 @@ properties:
   credhub.log_level:
     description: "Log level. Available levels are none, error, warn, info, debug"
     default: info
-
-  # JVM configuration
-  credhub.max_heap_size:
-    description: Maximum memory heap size in MB for CredHub JVM
-    default: 1024
