@@ -472,5 +472,12 @@ RSpec.describe 'the template' do
         end
       end
     end
+    describe 'key_creation_enabled' do
+        it 'appears' do
+          result = render_erb_to_hash('{ type: "in-memory" }')
+
+          expect(result['encryption']['key_creation_enabled']).to eq false
+      end
+    end
   end
 end

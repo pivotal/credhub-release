@@ -162,7 +162,8 @@
 
   application_config['encryption'] = {
     'provider' => active_provider['type'],
-    'keys' => keys
+    'keys' => keys,
+    'key_creation_enabled' => !!spec.bootstrap
   }
 
   if active_provider['type'] == 'hsm'
