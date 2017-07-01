@@ -118,6 +118,8 @@ properties:
     description: "URL of UAA instance for client to contact"
   credhub.authentication.uaa.verification_key:
     description: "The public key for verifying tokens issued by the UAA instance"
+  credhub.authentication.uaa.ca_certs:
+    description: "List of certificates of CAs trusted trusted for signing TLS certificates for UAA"
 
   # Mutual TLS
   credhub.authentication.mutual_tls.trusted_cas:

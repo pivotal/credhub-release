@@ -91,6 +91,13 @@ RSpec.describe 'the template' do
       result = render_erb_to_hash('{ type: "in-memory" }')
       expect(result['auth_server']['url']).to eq 'my_uaa_url'
     end
+
+    it 'sets the auth server trust store' do
+      result = render_erb_to_hash('{ type: "in-memory" }')
+
+      expect(result['auth_server']['trust_store']).to eq '/var/vcap/jobs/credhub/config/auth_server_trust_store.jks'
+      expect(result['auth_server']['trust_store_password']).to eq 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
+    end
   end
 
   describe 'authorization' do
