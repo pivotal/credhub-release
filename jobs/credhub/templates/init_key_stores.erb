@@ -24,8 +24,15 @@ MTLS_TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 MTLS_TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/mtls_trust_store.jks
 MTLS_CA_ALIAS=mtls_ca
 
+# UAA
+AUTH_SERVER_CA_CERT_FILE=/var/vcap/jobs/credhub/config/auth_server_ca_cert.crt
+AUTH_SERVER_TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/auth_server_trust_store.jks
+AUTH_SERVER_TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
+AUTH_SERVER_CA_ALIAS_BASE=auth_server_ca
+
 sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 sed -i "s/MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER/${MTLS_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
+sed -i "s/AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER/${AUTH_SERVER_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 
 rm -f ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE}
 
@@ -79,8 +86,27 @@ EOL
 
 <% end %>
 
+<%
+auth_server_ca_certs = p('credhub.authentication.uaa.ca_certs') || []
+auth_server_ca_certs.each_with_index do |cert, index|
+%>
+
+cat > ${AUTH_SERVER_CA_CERT_FILE} <<EOL
+<%= cert %>
+EOL
+
+<%=
+"${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts \
+  -keystore ${AUTH_SERVER_TRUST_STORE_PATH} \
+  -storepass ${AUTH_SERVER_TRUST_STORE_PASSWORD} \
+  -alias ${AUTH_SERVER_CA_ALIAS_BASE}#{index} \
+  -file ${AUTH_SERVER_CA_CERT_FILE}"
+%>
+
+<% end %>
+
 # remove intermediate files
-rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE} ${MTLS_CA_CERT_FILE}
+rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}
 
 # restrict file permissions
 chown vcap /var/vcap/jobs/credhub/config/*.jks

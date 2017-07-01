@@ -53,7 +53,9 @@
 
   # Auth Server
   application_config['auth_server'] = {
-    'url' => p('credhub.authentication.uaa.url')
+    'url' => p('credhub.authentication.uaa.url'),
+    'trust_store' => "#{credhub_conf_dir}/auth_server_trust_store.jks",
+    'trust_store_password' => 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
   }
 
   # Database Config
