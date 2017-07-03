@@ -220,14 +220,17 @@ This failure indicates that CredHub was unable to start its data encryption serv
 
 This failure indicates that the active encryption provider type has not be defined or is an invalid value. Check the `encryption.providers.type` value in your manifest.
 
+***
 #### [Post-start error] The encryption keys provided cannot decrypt any of the value(s) in the database
 
 This failure indicates that the provided encryption key(s) provided in the deployment manifest cannot access any of the data stored in the database. You must update your encryption keys in the deployment manifest and redeploy. 
 
+***
 #### [Post-start error] Migration failed ERROR: syntax error at or near "CONSTRAINT"
 
 This failure indicates an inability to successfully perform the required database migrations. The specific error citing a syntax error near CONSTRAINT occurs when a non-supported version of PostgreSQL, e.g. 9.0, is deployed. CredHub requires PostgreSQL version 9.4 or greater.   
 
+***
 #### [Post-start error] I/O error on GET request for "https://uaa.example.com:8443/.well-known/openid-configuration"
 
 This failure indicates that the CredHub server was unable to get the needed configuration information for UAA. You should validate that the UAA target is reachable from the CredHub instance and that the provided CA certificate in the manifest at `credhub.authentication.uaa.ca_certs[n]` is the CA which signed the targeted UAA TLS certificate. 
@@ -244,6 +247,7 @@ A descriptive error should be presented for usability errors when interacting vi
 
 This error indicates that the CLI cannot reach the configured UAA instance. The CLI contacts the UAA instance directly during a login request. To resolve this issue, validate that the configured UAA address is valid and that it is configured to be reachable from your request location. 
 
+***
 #### The request token signature could not be verified. Please validate that your request token was issued by the UAA server authorized by CredHub.
 
 This error indicates that the token presented by the CLI was not signed by the UAA instance trusted by CredHub. You should validate that your deployment manifest contains the correct UAA verification key at `credhub.user_management.uaa.verification_key`.
