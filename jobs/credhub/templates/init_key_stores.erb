@@ -87,23 +87,38 @@ EOL
 <% end %>
 
 <%
+invalid_auth_server_ca_certs = "At least one trusted CA certificate for UAA must be provided. Please add a value at 'credhub.authentication.uaa.ca_certs[]' and redeploy."
+
+begin
+  p('credhub.authentication.uaa.ca_certs')
+rescue UnknownProperty
+  raise invalid_auth_server_ca_certs
+end
+
 auth_server_ca_certs = p('credhub.authentication.uaa.ca_certs') || []
-auth_server_ca_certs.each_with_index do |cert, index|
+
+if auth_server_ca_certs.kind_of?(Array) && auth_server_ca_certs.any?
+  auth_server_ca_certs.each_with_index do |cert, index|
 %>
 
 cat > ${AUTH_SERVER_CA_CERT_FILE} <<EOL
-<%= cert %>
+  <%= cert %>
 EOL
 
-<%=
+  <%=
 "${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts \
   -keystore ${AUTH_SERVER_TRUST_STORE_PATH} \
   -storepass ${AUTH_SERVER_TRUST_STORE_PASSWORD} \
   -alias ${AUTH_SERVER_CA_ALIAS_BASE}#{index} \
   -file ${AUTH_SERVER_CA_CERT_FILE}"
-%>
+  %>
 
-<% end %>
+<%
+  end
+else
+  raise invalid_auth_server_ca_certs
+end
+%>
 
 # remove intermediate files
 rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}
