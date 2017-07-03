@@ -12,14 +12,16 @@ def render_erb_to_yaml(data_storage_yaml,
                        mtls_yaml: nil,
                        option_yaml: nil,
                        provider_type_yaml: nil,
-                       acls_enabled: false)
+                       acls_enabled: false,
+                       java7_ciphers: nil)
   data_storage_yaml ||= '{ type: "in-memory", database: "my_db_name" }'
-  tls_yaml ||= 'tls: { certificate: "foo", private_key: "bar" }'
+  tls_yaml ||= '{ certificate: "foo", private_key: "bar" }'
   keys_yaml ||= '[{provider_name: "active_hsm", encryption_key_name: "active_keyname", active: true},
                   {provider_name: "active_hsm", encryption_key_name: "another_keyname"}]'
   log_level ||= 'info'
   provider_type_yaml ||= 'hsm'
   acls_enabled ||= false
+  java7_ciphers ||= ''
   option_yaml ||= <<-EOF
         properties:
           credhub:
@@ -45,9 +47,11 @@ def render_erb_to_yaml(data_storage_yaml,
             authorization:
               acls:
                 enabled: #{acls_enabled}
-            #{tls_yaml.empty? ? '' : tls_yaml}
+            tls:
+              #{tls_yaml.empty? ? '' : tls_yaml}
             data_storage: #{data_storage_yaml}
             log_level: #{log_level}
+            #{java7_ciphers}
 
   EOF
   options = {:context => YAML.load(option_yaml).to_json}
@@ -243,6 +247,34 @@ RSpec.describe 'the template' do
     expect(result['server']['ssl']['key_alias']).to eq 'credhub_tls_cert'
     expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256'
     expect(result['server']['ssl']['enabled_protocols']).to eq 'TLSv1.2'
+  end
+
+  describe 'TLS ciphers' do
+    context 'with java 7 ciphers enabled' do
+      it 'includes the java 7 ciphers' do
+        java7_ciphers = 'java7_tls_ciphers_enabled: true'
+        result = render_erb_to_hash('{ type: "in-memory" }', java7_ciphers: java7_ciphers)
+
+        expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA'
+      end
+    end
+
+    context 'with java 7 ciphers disabled' do
+      it 'does not include the java 7 ciphers' do
+        java7_ciphers = 'java7_tls_ciphers_enabled: false'
+        result = render_erb_to_hash('{ type: "in-memory" }', java7_ciphers: java7_ciphers)
+
+        expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256'
+      end
+    end
+
+    context 'with java 7 ciphers unspecified' do
+      it 'does not include the java 7 ciphers' do
+        result = render_erb_to_hash('{ type: "in-memory" }')
+
+        expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256'
+      end
+    end
   end
 
   describe 'when there is no mutual TLS section' do
