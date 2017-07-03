@@ -245,7 +245,7 @@ RSpec.describe 'the template' do
     expect(result['server']['ssl']['key_store']).to eq '/var/vcap/jobs/credhub/config/cacerts.jks'
     expect(result['server']['ssl']['key_password']).to eq 'KEY_STORE_PASSWORD_PLACEHOLDER'
     expect(result['server']['ssl']['key_alias']).to eq 'credhub_tls_cert'
-    expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256'
+    expect(result['server']['ssl']['ciphers']).to eq 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
     expect(result['server']['ssl']['enabled_protocols']).to eq 'TLSv1.2'
   end
 
@@ -255,7 +255,7 @@ RSpec.describe 'the template' do
         java7_ciphers = 'java7_tls_ciphers_enabled: true'
         result = render_erb_to_hash('{ type: "in-memory" }', java7_ciphers: java7_ciphers)
 
-        expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA'
+        expect(result['server']['ssl']['ciphers']).to eq 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA'
       end
     end
 
@@ -264,7 +264,7 @@ RSpec.describe 'the template' do
         java7_ciphers = 'java7_tls_ciphers_enabled: false'
         result = render_erb_to_hash('{ type: "in-memory" }', java7_ciphers: java7_ciphers)
 
-        expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256'
+        expect(result['server']['ssl']['ciphers']).to eq 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
       end
     end
 
@@ -272,7 +272,7 @@ RSpec.describe 'the template' do
       it 'does not include the java 7 ciphers' do
         result = render_erb_to_hash('{ type: "in-memory" }')
 
-        expect(result['server']['ssl']['ciphers']).to eq 'ECDHE-ECDSA-AES256-GCM-SHA384,ECDHE-RSA-AES256-GCM-SHA384,ECDHE-ECDSA-AES128-GCM-SHA256,ECDHE-RSA-AES128-GCM-SHA256'
+        expect(result['server']['ssl']['ciphers']).to eq 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
       end
     end
   end
