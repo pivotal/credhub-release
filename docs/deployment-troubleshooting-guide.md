@@ -228,6 +228,10 @@ This failure indicates that the provided encryption key(s) provided in the deplo
 
 This failure indicates an inability to successfully perform the required database migrations. The specific error citing a syntax error near CONSTRAINT occurs when a non-supported version of PostgreSQL, e.g. 9.0, is deployed. CredHub requires PostgreSQL version 9.4 or greater.   
 
+#### [Post-start error] I/O error on GET request for "https://uaa.example.com:8443/.well-known/openid-configuration"
+
+This failure indicates that the CredHub server was unable to get the needed configuration information for UAA. You should validate that the UAA target is reachable from the CredHub instance and that the provided CA certificate in the manifest at `credhub.authentication.uaa.ca_certs[n]` is the CA which signed the targeted UAA TLS certificate. 
+
 ## Usability Failures
 
 Usability failures occur after a successful deployment of CredHub. These errors are primarily related to the server's ability to reach dependent components. 
