@@ -149,3 +149,7 @@ properties:
   credhub.max_heap_size:
     description: Maximum memory heap size in MB for CredHub JVM
     default: 1024
+
+  credhub.java7_tls_ciphers_enabled:
+    description: 'Allows legacy TLS cipher suites to enable TLS communication with Java 7 clients'
+    default: false
