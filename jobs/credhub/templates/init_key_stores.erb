@@ -102,7 +102,7 @@ if auth_server_ca_certs.kind_of?(Array) && auth_server_ca_certs.any?
 %>
 
 cat > ${AUTH_SERVER_CA_CERT_FILE} <<EOL
-  <%= cert %>
+<%= cert %>
 EOL
 
   <%=
