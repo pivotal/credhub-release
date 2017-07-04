@@ -252,4 +252,11 @@ This error indicates that the CLI cannot reach the configured UAA instance. The 
 
 This error indicates that the token presented by the CLI was not signed by the UAA instance trusted by CredHub. You should validate that your deployment manifest contains the correct UAA verification key at `credhub.user_management.uaa.verification_key`.
 
+***
+#### The request includes an unrecognized parameter 'ca_name'. Please update or remove this parameter and retry your request.
 
+This error occurs when the request includes a parameter that is not recognized by the server. If you encounter this error when sending requests to the API, you should validate the structure of the request. Examples of valid requests are provided [here][1].
+
+If you encounter this error when using the CLI, this occurs because the feature you are attempting to exercise is not yet or no longer supported by the server. You are recommended to update to the latest versions of both or review the release notes to validate when a feature was added or removed. 
+
+[1]:https://credhub-api.cfapps.io
