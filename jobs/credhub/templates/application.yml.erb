@@ -1,5 +1,9 @@
 <%=
 
+  def is_boolean(x)
+    !!x == x
+  end
+
   credhub_conf_dir = '/var/vcap/jobs/credhub/config'
 
   application_config = {}
@@ -80,48 +84,41 @@
   datastorage_type = p('credhub.data_storage.type')
 
   if datastorage_type == 'in-memory'
-      flyway_locations << 'classpath:/db/migration/h2'
+    flyway_locations << 'classpath:/db/migration/h2'
   elsif datastorage_type == 'postgres' || datastorage_type == 'mysql'
-      db_params = ['host', 'port', 'database']
-        .map {|name| "credhub.data_storage.#{name}"}
-        .map {|property| p(property)}
-      jdbc_driver = datastorage_type == 'postgres' ? 'postgresql' : 'mariadb'
-      db_params.unshift(jdbc_driver)
-      connection_url = sprintf 'jdbc:%s://%s:%s/%s?autoReconnect=true', *db_params
-
-      application_config['spring']['datasource'] = {
-        'username' => p('credhub.data_storage.username'),
-        'password' => p('credhub.data_storage.password'),
-        'url' => connection_url
-      }
-
-      flyway_locations << "classpath:/db/migration/#{datastorage_type}"
-  else
-    raise 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
-  end
-
-  def is_boolean(x)
-    !!x == x
-  end
-
-  # Mysql TLS Config
-  if datastorage_type == 'mysql'
-    datasource_url = application_config['spring']['datasource']['url']
+    db_params = ['host', 'port', 'database']
+      .map {|name| "credhub.data_storage.#{name}"}
+      .map {|property| p(property)}
+    jdbc_driver = datastorage_type == 'postgres' ? 'postgresql' : 'mariadb'
+    db_params.unshift(jdbc_driver)
+    connection_url = sprintf 'jdbc:%s://%s:%s/%s?autoReconnect=true', *db_params
 
     if_p('credhub.data_storage.require_tls') do |require_tls|
       if !is_boolean(require_tls)
         raise 'credhub.data_storage.require_tls must be set to `true` or `false`.'
       end
 
-      datasource_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true' if require_tls
+      if datastorage_type == 'mysql'
+        connection_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true' if require_tls
+
+        if_p('credhub.data_storage.tls_ca') do |tls_cas|
+          connection_url << '&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER'
+          connection_url << "&trustCertificateKeyStoreUrl=#{credhub_conf_dir}/db_trust_store.jks"
+        end
+      elsif datastorage_type == 'postgres'
+        connection_url << '&ssl=true' if require_tls
+      end
     end
 
-    if_p('credhub.data_storage.tls_ca') do |tls_cas|
-      datasource_url << '&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER'
-      datasource_url << "&trustCertificateKeyStoreUrl=#{credhub_conf_dir}/db_trust_store.jks"
-    end
+    application_config['spring']['datasource'] = {
+      'username' => p('credhub.data_storage.username'),
+      'password' => p('credhub.data_storage.password'),
+      'url' => connection_url
+    }
 
-    application_config['spring']['datasource']['url'] = datasource_url
+    flyway_locations << "classpath:/db/migration/#{datastorage_type}"
+  else
+    raise 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
   end
 
   application_config['flyway'] = {

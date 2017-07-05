@@ -31,6 +31,7 @@ AUTH_SERVER_TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c3
 AUTH_SERVER_CA_ALIAS_BASE=auth_server_ca
 
 sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
+sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/bin/ctl
 sed -i "s/MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER/${MTLS_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 sed -i "s/AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER/${AUTH_SERVER_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 
@@ -44,14 +45,6 @@ cat > ${PRIVATE_KEY_FILE} <<EOL
 <%= p('credhub.tls.private_key') %>
 EOL
 
-<% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
-
-cat > ${DATABASE_TLS_CA_FILE} <<EOL
-<%= tls_ca %>
-EOL
-
-<% end %>
-
 if [ -s ${CERT_FILE} ]; then
     RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 -export -in ${CERT_FILE} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
             -password pass:k0*l*s3cur1tyr0ck$
@@ -61,6 +54,28 @@ if [ -s ${CERT_FILE} ]; then
             -deststorepass ${KEY_STORE_PASSWORD} -destkeypass ${KEY_STORE_PASSWORD} -destkeystore ${KEY_STORE_PATH} \
             -alias ${CERT_ALIAS}
 fi
+
+# Generate and then delete a key in the DB trust store to ensure that it exists
+
+"${JAVA_HOME}/bin/keytool" -genkey \
+    -alias temp \
+    -dname "CN=temp" \
+    -keypass "${KEY_STORE_PASSWORD}" \
+    -keystore "${DB_TRUST_STORE_PATH}" \
+    -storepass "${KEY_STORE_PASSWORD}"
+
+"${JAVA_HOME}/bin/keytool" -delete \
+    -alias temp \
+    -keystore "${DB_TRUST_STORE_PATH}" \
+    -storepass "${KEY_STORE_PASSWORD}"
+
+<% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
+
+cat > ${DATABASE_TLS_CA_FILE} <<EOL
+<%= tls_ca %>
+EOL
+
+<% end %>
 
 if [ -s ${DATABASE_TLS_CA_FILE} ]; then
     ${JAVA_HOME}/bin/keytool -import -noprompt -keystore ${DB_TRUST_STORE_PATH} -storepass ${KEY_STORE_PASSWORD} \

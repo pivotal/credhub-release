@@ -140,7 +140,7 @@ RSpec.describe 'the template' do
     end
 
     context 'with Postgres' do
-      it 'sets databse url correctly' do
+      it 'sets database url correctly' do
         result = render_erb_to_hash(
             '{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password" }')
         url = parse_database_url(result['spring']['datasource']['url'])
@@ -167,6 +167,27 @@ RSpec.describe 'the template' do
         result = render_erb_to_hash(
             '{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password" }')
         expect(result['flyway']['locations']).to eq %w(classpath:/db/migration/common classpath:/db/migration/postgres)
+      end
+
+      it 'prints error when require_tls is not a boolean type' do
+        expect {render_erb_to_hash('{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: "true" }')}
+            .to raise_error('credhub.data_storage.require_tls must be set to `true` or `false`.')
+      end
+
+      it 'uses tls if require_tls is true' do
+        data_storage_yaml = '{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: true }'
+        result = render_erb_to_hash(data_storage_yaml)
+        url = parse_database_url(result['spring']['datasource']['url'])
+
+        expect(url['query_params']['ssl']).to eq ['true']
+      end
+
+      it 'does not use tls if require_tls is false' do
+        data_storage_yaml = '{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tlsL false }'
+        result = render_erb_to_hash(data_storage_yaml)
+        url = parse_database_url(result['spring']['datasource']['url'])
+
+        expect(url['query_params']).not_to have_key('ssl')
       end
     end
 
