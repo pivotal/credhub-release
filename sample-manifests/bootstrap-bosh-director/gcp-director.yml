@@ -24,8 +24,8 @@ resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3421.6
-    sha1: 83dc6a0281611225f8bce029577ef6a64020edc9
+    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3363.22
+    sha1: 317813b45ae3bf5acda28617474b9d3b33c28be5
   cloud_properties:
     zone: ((gcp-zone))
     machine_type: n1-standard-4
