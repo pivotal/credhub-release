@@ -8,24 +8,24 @@ name: &name aws-director-credhub
 
 releases:
 - name: bosh
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.1
-  sha1: c2aaffdb3a9b6ddf2a05d2a865e81e4186741675
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.2
+  sha1: 592569921af54b131803ca403cb25f2510497f29
 - name: uaa
-  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=34
-  sha1: dcb2a2911c1592b2c582237e801fb5d0c7639674
+  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=41
+  sha1: a1b1818fb4f5e722a6c3073d364ce4c400e5fb31
 - name: credhub
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.0.1
-  sha1: d6bea73ef3125197eeb5865811ca7117cfc85ca6
+  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.0.3
+  sha1: 4c472a9d2de80c3a19335a66a34575dc5de3d99b
 - name: bosh-aws-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=64
-  sha1: 7fc8ac0f06999b73e426d8baa0345eacaad1d4c7
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=65
+  sha1: 26b3a5c43e6f82594a373309a495660d6db26254
 
 resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421.6
-    sha1: e0d4a0964f1e131d78be15e85158c4e12591f75f
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421.11
+    sha1: 98f9b71398f0f771e8a4bbaf5531440b99bae540
   cloud_properties:
     instance_type: m3.xlarge
     ephemeral_disk: {size: 25000, type: gp2}
@@ -138,6 +138,8 @@ instance_groups:
           uaa:
             url: *uaa-url
             verification_key: ((uaa-jwt.public_key))
+            ca_certs:
+            - ((uaa-tls.ca))
           mutual_tls:
             trusted_cas:
             - ((credhub-mtls-ca.certificate))
