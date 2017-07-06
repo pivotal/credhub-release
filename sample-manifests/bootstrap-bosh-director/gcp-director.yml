@@ -11,8 +11,8 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.1
   sha1: c2aaffdb3a9b6ddf2a05d2a865e81e4186741675
 - name: uaa
-  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=34
-  sha1: dcb2a2911c1592b2c582237e801fb5d0c7639674
+  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=41
+  sha1: a1b1818fb4f5e722a6c3073d364ce4c400e5fb31
 - name: credhub
   url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.0.1
   sha1: d6bea73ef3125197eeb5865811ca7117cfc85ca6
