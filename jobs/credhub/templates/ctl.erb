@@ -1,5 +1,22 @@
 #!/bin/bash
 
+<%
+java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
+\t\t-Xmx${MAX_HEAP_SIZE}m \\
+\t\t-Dspring.profiles.active=prod \\
+\t\t-Dspring.config.location=/var/vcap/jobs/credhub/config/application.yml \\
+\t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+\t\t-Djava.security.egd=file:/dev/urandom \\
+\t\t-Djava.io.tmpdir=$TMP_DIR \\\n"
+
+if p('credhub.data_storage.require_tls')
+  java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks\\
+\t\t-Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER\\\n"
+end
+
+java_command += "\t\t-ea -jar *.jar"
+%>
+
 
 RUN_DIR=/var/vcap/sys/run/credhub
 LOG_DIR=/var/vcap/sys/log/credhub
@@ -25,18 +42,7 @@ case $1 in
     echo $$ > $PIDFILE
 
     cd /var/vcap/packages/credhub
-    exec chpst -u $RUNAS:$RUNAS java \
-        -Xmx${MAX_HEAP_SIZE}m \
-        -Dspring.profiles.active=prod \
-        -Dspring.config.location=/var/vcap/jobs/credhub/config/application.yml \
-        -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \
-        -Djava.security.egd=file:/dev/urandom \
-        -Djava.io.tmpdir=$TMP_DIR \
-<% if p('credhub.data_storage.require_tls') -%>
-        -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks \
-        -Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER \
-<% end -%>
-        -ea -jar *.jar
+    <%= java_command %>
     ;;
 
   stop)
