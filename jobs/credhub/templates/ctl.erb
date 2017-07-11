@@ -32,8 +32,10 @@ case $1 in
         -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \
         -Djava.security.egd=file:/dev/urandom \
         -Djava.io.tmpdir=$TMP_DIR \
+<%- if p('credhub.data_storage.require_tls') -%>
         -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks \
         -Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER \
+<%- end -%>
         -ea -jar *.jar
     ;;
 
