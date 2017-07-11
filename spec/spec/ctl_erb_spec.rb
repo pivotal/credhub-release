@@ -47,5 +47,10 @@ describe 'ctl.erb template' do
       expect(template).to include('-Djavax.net.ssl.trustStore')
       expect(template).to include('-Djavax.net.ssl.trustStorePassword')
     end
+
+    it 'does not emit extra newlines in the java command' do
+      template = render_ctl_template(true)
+      expect(template).to_not match(/\\\n\s*\n/)
+    end
   end
 end

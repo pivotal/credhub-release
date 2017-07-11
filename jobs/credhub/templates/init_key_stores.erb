@@ -55,20 +55,6 @@ if [ -s ${CERT_FILE} ]; then
             -alias ${CERT_ALIAS}
 fi
 
-# Generate and then delete a key in the DB trust store to ensure that it exists
-
-"${JAVA_HOME}/bin/keytool" -genkey \
-    -alias temp \
-    -dname "CN=temp" \
-    -keypass "${KEY_STORE_PASSWORD}" \
-    -keystore "${DB_TRUST_STORE_PATH}" \
-    -storepass "${KEY_STORE_PASSWORD}"
-
-"${JAVA_HOME}/bin/keytool" -delete \
-    -alias temp \
-    -keystore "${DB_TRUST_STORE_PATH}" \
-    -storepass "${KEY_STORE_PASSWORD}"
-
 <% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
 
 cat > ${DATABASE_TLS_CA_FILE} <<EOL
