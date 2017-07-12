@@ -8,14 +8,14 @@ name: &name aws-director-credhub
 
 releases:
 - name: bosh
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.2
-  sha1: 592569921af54b131803ca403cb25f2510497f29
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.3
+  sha1: 31d2912d4320ce6079c190f2218c6053fd1e920f
 - name: uaa
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=41
   sha1: a1b1818fb4f5e722a6c3073d364ce4c400e5fb31
 - name: credhub
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.0.3
-  sha1: 4c472a9d2de80c3a19335a66a34575dc5de3d99b
+  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.1.1
+  sha1: 430a3dfd18d91efc9bc4b5e1a5f2e661c3159f43
 - name: bosh-aws-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=65
   sha1: 26b3a5c43e6f82594a373309a495660d6db26254
