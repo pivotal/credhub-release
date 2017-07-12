@@ -150,6 +150,7 @@ instance_groups:
           username: admin
           password: ((database-admin))
           database: credhub
+          require_tls: false
         tls: ((credhub-tls))
         log_level: info
         encryption:
