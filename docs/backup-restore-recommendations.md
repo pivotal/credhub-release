@@ -21,15 +21,15 @@ Every new revision of the deployment manifest should be backed up. It may be app
 
 The process for backing up the CredHub encryption key differs based on the encryption provider enabled. The following list includes recommendations for each supported type. 
 
-#### internal
+#### Internal
 
-The internal provider performs encryption and decryption operations using a symmetrical AES key. This key, which is a hexadecimal value provided to the application during deployment, should be stored in a secure place so that it can be provided in a future recovery deployment. 
+The internal provider performs encryption and decryption operations using a symmetrical AES key. This key is derived from the `encryption_password` value provided in your deployment manifest and a salt stored in the database. The `encryption_password` value should be stored in a secure place so that it can be provided in a future recovery deployment. 
 
 #### Luna HSM
 
 The Luna HSM is designed to not allow the removal of key material stored on the device. This security principal means a traditional data export is not possible with a Luna HSM. The two recommended options for data resiliency with a Luna HSM provider are to setup a redundant HSM configuration or to manage a 'Luna Backup HSM' device. 
 
-Starting in v0.5.0, CredHub supports management and integration to an HA Luna HSM cluster. In this configuration, multiple (N) HSMs service requests using mirrored partitions, each containing a copy of the encryption key. This provides redundancy so that N–1 HSMs may fail without the loss availability or key material. 
+CredHub supports management and integration to an HA Luna HSM cluster. In this configuration, multiple (N) HSMs service requests using mirrored partitions, each containing a copy of the encryption key. This provides redundancy so that N–1 HSMs may fail without the loss of availability or key material. 
 
 An example of an HA HSM configuration can be [found here][1]. 
 
@@ -38,7 +38,7 @@ Additional information on backup and restore to a Luna Backup HSM can be [found 
 If you are using an Luna HSM from AWS, you may also refer to [their reference documentation][3] on HA and backup. 
 
 [1]:https://github.com/pivotal-cf/credhub-release/blob/0.6.1/sample-manifests/snippet-hsm-encryption.yml#L26-L58
-[2]:http://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
+[2]:https://cloudhsm-safenet-docs.s3.amazonaws.com/007-011136-002_lunasa_5-1_webhelp_rev-a/Content/concepts/about_backup_local_and_remote.htm
 [3]:http://docs.aws.amazon.com/cloudhsm/latest/userguide/configuring-ha.html
 
 #### Frequency
@@ -53,7 +53,7 @@ The majority of stateful data for CredHub is stored in the configured database. 
 
 Note: After rotating your encryption key, it is recommended that you verify a backup with the latest encryption key, then destroy prior backups. This procedure will ensure that the disclosure of an prior encryption key does provide the ability to access data stored in backups.
 
-If you are using PCF MySQL, we suggest following their [backup and restore guidelines](http://docs.pivotal.io/p-mysql/1-8/backup.html).
+If you are using PCF MySQL, we suggest following their [backup and restore guidelines](https://docs.pivotal.io/p-mysql/1-8/backup.html).
 
 For more information about database backups:
 
