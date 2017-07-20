@@ -2,9 +2,9 @@ This guide provides instructions on how to enable [Secure Service Delivery for C
 
 ## Table of Contents
 
-* [Pre-deploy steps](#Pre-deploy steps)
-* [Deploy Cloud Foundry](#Deploy Cloud Foundry)
-* [Post-deploy steps](#Post-deploy steps)
+* [Pre-deploy steps](#pre-deploy-steps)
+* [Deploy Cloud Foundry](#deploy-cloud-foundry)
+* [Post-deploy steps](#post-deploy-steps)
 
 ### Pre-deploy steps
 
