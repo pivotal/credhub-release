@@ -260,3 +260,9 @@ This error occurs when the request includes a parameter that is not recognized b
 If you encounter this error when using the CLI, this occurs because the feature you are attempting to exercise is not yet or no longer supported by the server. You are recommended to update to the latest versions of both or review the release notes to validate when a feature was added or removed. 
 
 [1]:https://credhub-api.cfapps.io
+
+***
+#### Response "exception":"java.lang.IllegalArgumentException","message":"json string can not be null or empty"
+
+This error occurs if the request does not include a valid content-type header. For example, using curl will send content-type header `application/x-www-form-urlencoded` if not provided. To resolve this error, always include a header for `content-type: application/json` in your requests to CredHub. 
+
