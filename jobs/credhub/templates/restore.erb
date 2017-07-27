@@ -12,17 +12,17 @@ dbname = p('credhub.data_storage.database')
 set -eu
 
 <% if dbtype == "postgres" %>
-export PG_PKG_DIR=/var/vcap/packages/postgres-9.4
+export PGUTILS_DIR=/var/vcap/packages/pg_utils-9
 export PGPASSWORD="<%= dbpassword %>"
 
-${PG_PKG_DIR}/bin/pg_restore \
+"${PGUTILS_DIR}/bin/pg_restore" \
   --user="<%= dbusername %>" \
   --host="<%= dbhost %>" \
   --port="<%= dbport %>" \
   --format="custom" \
   --schema="public" \
   --clean \
-  --dbname="<%= dbname %>" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump
+  --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
 <% else %>
 echo "Skipping restore, as database is not Postgres"

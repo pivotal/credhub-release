@@ -27,22 +27,22 @@ RSpec.describe "the template" do
   context "when db is postgres" do
     it "includes the pgrestore command" do
       result = render_restore_erb()
-      expect(result).to include('export PG_PKG_DIR=/var/vcap/packages/postgres-9.4')
+      expect(result).to include('export PGUTILS_DIR=/var/vcap/packages/pg_utils-9')
       expect(result).to include('export PGPASSWORD="example_password"')
-      expect(result).to include "${PG_PKG_DIR}/bin/pg_restore \\\n" +
+      expect(result).to include '"${PGUTILS_DIR}/bin/pg_restore" \\' + "\n" +
       '  --user="example_username" \\' + "\n" +
       '  --host="127.0.0.1" \\' + "\n" +
       '  --port="5432" \\' + "\n" +
       '  --format="custom" \\' + "\n" +
       '  --schema="public" \\' + "\n" +
       '  --clean \\' + "\n" +
-      '  --dbname="example_credhub" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
+      '  --dbname="example_credhub" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
     end
   end
   context "when db is not postgres" do
     it "logs that it skips this restore," do
       result = render_restore_erb("NOT_PG")
-      expect(result).to_not include "${PG_PKG_DIR}/bin/pg_dump \\\n"
+      expect(result).to_not include "${PGUTILS_DIR}/bin/pg_dump \\\n"
       expect(result).to include 'Skipping restore, as database is not Postgres'
     end
   end

@@ -21,6 +21,7 @@ packages:
 - openjdk_1.8.0
 - lunaclient
 - credhub
+- pg_utils-9
 
 properties:
   credhub.port:
