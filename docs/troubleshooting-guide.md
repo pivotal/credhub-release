@@ -233,7 +233,11 @@ This failure indicates an inability to successfully perform the required databas
 ***
 #### [Post-start error] I/O error on GET request for "https://uaa.example.com:8443/.well-known/openid-configuration"
 
-This failure indicates that the CredHub server was unable to get the needed configuration information for UAA. You should validate that the UAA target is reachable from the CredHub instance and that the provided CA certificate in the manifest at `credhub.authentication.uaa.ca_certs[n]` is the CA which signed the targeted UAA TLS certificate. 
+This failure indicates that the CredHub server was unable to get the needed configuration information from UAA. A few items may cause this error: 
+
+1. Ensure you are running UAA version 20 or later. 
+1. Validate that the UAA target is reachable from the CredHub instance. If the UAA address is external, the instance may need internet access to reach it.
+1. Validate that the provided CA certificate in the manifest at `credhub.authentication.uaa.ca_certs[n]` is the CA which signed the targeted UAA TLS certificate.
 
 ## Usability Failures
 
