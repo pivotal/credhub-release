@@ -6,7 +6,11 @@ openjdk_1.8.0/openjdk-1.8.0_131.tar.gz:
   size: 45478834
   object_id: 66d4c529-ea14-4daa-ad18-3990ec2ddeeb
   sha: 48134b3287657cacc8e4c5c8dd0af097c2546cfc
-pg_utils-9/postgresql-9.6.3.tar.gz:
+pg_utils_9.4/postgresql-9.4.12.tar.gz:
+  size: 23420452
+  object_id: 9affd694-1efd-4354-6d0b-555b6969b238
+  sha: 1405b6faf980c6a6ddd6869856a9859f6e13bcae
+pg_utils_9.6/postgresql-9.6.3.tar.gz:
   size: 25536998
   object_id: 371787f5-a00f-41f2-47c8-ca27c54082a0
   sha: f596ca487e0c4d41ccc628b1d69b180fb23402db

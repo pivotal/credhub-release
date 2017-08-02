@@ -5,7 +5,7 @@ set -eux
 function extract() {
   echo "Extracting archive..."
 
-  tar zxvf pg_utils-9/postgresql-9.6.*.tar.gz
+  tar zxvf pg_utils_9.4/postgresql-9.4.*.tar.gz
 }
 
 function compile() {

@@ -12,7 +12,7 @@ dbname = p('credhub.data_storage.database')
 set -eu
 
 <% if dbtype == "postgres" %>
-export PGUTILS_DIR=/var/vcap/packages/pg_utils-9
+export PGUTILS_DIR=/var/vcap/packages/pg_utils_9.4
 export PGPASSWORD="<%= dbpassword %>"
 
 "${PGUTILS_DIR}/bin/pg_dump" \

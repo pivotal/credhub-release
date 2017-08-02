@@ -27,7 +27,7 @@ RSpec.describe "the template" do
   context "when db is postgres" do
     it "includes the pgrestore command" do
       result = render_restore_erb()
-      expect(result).to include('export PGUTILS_DIR=/var/vcap/packages/pg_utils-9')
+      expect(result).to include('export PGUTILS_DIR=/var/vcap/packages/pg_utils_9.4')
       expect(result).to include('export PGPASSWORD="example_password"')
       expect(result).to include '"${PGUTILS_DIR}/bin/pg_restore" \\' + "\n" +
       '  --user="example_username" \\' + "\n" +
