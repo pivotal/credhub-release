@@ -189,13 +189,6 @@ RSpec.describe 'the template' do
 
         expect(url['query_params']).not_to have_key('ssl')
       end
-
-      it 'raises if no CA is supplied and require_tls is true' do
-        data_storage_yaml = '{ type: "postgres", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: true }'
-
-        expect {render_erb_to_hash(data_storage_yaml)}
-            .to raise_error("A CA must be provided at 'credhub.data_storage.tls_ca' if database TLS is required. Please add a CA or disable TLS and redeploy.")
-      end
     end
 
     context 'with MySQL' do
@@ -227,14 +220,6 @@ RSpec.describe 'the template' do
         expect(result['flyway']['locations']).to eq %w(classpath:/db/migration/common classpath:/db/migration/mysql)
       end
 
-      it 'raises if require_tls is true but there is no tls_ca' do
-        data_storage_yaml = '{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: true }'
-        expected_error = "A CA must be provided at 'credhub.data_storage.tls_ca' if database TLS is required. Please add a CA or disable TLS and redeploy."
-
-        expect { render_erb_to_hash(data_storage_yaml) }
-          .to raise_error expected_error
-      end
-
       it 'sets url correctly for MySQL when tls_ca is set' do
         result = render_erb_to_hash('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: true, tls_ca: "something" }')
 
@@ -247,13 +232,6 @@ RSpec.describe 'the template' do
       it 'prints error when require_tls is not a boolean type' do
         expect {render_erb_to_hash('{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: "true" }')}
             .to raise_error('credhub.data_storage.require_tls must be set to `true` or `false`.')
-      end
-
-      it 'raises if no CA is supplied and require_tls is true' do
-        data_storage_yaml = '{ type: "mysql", host: "my_host", port: 1234, database: "my_db_name", username: "my-username", password: "my-password", require_tls: true }'
-
-        expect {render_erb_to_hash(data_storage_yaml)}
-            .to raise_error("A CA must be provided at 'credhub.data_storage.tls_ca' if database TLS is required. Please add a CA or disable TLS and redeploy.")
       end
     end
 

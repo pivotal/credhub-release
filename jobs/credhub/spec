@@ -16,6 +16,8 @@ templates:
   application.yml.erb: config/application.yml
   log4j2.properties.erb: config/log4j2.properties
   encryption.conf.erb: config/encryption.conf
+  # CAs
+  database_ca.pem.erb: config/database_ca.pem
 
 packages:
 - openjdk_1.8.0

@@ -14,7 +14,7 @@ KEY_STORE_PATH=/var/vcap/jobs/credhub/config/cacerts.jks
 KEY_STORE_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c32)
 
 # DB
-DATABASE_TLS_CA_FILE=/var/vcap/jobs/credhub/config/database_ca.crt
+DATABASE_TLS_CA_FILE=/var/vcap/jobs/credhub/config/database_ca.pem
 DB_TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/db_trust_store.jks
 DATABASE_VERIFY_CA_ALIAS=database_verify_ca
 
@@ -35,7 +35,7 @@ sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs
 sed -i "s/MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER/${MTLS_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 sed -i "s/AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER/${AUTH_SERVER_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 
-rm -f ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE}
+rm -f ${CERT_FILE} ${PRIVATE_KEY_FILE}
 
 cat > ${CERT_FILE} <<EOL
 <%= p('credhub.tls.certificate') %>
@@ -55,17 +55,12 @@ if [ -s ${CERT_FILE} ]; then
             -alias ${CERT_ALIAS}
 fi
 
-<% if_p('credhub.data_storage.tls_ca') do |tls_ca| %>
-
-cat > ${DATABASE_TLS_CA_FILE} <<EOL
-<%= tls_ca %>
-EOL
-
-<% end %>
-
-if [ -s ${DATABASE_TLS_CA_FILE} ]; then
-    ${JAVA_HOME}/bin/keytool -import -noprompt -keystore ${DB_TRUST_STORE_PATH} -storepass ${KEY_STORE_PASSWORD} \
-            -alias ${DATABASE_VERIFY_CA_ALIAS} -file ${DATABASE_TLS_CA_FILE}
+if [ $(cat $DATABASE_TLS_CA_FILE | wc -c) -ge 2 ]; then
+  ${JAVA_HOME}/bin/keytool -import -noprompt \
+    -keystore ${DB_TRUST_STORE_PATH} \
+    -storepass ${KEY_STORE_PASSWORD} \
+    -alias ${DATABASE_VERIFY_CA_ALIAS} \
+    -file ${DATABASE_TLS_CA_FILE}
 fi
 
 <%
@@ -122,7 +117,7 @@ end
 %>
 
 # remove intermediate files
-rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${DATABASE_TLS_CA_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}
+rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}
 
 # restrict file permissions
 chown vcap /var/vcap/jobs/credhub/config/*.jks

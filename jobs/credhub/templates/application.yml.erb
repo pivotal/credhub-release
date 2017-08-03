@@ -99,12 +99,6 @@
       end
 
       if require_tls
-        begin
-          p('credhub.data_storage.tls_ca')
-        rescue UnknownProperty
-          raise "A CA must be provided at 'credhub.data_storage.tls_ca' if database TLS is required. Please add a CA or disable TLS and redeploy."
-        end
-
         if datastorage_type == 'mysql'
           connection_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true' if require_tls
           connection_url << '&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER'
