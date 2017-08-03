@@ -10,7 +10,3 @@ pg_utils_9.4/postgresql-9.4.12.tar.gz:
   size: 23420452
   object_id: 9affd694-1efd-4354-6d0b-555b6969b238
   sha: 1405b6faf980c6a6ddd6869856a9859f6e13bcae
-pg_utils_9.6/postgresql-9.6.3.tar.gz:
-  size: 25536998
-  object_id: 371787f5-a00f-41f2-47c8-ca27c54082a0
-  sha: f596ca487e0c4d41ccc628b1d69b180fb23402db

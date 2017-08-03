@@ -23,7 +23,6 @@ packages:
 - openjdk_1.8.0
 - lunaclient
 - credhub
-- pg_utils_9.6
 - pg_utils_9.4
 
 properties:
