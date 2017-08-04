@@ -8,24 +8,28 @@ name: &name gcp-director-credhub
 
 releases:
 - name: bosh
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.3
-  sha1: 31d2912d4320ce6079c190f2218c6053fd1e920f
+  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-262.3-ubuntu-trusty-3421.18-20170804-172150-611268523-20170804172155.tgz
+  version: "262.3"
+  sha1: 1ce865af71a96efccf921dfd48d0c3db1e35bd04
 - name: uaa
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=44
+  version: "44"
   sha1: 89c4b7525323aba891da0330320dce4201697491
 - name: credhub
   url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.2.0
+  version: "1.2.0"
   sha1: b28b53dc55c1f1c8ef37edddc9ecad76e16f7d77
 - name: bosh-google-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.9.0
+  version: "25.9.0"
   sha1: 3fbda22fde33878b54dec77f4182f8044be72687
 
 resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3421.11
-    sha1: e055682ebd86a2f48dc82bbc114c7de20b5a5393
+    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3421.18
+    sha1: 54c03c65a3b48474dd92695999ed2e8655951e1f
   cloud_properties:
     zone: ((gcp-zone))
     machine_type: n1-standard-4
