@@ -30,6 +30,16 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   --clean \
   --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
+<% elseif dbtype == "mysql" %>
+export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23
+    mysql db_name < backup-file.sql
+"${MYSQLUTILS_DIR}/client/mysql" \
+  -u "<%= dbusername %>" \
+  -p "<%= dbpassword %>" \
+  -h "<%= dbhost %>" \
+  -P "<%= dbport %>" \
+  "<%= dbname %>" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
+
 <% else %>
-echo "Skipping restore, as database is not Postgres"
+echo "Skipping restore, as database is not Postgres or MySql"
 <% end %>
