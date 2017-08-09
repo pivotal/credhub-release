@@ -28,7 +28,7 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   --format="custom" \
   "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
-<% elseif dbtype == "mysql" %>
+<% elsif dbtype == "mysql" %>
 export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23
 export MYSQL_PWD="<%= dbpassword %>"
 "${MYSQLUTILS_DIR}/client/mysqldump" \
