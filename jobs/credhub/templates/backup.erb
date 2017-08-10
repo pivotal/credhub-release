@@ -29,13 +29,26 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
 <% elsif dbtype == "mysql" %>
-export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23
-export MYSQL_PWD="<%= dbpassword %>"
-"${MYSQLUTILS_DIR}/client/mysqldump" \
-  -u "<%= dbusername %>" \
-  -h "<%= dbhost %>" \
-  -P "<%= dbport %>" \
-  "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
+    export MYSQLUTILS_DIR=/var/vcap/packages/mysql
+    export MYSQL_PWD="<%= dbpassword %>"
+
+    <% if_p('credhub.data_storage.require_tls') do |require_tls|
+      if require_tls %>
+            "${MYSQLUTILS_DIR}/bin/mysqldump" \
+            -u "<%= dbusername %>" \
+            -h "<%= dbhost %>" \
+            -P "<%= dbport %>" \
+            --ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \
+            --ssl-verify-server-cert \
+            "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
+        <% else %>
+            "${MYSQLUTILS_DIR}/bin/mysqldump" \
+            -u "<%= dbusername %>" \
+            -h "<%= dbhost %>" \
+            -P "<%= dbport %>" \
+            "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
+        <% end %>
+    <% end %>
 
 <% else %>
 echo "Skipping backup, as database is not Postgres or Mysql"

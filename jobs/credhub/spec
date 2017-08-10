@@ -24,6 +24,7 @@ packages:
 - lunaclient
 - credhub
 - pg_utils_9.4
+- mariadb_10.1.23
 
 properties:
   credhub.port:

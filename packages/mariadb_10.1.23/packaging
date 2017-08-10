@@ -13,9 +13,10 @@ function compile() {
   echo "Compiling..."
 
   pushd mariadb > /dev/null
-    cmake
-    chmod +x storage/tokudb/PerconaFT/xz/src/build_lzma/build-aux/install-sh
-    make
+    pushd server-mariadb-10.1.23
+      cmake .
+      make
+    popd
   popd
 }
 
