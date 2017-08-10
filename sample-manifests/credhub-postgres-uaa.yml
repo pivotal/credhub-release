@@ -6,7 +6,7 @@
 ##
 ## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace the external_ip and uaa_url with an accurate values.
 ---
-name: credhub-postgres-uaa
+name: sample-credhub-postgres-uaa
 
 releases:
 - name: credhub
@@ -32,11 +32,6 @@ variables:
   type: password
   options:
     length: 40
-- name: credhub-mtls-ca
-  type: certificate
-  options:
-    is_ca: true
-    common_name: 'CredHub mTLS CA'
 - name: credhub-ca
   type: certificate
   options:
@@ -51,6 +46,15 @@ variables:
     - ((external-ip-address))
     - ((internal-ip-address))
     - 127.0.0.1
+- name: database-tls
+  type: certificate
+  options: 
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternative_names:
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
 - name: database-admin
   type: password
 - name: uaa-tls
@@ -58,7 +62,7 @@ variables:
   options:
     ca: credhub-ca
     common_name: ((external-ip-address))
-    alternatiive_names:
+    alternative_names:
     - ((external-ip-address))
 - name: uaa-jwt
   type: rsa
@@ -89,16 +93,13 @@ instance_groups:
     release: credhub
     properties:
       credhub:
-        port: 8844
         tls: ((credhub-tls))
-        log_level: info
         authentication:
           uaa:
             url: *uaa-url
             verification_key: ((uaa-jwt.public_key))
-          mutual_tls:
-            trusted_cas:
-            - ((credhub-mtls-ca.certificate))
+            ca_certs:
+            - ((uaa-tls.ca)) 
         data_storage:
           type: postgres
           username: admin
@@ -106,6 +107,8 @@ instance_groups:
           host: 127.0.0.1
           port: 5432
           database: credhub
+          require_tls: true
+          tls_ca: ((database-tls.ca))
         encryption:
           keys: 
           - provider_name: int
@@ -127,6 +130,10 @@ instance_groups:
         roles: 
         - name: admin
           password: ((database-admin))
+        tls: 
+          ca: ((database-tls.ca))
+          certificate: ((database-tls.certificate))
+          private_key: ((database-tls.private_key))
 
   - name: uaa
     release: uaa
@@ -168,6 +175,8 @@ instance_groups:
         address: 127.0.0.1
         port: 5432
         db_scheme: postgresql
+        # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
+        tls_enabled: false 
         databases:
         - tag: uaa
           name: uaa
