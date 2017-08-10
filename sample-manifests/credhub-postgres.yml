@@ -60,6 +60,7 @@ instance_groups:
 - name: credhub-postgres
   instances: 1
   vm_type: medium
+  persistent_disk_type: 10GB
   azs: [west]
   stemcell: default
   networks:
