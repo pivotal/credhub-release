@@ -31,7 +31,7 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
 <% elsif dbtype == "mysql" %>
-    export MYSQLUTILS_DIR=/var/vcap/packages/mysql
+    export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23
     export MYSQL_PWD="<%= dbpassword %>"
 <% if_p('credhub.data_storage.require_tls') do |require_tls|
 if require_tls %>

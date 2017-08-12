@@ -14,9 +14,34 @@ function compile() {
 
   pushd mariadb > /dev/null
     pushd server-mariadb-10.1.23
-      cmake .
-      make
-    popd
+    mkdir bld
+      cmake . \
+        -DWITHOUT_SERVER=ON \
+        -DCMAKE_INSTALL_PREFIX=${BOSH_INSTALL_TARGET}
+
+        set +e
+        make -j 3 > build.out 2> build.err
+        BUILD_EXIT_CODE=$?
+        set -e
+
+        if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            tail -n 1000 build.err
+            exit $BUILD_EXIT_CODE
+        fi
+        tail -n 1000 build.out
+
+        make install > build.out 2> build.err
+        BUILD_EXIT_CODE=$?
+        set -e
+
+        if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            tail -n 1000 build.err
+            exit $BUILD_EXIT_CODE
+        fi
+        tail -n 1000 build.out
+
+        rm -rf ${BOSH_INSTALL_TARGET}/mysql-test/
+      popd
   popd
 }
 
