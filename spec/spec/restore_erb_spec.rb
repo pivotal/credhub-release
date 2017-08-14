@@ -61,7 +61,7 @@ RSpec.describe "the template" do
   context "when db is mysql" do
     it "includes the mysql command with require_tls:false" do
       result = render_restore_erb("mysql", false)
-      expect(result).to include 'export MYSQLUTILS_DIR=/var/vcap/packages/mysql'
+      expect(result).to include 'export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23'
       expect(result).to include '"${MYSQLUTILS_DIR}/bin/mysql" \\'
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
@@ -72,7 +72,7 @@ RSpec.describe "the template" do
     end
     it "includes the mysql command with ssl properties when require_tls:true" do
       result = render_restore_erb("mysql", true)
-      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/mysql')
+      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23')
       expect(result).to include '"${MYSQLUTILS_DIR}/bin/mysql" \\'
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
@@ -85,8 +85,8 @@ RSpec.describe "the template" do
   context "when db is not postgres or mysql" do
     it "logs that it skips this restore," do
       result = render_restore_erb("UNSUPPORTED", nil)
-      expect(result).to_not include "${PGUTILS_DIR}/bin/pg_dump \\\n"
-      expect(result).to_not include "${MYSQLUTILS_DIR}/client/mysql"
+      expect(result).to_not include "/var/vcap/packages/pg_utils_9.4/bin/pg_dump \\\n"
+      expect(result).to_not include "/var/vcap/packages/mariadb_10.1.23/bin/mysqldump \\\n"
       expect(result).to include 'Skipping restore, as database is not Postgres or MySql'
     end
   end

@@ -56,7 +56,7 @@ RSpec.describe "the template" do
   context "when db is mysql" do
     it "includes the mysqldump command" do
       result = render_backup_erb("mysql", false)
-      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/mysql')
+      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23')
       expect(result).to include '"${MYSQLUTILS_DIR}/bin/mysqldump" \\'
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
@@ -67,7 +67,7 @@ RSpec.describe "the template" do
     end
     it "includes the mysqldump command and require_tls is true" do
       result = render_backup_erb("mysql", true)
-      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/mysql')
+      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23')
       expect(result).to include '"${MYSQLUTILS_DIR}/bin/mysqldump" \\'
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
@@ -81,7 +81,7 @@ RSpec.describe "the template" do
     it "logs that it skips this backup," do
       result = render_backup_erb("UNSUPPORTED", nil)
       expect(result).to_not include "/var/vcap/packages/pg_utils_9.4/bin/pg_dump \\\n"
-      expect(result).to_not include "/var/vcap/packages/mysql/bin/mysqldump \\\n"
+      expect(result).to_not include "/var/vcap/packages/mariadb_10.1.23/bin/mysqldump \\\n"
       expect(result).to include 'Skipping backup, as database is not Postgres or Mysql'
     end
   end
