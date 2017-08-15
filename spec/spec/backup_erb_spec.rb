@@ -63,7 +63,6 @@ RSpec.describe "the template" do
       expect(result).to include '-P "5432" \\'
       expect(result).to include '"example_credhub" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
       expect(result).to_not include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
-      expect(result).to_not include '--ssl-verify-server-cert'
     end
     it "includes the mysqldump command and require_tls is true" do
       result = render_backup_erb("mysql", true)
@@ -73,7 +72,6 @@ RSpec.describe "the template" do
       expect(result).to include '-h "127.0.0.1" \\'
       expect(result).to include '-P "5432" \\'
       expect(result).to include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
-      expect(result).to include '--ssl-verify-server-cert'
       expect(result).to include '"example_credhub" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
     end
   end

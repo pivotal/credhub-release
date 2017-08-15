@@ -40,7 +40,6 @@ if require_tls %>
 -h "<%= dbhost %>" \
 -P "<%= dbport %>" \
 --ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \
---ssl-verify-server-cert \
 "<%= dbname %>" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 <% else %>
 "${MYSQLUTILS_DIR}/bin/mysql" \

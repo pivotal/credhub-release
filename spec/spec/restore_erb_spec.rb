@@ -68,7 +68,6 @@ RSpec.describe "the template" do
       expect(result).to include '-P "5432" \\'
       expect(result).to include '"example_credhub" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
       expect(result).to_not include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
-      expect(result).to_not include '--ssl-verify-server-cert'
     end
     it "includes the mysql command with ssl properties when require_tls:true" do
       result = render_restore_erb("mysql", true)
@@ -79,7 +78,6 @@ RSpec.describe "the template" do
       expect(result).to include '-P "5432" \\'
       expect(result).to include '"example_credhub" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
       expect(result).to include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
-      expect(result).to include '--ssl-verify-server-cert'
     end
   end
   context "when db is not postgres or mysql" do
