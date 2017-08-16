@@ -8,9 +8,9 @@ name: &name aws-director-credhub
 
 releases:
 - name: bosh
-  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-262.3-ubuntu-trusty-3421.18-20170804-172150-611268523-20170804172155.tgz
-  version: "262.3"
-  sha1: 1ce865af71a96efccf921dfd48d0c3db1e35bd04
+  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-263-ubuntu-trusty-3445-20170814-204245-850001459-20170814204250.tgz
+  version: "263"
+  sha1: f64bb820520f9b1ba17a0d9a460bbd761cb5dbdf
 - name: uaa
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=45
   version: "45"
@@ -28,8 +28,8 @@ resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421.18
-    sha1: e954a64c549f6f8a0e7b49bfb409c29b4beaed17
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445
+    sha1: bd838e10dae2b469b6cee37fad3966238013f546
   cloud_properties:
     instance_type: m3.xlarge
     ephemeral_disk: {size: 25000, type: gp2}

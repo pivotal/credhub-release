@@ -8,9 +8,9 @@ name: &name gcp-director-credhub
 
 releases:
 - name: bosh
-  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-262.3-ubuntu-trusty-3421.18-20170804-172150-611268523-20170804172155.tgz
-  version: "262.3"
-  sha1: 1ce865af71a96efccf921dfd48d0c3db1e35bd04
+  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-263-ubuntu-trusty-3445-20170814-204245-850001459-20170814204250.tgz
+  version: "263"
+  sha1: f64bb820520f9b1ba17a0d9a460bbd761cb5dbdf
 - name: uaa
   url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=45
   version: "45"
@@ -28,8 +28,8 @@ resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3421.18
-    sha1: 2bcbd5c2c0b77bc8cc9b1971264e680f994dc8fe
+    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3445
+    sha1: 4977df67a5532674408c2c712a5060735c46aed2
   cloud_properties:
     zone: ((gcp-zone))
     machine_type: n1-standard-4
