@@ -12,9 +12,9 @@ releases:
   version: "263"
   sha1: f64bb820520f9b1ba17a0d9a460bbd761cb5dbdf
 - name: uaa
-  url: http://bosh.io/d/github.com/cloudfoundry/uaa-release?v=45
+  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/uaa-45-ubuntu-trusty-3445-20170814-174800-770050554-20170814174806.tgz
   version: "45"
-  sha1: 4d4fba13b724b75206f5eb3abae8efa94dcf7db8
+  sha1: 5eed6a9b1220ad634812b34fa8b5924dd106e034
 - name: credhub
   url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.2.0
   version: "1.2.0"
