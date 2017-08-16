@@ -61,6 +61,8 @@ RSpec.describe "the template" do
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
       expect(result).to include '-P "5432" \\'
+      expect(result).to include '--single-transaction'
+      expect(result).to include '--skip-add-locks'
       expect(result).to include '"example_credhub" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
       expect(result).to_not include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
     end
@@ -72,6 +74,8 @@ RSpec.describe "the template" do
       expect(result).to include '-h "127.0.0.1" \\'
       expect(result).to include '-P "5432" \\'
       expect(result).to include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
+      expect(result).to include '--single-transaction'
+      expect(result).to include '--skip-add-locks'
       expect(result).to include '"example_credhub" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
     end
   end

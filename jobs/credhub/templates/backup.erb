@@ -38,6 +38,8 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
             -u "<%= dbusername %>" \
             -h "<%= dbhost %>" \
             -P "<%= dbport %>" \
+            --skip-add-locks \
+            --single-transaction \
             --ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \
             "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
         <% else %>
@@ -45,6 +47,8 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
             -u "<%= dbusername %>" \
             -h "<%= dbhost %>" \
             -P "<%= dbport %>" \
+            --skip-add-locks \
+            --single-transaction \
             "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
         <% end %>
     <% end %>
