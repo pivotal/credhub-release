@@ -6,10 +6,10 @@ mariadb_10.1.23/server-mariadb-10.1.23.tar.gz:
   size: 59884334
   object_id: c9de41ef-fafe-4e55-4764-b8b245143f49
   sha: 9f09c561878a7a405211e804da454aa7b8af354f
-openjdk_1.8.0/openjdk-1.8.0_131.tar.gz:
-  size: 45478834
-  object_id: 66d4c529-ea14-4daa-ad18-3990ec2ddeeb
-  sha: 48134b3287657cacc8e4c5c8dd0af097c2546cfc
+openjdk_1.8.0/openjdk-1.8.0_141.tar.gz:
+  size: 45927906
+  object_id: 3e6a0f62-a9bc-4061-79a7-00fa3b287092
+  sha: fef57709d2ca0b375a3879fe03df303afe24307f
 pg_utils_9.4/postgresql-9.4.12.tar.gz:
   size: 23420452
   object_id: 9affd694-1efd-4354-6d0b-555b6969b238
