@@ -31,7 +31,7 @@ This architecture benefits from high availability and scale, however, the additi
 
 ### Troubleshooting
 
-Errors during operation or deployment of CredHub should provide descriptive errors. In many cases, the error should provide insight into the how to resolve the issue. In some cases, you may need to review the application logs to locate the source of the issue. The [following document](deployment-troubleshooting-guide.md) contains a summmary of error cases and how to resolve them. If you are unable to solve your issue using this document or by reviewing logs, please file a [GitHub issue](https://github.com/pivotal-cf/credhub-release/issues/new). 
+Errors during operation or deployment of CredHub should provide descriptive errors. In many cases, the error should provide insight into the how to resolve the issue. In some cases, you may need to review the application logs to locate the source of the issue. The [following document](troubleshooting-guide.md) contains a summmary of error cases and how to resolve them. If you are unable to solve your issue using this document or by reviewing logs, please file a [GitHub issue](https://github.com/pivotal-cf/credhub-release/issues/new). 
 
 ### Additional resources
 

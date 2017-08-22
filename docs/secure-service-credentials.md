@@ -1,4 +1,4 @@
-This guide provides instructions on how to enable [Secure Service Delivery for Cloud Foundry](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/initiatives/secure-service-credentials.md) using [cf-deployment](https://github.com/cloudfoundry/cf-deployment).
+This guide provides instructions on how to enable [Secure Service Delivery for Cloud Foundry](https://github.com/cloudfoundry-incubator/credhub/blob/master/docs/secure-service-credentials.md) using [cf-deployment](https://github.com/cloudfoundry/cf-deployment).
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This guide provides instructions on how to enable [Secure Service Delivery for C
 
 ##### Required Manifest Changes
 
-Required manifest modifications are in the [secure-service-credentials.yml](https://github.com/ishustava/cf-deployment/blob/develop/operations/experimental/secure-service-credentials.yml) ops file. Here is the summary the changes:
+Required manifest modifications are in the [secure-service-credentials.yml](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/experimental/secure-service-credentials.yml) ops file. Here is the summary the changes:
 * Adds a CredHub instance group to cf deployment
 * Adds a database
 * Enables [Instance Identity](https://github.com/cloudfoundry/diego-release/blob/develop/docs/instance-identity.md) on Diego

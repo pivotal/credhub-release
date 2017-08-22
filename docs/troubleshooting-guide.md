@@ -55,7 +55,7 @@ Task 697
 21:28:13 | Error: Unable to render instance groups for deployment. Errors are:
   - Unable to render jobs for instance group 'credhub'. Errors are:
     - Unable to render templates for job 'credhub'. Errors are:
-      - Error filling in template 'pre-start.erb' (line 15: undefined method `[]' for nil:NilClass)
+      - Error filling in template 'pre-start.erb' (line 11: undefined method `[]' for nil:NilClass)
 
 Started  Thu Jan 26 21:27:55 UTC 2017
 Finished Thu Jan 26 21:28:13 UTC 2017
@@ -69,7 +69,7 @@ Updating deployment:
 Exit code 1
 ```
 
-You may narrow down the missing or invalid value for this type of error by checking the specified line number of the template indicated. For example, the above `template 'pre-start.erb' (line 15` can be found [here.](https://github.com/pivotal-cf/credhub-release/blob/0.4.0/jobs/credhub/templates/pre-start.erb#L15)
+You may narrow down the missing or invalid value for this type of error by checking the specified line number of the template indicated. For example, the above `template 'pre-start.erb' (line 11` can be found [here.](https://github.com/pivotal-cf/credhub-release/blob/1.2.0/jobs/credhub/templates/pre-start.erb#L11)
 
 ### Pre-Start Error
 
@@ -158,7 +158,7 @@ This error indicates a failure to parse the yaml of the manifest. Check your man
 ***
 #### [Configuration error] undefined method `[]' for nil:NilClass
 
-This error indicates that a required property has not been defined in the deployment manifest. This error will accompany the template and line number of the failure, e.g. `Error filling in template 'pre-start.erb' (line 15 ...` You may narrow down the missing value for this type of error by checking the specified line number of the template indicated. For example, the above `template 'pre-start.erb' (line 15` can be found [here.][5]
+This error indicates that a required property has not been defined in the deployment manifest. This error will accompany the template and line number of the failure, e.g. `Error filling in template 'pre-start.erb' (line 11 ...` You may narrow down the missing value for this type of error by checking the specified line number of the template indicated. For example, the above `template 'pre-start.erb' (line 11` can be found [here.][5]
 
 The referenced line may not point exactly to the missing value. For instance, an error may point to the line `<% if active_provider['type'] == 'hsm' %>` when it cannot properly resolve the provider of the active key. You should validate the configuration of the entire section that holds the value for these errors, e.g. the encryption section for an error involving active_provider['type'].
 
@@ -231,7 +231,7 @@ This failure indicates that the provided encryption key(s) provided in the deplo
 This failure indicates an inability to successfully perform the required database migrations. The specific error citing a syntax error near CONSTRAINT occurs when a non-supported version of PostgreSQL, e.g. 9.0, is deployed. CredHub requires PostgreSQL version 9.4 or greater.   
 
 ***
-#### [Post-start error] I/O error on GET request for "https://uaa.example.com:8443/.well-known/openid-configuration"
+#### [Post-start error] I/O error on GET request for "ht&#8203;tps://uaa.example.com:8443/.well-known/openid-configuration"
 
 This failure indicates that the CredHub server was unable to get the needed configuration information from UAA. A few items may cause this error: 
 
@@ -247,7 +247,7 @@ A descriptive error should be presented for usability errors when interacting vi
 
 ### Error List
 
-#### Login timeout - "Post https://uaa.example.com:8443/oauth/token/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)"
+#### Login timeout - "Post ht&#8203;tps://uaa.example.com:8443/oauth/token/: net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)"
 
 This error indicates that the CLI cannot reach the configured UAA instance. The CLI contacts the UAA instance directly during a login request. To resolve this issue, validate that the configured UAA address is valid and that it is configured to be reachable from your request location. 
 
