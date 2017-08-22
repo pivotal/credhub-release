@@ -5,7 +5,7 @@ require 'yaml'
 require 'json'
 require 'fileutils'
 
-def render_restore_erb(dbtype, require_tls)
+def render_restore_erb(dbtype, require_tls, is_bootstrap=true)
   option_yaml = <<-EOF
         properties:
           credhub:
@@ -17,6 +17,7 @@ def render_restore_erb(dbtype, require_tls)
               database: example_credhub
               require_tls: #{require_tls}
               type: #{dbtype}
+        bootstrap: #{is_bootstrap}
   EOF
 
   options = {:context => YAML.load(option_yaml).to_json}
@@ -86,6 +87,14 @@ RSpec.describe "the template" do
       expect(result).to_not include "/var/vcap/packages/pg_utils_9.4/bin/pg_dump \\\n"
       expect(result).to_not include "/var/vcap/packages/mariadb_10.1.23/bin/mysqldump \\\n"
       expect(result).to include 'Skipping restore, as database is not Postgres or MySql'
+    end
+  end
+  context "when not bootstrap vm" do
+    it "logs that it delegates restore to the bootstrap vm" do
+      result = render_restore_erb("mysql", false, false)
+      expect(result).to_not include "/var/vcap/packages/pg_utils_9.4/bin/pg_dump \\\n"
+      expect(result).to_not include "/var/vcap/packages/mariadb_10.1.23/bin/mysqldump \\\n"
+      expect(result).to include 'Deferring to the bootstrap VM to perform restore'
     end
   end
 end
