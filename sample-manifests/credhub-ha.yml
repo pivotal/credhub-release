@@ -1,0 +1,122 @@
+## This manifest deploys multiple CredHub instances and a backing PostgreSQL database. This configuration assumes that you have an existing UAA deployed at a known location for authentication. 
+## 
+## This deployment is intended for development testing only. You will lose all of your stored data in the event of an issue with the VM or mounted disks. 
+## 
+## This manifest assumes that you are deploying with a BOSH Director that has CredHub enabled. If this is not the case, you must replace the values below with ((variable)) syntax with actual values. If you are using BOSH with CredHub enabled, these values will be generated automatically, with the exception of '/uaa/jwt', which you must set to the public verification key for you UAA provider.
+## 
+## You must update the vm_type, network name and load balancer VM extension according to your cloud config. You must also replace `loadbalancer-external-ip` and `database-internal-ip` with IPs or hostnames from your network and UAA variables with an accurate values. 
+---
+name: sample-credhub-ha
+
+releases:
+- name: credhub
+  version: latest
+- name: postgres
+  version: latest
+
+stemcells: 
+- alias: default 
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  update_watch_time: 10000-120000
+  canary_watch_time: 10000-120000
+
+variables:
+- name: credhub-encryption-password
+  type: password
+  options:
+    length: 40
+- name: credhub-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub CA
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((loadbalancer-external-ip))
+    alternative_names:
+    - ((loadbalancer-external-ip))
+- name: database-tls
+  type: certificate
+  options: 
+    ca: credhub-ca
+    common_name: ((database-internal-ip))
+    alternative_names:
+    - ((database-internal-ip))
+- name: database-admin
+  type: password
+
+instance_groups: 
+- name: postgres
+  instances: 1
+  vm_type: medium
+  persistent_disk_type: 10GB
+  azs: [west]
+  stemcell: default
+  networks:
+  - name: west
+    static_ips: [((database-internal-ip))]
+    default: [dns, gateway]
+  jobs:
+  - name: postgres
+    release: postgres
+    properties: 
+      databases:
+        address: ((database-internal-ip))
+        port: 5432
+        databases: 
+        - name: credhub
+        roles: 
+        - name: admin
+          password: ((database-admin))
+        tls: 
+          ca: ((database-tls.ca))
+          certificate: ((database-tls.certificate))
+          private_key: ((database-tls.private_key))
+
+- name: credhub
+  instances: 3
+  vm_type: medium
+  azs: [west]
+  stemcell: default
+  vm_extensions:
+  - credhub-load-balancer
+  networks:
+  - name: west
+    default: [dns, gateway]
+  jobs:
+  - name: credhub
+    release: credhub
+    properties:
+      credhub:
+        tls: ((credhub-tls))
+        authentication:
+          uaa:
+            url: ((uaa-url))
+            verification_key: ((uaa-jwt.public_key))
+            ca_certs:
+            - ((uaa-tls.ca)) 
+        data_storage:
+          type: postgres
+          username: admin
+          password: ((database-admin))
+          host: ((database-internal-ip))
+          port: 5432
+          database: credhub
+          require_tls: true
+          tls_ca: ((database-tls.ca))
+        encryption:
+          keys: 
+          - provider_name: int
+            encryption_password: ((credhub-encryption-password))
+            active: true
+          providers: 
+          - name: int
+            type: internal
+
