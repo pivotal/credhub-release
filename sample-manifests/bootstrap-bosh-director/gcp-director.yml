@@ -20,7 +20,7 @@ releases:
   version: "1.3.0"
   sha1: 2b13fa390bd1b0ec7ca69537d1ac67b101cf0f7d
 - name: bosh-google-cpi
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.9.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.10.0
   version: "25.10.0"
   sha1: 3a551822bff0fd040d73fd385ab34fbc17b476f5
 
