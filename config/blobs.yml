@@ -2,15 +2,7 @@ lunaclient_5.3.0-11/lunaclient_5.3.0-11.tar.gz:
   size: 7306782
   object_id: 2ceaec43-ce10-43d8-92c3-a06654b6f3c7
   sha: 09f0136a78ecbf7cbfe78d78419ab6b8ff5891cb
-mariadb_10.1.23/server-mariadb-10.1.23.tar.gz:
-  size: 59884334
-  object_id: c9de41ef-fafe-4e55-4764-b8b245143f49
-  sha: 9f09c561878a7a405211e804da454aa7b8af354f
 openjdk_1.8.0/openjdk-1.8.0_141.tar.gz:
   size: 45927906
   object_id: 3e6a0f62-a9bc-4061-79a7-00fa3b287092
   sha: fef57709d2ca0b375a3879fe03df303afe24307f
-pg_utils_9.4/postgresql-9.4.12.tar.gz:
-  size: 23420452
-  object_id: 9affd694-1efd-4354-6d0b-555b6969b238
-  sha: 1405b6faf980c6a6ddd6869856a9859f6e13bcae

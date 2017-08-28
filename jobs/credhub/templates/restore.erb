@@ -15,7 +15,7 @@ set -eu
 <% if !is_bootstrap_vm %>
 echo 'Deferring to the bootstrap VM to perform restore'
 <% elsif dbtype == "postgres" %>
-export PGUTILS_DIR=/var/vcap/packages/pg_utils_9.4
+export PGUTILS_DIR=/var/vcap/packages/database-backup-restorer-postgres
 export PGPASSWORD="<%= dbpassword %>"
   <% if_p('credhub.data_storage.require_tls') do |require_tls|
     if require_tls %>
@@ -34,7 +34,7 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
 <% elsif dbtype == "mysql" %>
-    export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23
+    export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql
     export MYSQL_PWD="<%= dbpassword %>"
 <% if_p('credhub.data_storage.require_tls') do |require_tls|
 if require_tls %>
