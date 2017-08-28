@@ -76,3 +76,7 @@ $ ./spec/run_tests.sh
 ```sh
 $ bosh create-release --name credhub --version test --tarball ./credhub-test.tgz
 ```
+
+## Onboarding Checklist
+
+The onboarding checklist is in the CredHub's project folder on Google Drive: https://docs.google.com/document/d/1wSqrkuOxomLgSaqLT_NkAjv5Dh_6-amj7d9dmfVUJjs/edit
