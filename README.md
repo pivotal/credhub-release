@@ -1,6 +1,6 @@
-# CredHub Release
+# <img src="docs/images/logo.png" alt="CredHub"><br/>
 
-CredHub release provides a BOSH Release for [CredHub](https://github.com/cloudfoundry-incubator/credhub).
+CredHub Release provides a BOSH Release for [CredHub](https://github.com/cloudfoundry-incubator/credhub).
 
 * [Documentation](docs/)
 * [CredHub Tracker](https://www.pivotaltracker.com/n/projects/1977341)
@@ -13,7 +13,7 @@ See additional repos for more info:
 
 ## Deploying CredHub
 
-This repository includes code to create a BOSH release of [CredHub.][1] Releases based on this repository are created and posted automatically to [bosh.io][2] for deployment. 
+This repository includes code to create a BOSH release of [CredHub.][1] Releases based on this repository are created and posted automatically to [bosh.io][2] for deployment.
 
 Adding CredHub to an existing deployment manifest can be done by simply adding the release and its appropriate [job configurations.][3] Complete sample manifests can be [found here.](sample-manifests/)
 
@@ -31,9 +31,9 @@ releases:
 
 ## Release Lifecycle
 
-CredHub issues frequent minor releases containing new features. If you wish to receive the latest new features, the most recent release should be used. If you choose to use the latest release line, you must update to a subsequent patch or minor release - which may contain new features - to receive security patches and bug fixes. 
+CredHub issues frequent minor releases containing new features. If you wish to receive the latest new features, the most recent release should be used. If you choose to use the latest release line, you must update to a subsequent patch or minor release - which may contain new features - to receive security patches and bug fixes.
 
-If you wish to use a stable version with a less frequent feature release cycle, you may use a long term support version. LTS versions are patched for security vulnerabilities and bugs, but do not contain new features. New LTS versions are released quarterly. Patches are issued for LTS versions for 9 months following release (current–2 structure). 
+If you wish to use a stable version with a less frequent feature release cycle, you may use a long term support version. LTS versions are patched for security vulnerabilities and bugs, but do not contain new features. New LTS versions are released quarterly. Patches are issued for LTS versions for 9 months following release (current–2 structure).
 
 Current long term support versions
 
@@ -41,7 +41,7 @@ Current long term support versions
 |---------|-------------|------------------------|
 | 1.0.x   | Jun-15-2017 | Mar-15-2018            |
 | 1.3.x   | Aug-23-2017 | Jun-15-2018            |
- 
+
 
 ## Reporting a Vulnerability
 
@@ -53,7 +53,7 @@ The e-mail address to use to contact the Pivotal Application Security Team is se
 
 Our public PGP key can be obtained from a public key server such as [pgp.mit.edu](https://pgp.mit.edu). Its fingerprint is: 16F6 51BF 4637 F486 C5E2 4635 19BB 5184 0191 92ED. More information can be found at [pivotal.io/security](https://pivotal.io/security/).
 
-## Development 
+## Development
 
 ### Updating this repo's submodule before a BOSH release
 
@@ -71,7 +71,7 @@ $ ./scripts/update
 $ ./spec/run_tests.sh
 ```
 
-### Create a packaged BOSH release 
+### Create a packaged BOSH release
 
 ```sh
 $ bosh create-release --name credhub --version test --tarball ./credhub-test.tgz
