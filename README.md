@@ -1,4 +1,4 @@
-# <img src="docs/images/logo.png" alt="CredHub"><br/>
+# <div align="center"><img src="docs/images/logo.png" alt="CredHub"></div>
 
 CredHub Release provides a BOSH Release for [CredHub](https://github.com/cloudfoundry-incubator/credhub).
 
