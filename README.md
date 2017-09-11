@@ -37,11 +37,13 @@ If you wish to use a stable version with a less frequent feature release cycle, 
 
 Current long term support versions
 
-| Version | Released    | End of Patch Releases |
-|---------|-------------|------------------------|
-| 1.0.x   | Jun-15-2017 | Mar-15-2018            |
-| 1.3.x   | Aug-23-2017 | Jun-15-2018            |
+| Version | Released    | Latest Patch | End of Patch Releases |
+|---------|-------------|--------------| -----------------------|
+| 1.0.x   | Jun-15-2017 | [1.0.4][4]   | Mar-15-2018            |
+| 1.3.x   | Aug-23-2017 | [1.3.0][5]   | Jun-15-2018            |
 
+[4]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.0.4
+[5]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.3.0
 
 ## Reporting a Vulnerability
 
