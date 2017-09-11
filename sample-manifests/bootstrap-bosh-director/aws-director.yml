@@ -8,13 +8,13 @@ name: &name aws-director-credhub
 
 releases:
 - name: bosh
-  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-263-ubuntu-trusty-3445.2-20170822-204212-651879357-20170822204217.tgz
-  version: "263"
-  sha1: 92c4bcbb9fbf65cffd3014ba4559b2c7132d2137
+  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-263.1.0-ubuntu-trusty-3445.7-20170908-212446-089447899-20170908212451.tgz
+  version: "263.1.0"
+  sha1: b71cfd5d8aa6aeab9e918dc938cec21c104f32d8 
 - name: uaa
-  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/uaa-45-ubuntu-trusty-3445.2-20170822-204123-42127651-20170822204129.tgz
+  url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/uaa-45-ubuntu-trusty-3445.7-20170901-011657-278004037-20170901011704.tgz
   version: "45"
-  sha1: 41cb1ea7c1dca2cc8c4a815eb498a163321c3965 
+  sha1: fdcfa0731490031e14cc411ae72d94b1341a482c
 - name: credhub
   url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.3.0
   version: "1.3.0"
@@ -28,8 +28,8 @@ resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.2
-    sha1: ba32c8fff8016862d0b0ef3dd4762d090365c0e8
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.7
+    sha1: ad82e910dc07b1ef4fe475776e11adbc83470538
   cloud_properties:
     instance_type: m3.xlarge
     ephemeral_disk: {size: 25000, type: gp2}
