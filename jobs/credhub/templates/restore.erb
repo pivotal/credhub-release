@@ -12,6 +12,8 @@ is_bootstrap_vm = !!spec.bootstrap
 
 set -eu
 
+export PATH=/var/vcap/bosh/bin:$PATH
+
 <% if !is_bootstrap_vm %>
 echo 'Deferring to the bootstrap VM to perform restore'
 <% elsif dbtype == "postgres" %>
@@ -33,6 +35,8 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   --clean \
   --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
+monit restart credhub
+
 <% elsif dbtype == "mysql" %>
     export MYSQLUTILS_DIR=/var/vcap/packages/mariadb_10.1.23
     export MYSQL_PWD="<%= dbpassword %>"
@@ -51,6 +55,9 @@ if require_tls %>
 -P "<%= dbport %>" \
 "<%= dbname %>" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 <% end %>
+
+monit restart credhub
+
 <% end %>
 
 <% else %>
