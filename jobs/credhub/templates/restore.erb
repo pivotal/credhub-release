@@ -12,7 +12,7 @@ is_bootstrap_vm = !!spec.bootstrap
 
 set -eu
 
-export PATH=/var/vcap/bosh/bin:$PATH
+export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
 
 <% if !is_bootstrap_vm %>
 echo 'Deferring to the bootstrap VM to perform restore'
@@ -36,6 +36,7 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
   --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
 monit restart credhub
+post-start
 
 <% elsif dbtype == "mysql" %>
     export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql
@@ -57,6 +58,7 @@ if require_tls %>
 <% end %>
 
 monit restart credhub
+post-start
 
 <% end %>
 

@@ -12,7 +12,6 @@ health_check() {
     echo "Could not curl the credhub server"
     return 1
   fi
-  echo "json is $json" # TODO GROT
   [ `echo $json | grep '"status":"UP"' | wc -l` -eq 1 ];
 }
 
