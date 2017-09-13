@@ -39,14 +39,15 @@ RSpec.describe "the template" do
       '  --dbname="example_credhub" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
     end
 
-    it "adds monit to $PATH" do
-      result = render_restore_erb("postgres", false)
-      expect(result).to include "export PATH=/var/vcap/bosh/bin:$PATH"
+    it "adds /var/vcap/bosh/bin and /var/vcap/jobs/credhub/bin to $PATH" do
+      result = render_restore_erb()
+      expect(result).to include "export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH"
     end
 
-    it "restarts credhub" do
-      result = render_restore_erb("postgres", false)
+    it "restarts credhub and runs post-start" do
+      result = render_restore_erb()
       expect(result).to include "monit restart credhub"
+      expect(result).to include "post-start"
     end
   end
 

@@ -11,7 +11,7 @@ dbname = p('credhub.data_storage.database')
 
 set -eu
 
-export PATH=/var/vcap/bosh/bin:$PATH
+export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
 
 <% if dbtype == "postgres" %>
 export PG_PKG_DIR=/var/vcap/packages/postgres-9.4
@@ -27,6 +27,7 @@ ${PG_PKG_DIR}/bin/pg_restore \
   --dbname="<%= dbname %>" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump
 
 monit restart credhub
+post-start
 
 <% else %>
 echo "Skipping restore, as database is not Postgres"
