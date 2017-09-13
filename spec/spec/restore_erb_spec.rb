@@ -57,6 +57,16 @@ RSpec.describe "the template" do
                                     '  --clean \\' + "\n" +
                                     '  --dbname="example_credhub" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
     end
+
+    it "adds monit to $PATH" do
+      result = render_restore_erb("postgres", false)
+      expect(result).to include "export PATH=/var/vcap/bosh/bin:$PATH"
+    end
+
+    it "restarts credhub" do
+      result = render_restore_erb("postgres", false)
+      expect(result).to include "monit restart credhub"
+    end
   end
 
   context "when db is mysql" do
@@ -70,6 +80,7 @@ RSpec.describe "the template" do
       expect(result).to include '"example_credhub" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
       expect(result).to_not include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
     end
+
     it "includes the mysql command with ssl properties when require_tls:true" do
       result = render_restore_erb("mysql", true)
       expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql')
@@ -80,7 +91,18 @@ RSpec.describe "the template" do
       expect(result).to include '"example_credhub" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"'
       expect(result).to include '--ssl-ca=/var/vcap/jobs/credhub/config/database_ca.pem \\'
     end
+
+    it "adds monit to $PATH" do
+      result = render_restore_erb("mysql", false)
+      expect(result).to include "export PATH=/var/vcap/bosh/bin:$PATH"
+    end
+
+    it "restarts credhub" do
+      result = render_restore_erb("mysql", false)
+      expect(result).to include "monit restart credhub"
+    end
   end
+
   context "when db is not postgres or mysql" do
     it "logs that it skips this restore," do
       result = render_restore_erb("UNSUPPORTED", nil)
@@ -88,7 +110,14 @@ RSpec.describe "the template" do
       expect(result).to_not include "/var/vcap/packages/database-backup-restorer-mysql/bin/mysqldump \\\n"
       expect(result).to include 'Skipping restore, as database is not Postgres or MySql'
     end
+
+
+    it "does not restart credhub" do
+      result = render_restore_erb("UNSUPPORTED", false)
+      expect(result).to_not include "monit restart credhub"
+    end
   end
+
   context "when not bootstrap vm" do
     it "logs that it delegates restore to the bootstrap vm" do
       result = render_restore_erb("mysql", false, false)
