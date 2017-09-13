@@ -38,7 +38,18 @@ RSpec.describe "the template" do
       '  --clean \\' + "\n" +
       '  --dbname="example_credhub" "$BBR_ARTIFACT_DIRECTORY"/credhubdb_dump'
     end
+
+    it "adds monit to $PATH" do
+      result = render_restore_erb("postgres", false)
+      expect(result).to include "export PATH=/var/vcap/bosh/bin:$PATH"
+    end
+
+    it "restarts credhub" do
+      result = render_restore_erb("postgres", false)
+      expect(result).to include "monit restart credhub"
+    end
   end
+
   context "when db is not postgres" do
     it "logs that it skips this restore," do
       result = render_restore_erb("NOT_PG")
