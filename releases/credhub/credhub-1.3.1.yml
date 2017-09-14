@@ -1,0 +1,40 @@
+name: credhub
+version: 1.3.1
+commit_hash: d351e30
+uncommitted_changes: false
+jobs:
+- name: credhub
+  version: 1a81da3c18721751f00026b4e60f8f6886aa2484
+  fingerprint: 1a81da3c18721751f00026b4e60f8f6886aa2484
+  sha1: 8088c527ff6efcb56e706653cd1b0078d64df073
+packages:
+- name: credhub
+  version: c113daadcde5f2add56fb8f62313a96c6e98697e
+  fingerprint: c113daadcde5f2add56fb8f62313a96c6e98697e
+  sha1: c48571e86b5a3fbe2b12078b04a01f84c1cf8569
+  dependencies:
+  - openjdk_1.8.0
+- name: lunaclient
+  version: b922e045db5246ec742f0c4d1496844942d6167a
+  fingerprint: b922e045db5246ec742f0c4d1496844942d6167a
+  sha1: 84355cd3e736944c91af8e4f492973caf5d635be
+  dependencies: []
+- name: mariadb_10.1.23
+  version: 6ab14e132241110cff0dc160137b71a967d29d53
+  fingerprint: 6ab14e132241110cff0dc160137b71a967d29d53
+  sha1: 68967fa763f1e94e2b61ce9d9217db1f1354cf06
+  dependencies: []
+- name: openjdk_1.8.0
+  version: a6b85c1cd75382025bbfa49abb737015575aec44
+  fingerprint: a6b85c1cd75382025bbfa49abb737015575aec44
+  sha1: 96c43be5188e578d12c8aa43408c5b8ec2f33453
+  dependencies: []
+- name: pg_utils_9.4
+  version: dbd00a0758a5e6225e1121bfd444db6ec59204ee
+  fingerprint: dbd00a0758a5e6225e1121bfd444db6ec59204ee
+  sha1: 4e5fffedd5edde269dee0fa1be63c73c7c7acd40
+  dependencies: []
+license:
+  version: 08f2aa9f376c717e823b012885bc61cecf8c816e
+  fingerprint: 08f2aa9f376c717e823b012885bc61cecf8c816e
+  sha1: a712018cf0d024dae909cdd472b49bf6bd95135b
