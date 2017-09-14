@@ -20,9 +20,9 @@ Adding CredHub to an existing deployment manifest can be done by simply adding t
 ```
 releases:
 - name: credhub
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.3.0
-  version: 1.3.0
-  sha1: 2b13fa390bd1b0ec7ca69537d1ac67b101cf0f7d
+  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.3.1
+  version: 1.3.1
+  sha1: 5a9a182c9680ecc59bf7420eff9967e269d397af
 ```
 
 [1]:https://github.com/cloudfoundry-incubator/credhub
