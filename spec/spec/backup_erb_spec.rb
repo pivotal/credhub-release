@@ -29,7 +29,7 @@ RSpec.describe "the template" do
   context "when db is postgres" do
     it "includes the pgdump command" do
       result = render_backup_erb("postgres", false)
-      expect(result).to include('export PGUTILS_DIR=/var/vcap/packages/database-backup-restorer-postgres')
+      expect(result).to include('export PGUTILS_DIR=')
       expect(result).to include('export PGPASSWORD="example_password"')
       expect(result).to_not include('export PGSSLMODE="verify-full"')
       expect(result).to_not include('export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem')
@@ -42,7 +42,7 @@ RSpec.describe "the template" do
     end
     it "includes the pgdump command and require_tls is true" do
       result = render_backup_erb("postgres", true)
-      expect(result).to include('export PGUTILS_DIR=/var/vcap/packages/database-backup-restorer-postgres')
+      expect(result).to include('export PGUTILS_DIR=')
       expect(result).to include('export PGPASSWORD="example_password"')
       expect(result).to include('export PGSSLMODE="verify-full"')
       expect(result).to include('export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem')
@@ -57,7 +57,7 @@ RSpec.describe "the template" do
   context "when db is mysql" do
     it "includes the mysqldump command" do
       result = render_backup_erb("mysql", false)
-      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql')
+      expect(result).to include('export MYSQLUTILS_DIR')
       expect(result).to include '"${MYSQLUTILS_DIR}/bin/mysqldump" \\'
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
@@ -69,7 +69,7 @@ RSpec.describe "the template" do
     end
     it "includes the mysqldump command and require_tls is true" do
       result = render_backup_erb("mysql", true)
-      expect(result).to include('export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql')
+      expect(result).to include('export MYSQLUTILS_DIR')
       expect(result).to include '"${MYSQLUTILS_DIR}/bin/mysqldump" \\'
       expect(result).to include '-u "example_username" \\'
       expect(result).to include '-h "127.0.0.1" \\'
