@@ -26,6 +26,12 @@ packages:
 - lunaclient
 - credhub
 
+provides:
+- name: credhub
+  type: credhub
+  properties:
+  - credhub.port
+
 properties:
   credhub.port:
     description: "Listening port for the CredHub API"
