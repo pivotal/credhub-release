@@ -20,9 +20,9 @@ Adding CredHub to an existing deployment manifest can be done by simply adding t
 ```
 releases:
 - name: credhub
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.3.2
-  version: 1.3.2
-  sha1: b5d254b8f1985c6e8582627461547e15ab3538b5
+  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release?v=1.3.3
+  version: 1.3.3
+  sha1: 0e53a9901abfeeff6e0c3442f45e9e0f5bddeeb2
 ```
 
 [1]:https://github.com/cloudfoundry-incubator/credhub
@@ -39,11 +39,11 @@ Current long term support versions
 
 | Version | Released    | Latest Patch | End of Patch Releases |
 |---------|-------------|--------------| -----------------------|
-| 1.0.x   | Jun-15-2017 | [1.0.6][4]   | Mar-15-2018            |
-| 1.3.x   | Aug-23-2017 | [1.3.2][5]   | Jun-15-2018            |
+| 1.0.x   | Jun-15-2017 | [1.0.7][4]   | Mar-15-2018            |
+| 1.3.x   | Aug-23-2017 | [1.3.3][5]   | Jun-15-2018            |
 
-[4]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.0.6
-[5]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.3.2
+[4]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.0.7
+[5]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.3.3
 
 ## Reporting a Vulnerability
 
