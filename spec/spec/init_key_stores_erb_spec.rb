@@ -32,14 +32,35 @@ describe 'init_key_stores.erb template' do
   context 'with a ca_certs array containing a single cert' do
     it 'succeeds' do
       ca_certs = '[ FAKE-TEST-CA-CERT ]'
-      expect { render_template(ca_certs) }.to_not raise_error
+      expect {render_template(ca_certs)}.to_not raise_error
     end
   end
 
   context 'with a ca_certs array multiple certs' do
     it 'succeeds' do
       ca_certs = '[ FAKE-TEST-CA-CERT, ANOTHER-TEST-CA-CERT ]'
-      expect { render_template(ca_certs) }.to_not raise_error
+      expect {render_template(ca_certs)}.to_not raise_error
+    end
+  end
+
+  context 'with a ca_certs array with stacked CAs' do
+    it 'succeeds' do
+      ca_certs = '[ -----BEGIN CERTIFICATE-----
+DUMMYCERT1
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+DUMMYCERT2
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+DUMMYCERT3
+-----END CERTIFICATE-----
+ ]'
+      rendered_template = render_template(ca_certs)
+
+      expect {render_template(ca_certs)}.to_not raise_error
+      expect(rendered_template).to include("-----BEGIN CERTIFICATE----- DUMMYCERT3 -----END CERTIFICATE-----\nEOL")
+      expect(rendered_template).to include("-----BEGIN CERTIFICATE----- DUMMYCERT2 -----END CERTIFICATE-----\nEOL")
+      expect(rendered_template).to include("-----BEGIN CERTIFICATE----- DUMMYCERT1 -----END CERTIFICATE-----\nEOL")
     end
   end
 
@@ -47,7 +68,7 @@ describe 'init_key_stores.erb template' do
     it 'raises an error' do
       expected_error = "At least one trusted CA certificate for UAA must be provided. Please add a value at 'credhub.authentication.uaa.ca_certs[]' and redeploy."
 
-      expect { render_template() }.to raise_error(expected_error)
+      expect {render_template()}.to raise_error(expected_error)
     end
   end
 
@@ -55,7 +76,7 @@ describe 'init_key_stores.erb template' do
     it 'raises an error' do
       expected_error = "At least one trusted CA certificate for UAA must be provided. Please add a value at 'credhub.authentication.uaa.ca_certs[]' and redeploy."
 
-      expect { render_template('[]') }.to raise_error(expected_error)
+      expect {render_template('[]')}.to raise_error(expected_error)
     end
   end
 
@@ -63,7 +84,7 @@ describe 'init_key_stores.erb template' do
     it 'raises an error' do
       expected_error = "At least one trusted CA certificate for UAA must be provided. Please add a value at 'credhub.authentication.uaa.ca_certs[]' and redeploy."
 
-      expect { render_template('FAKE-TEST-CA-CERT') }.to raise_error(expected_error)
+      expect {render_template('FAKE-TEST-CA-CERT')}.to raise_error(expected_error)
     end
   end
 end
