@@ -41,6 +41,8 @@ builds:
     version: 1.0.0
   f1e64933-f7ea-4992-53fb-af3ca82c029e:
     version: 1.0.4
+  fa06b1b5-3729-4c19-58d1-6b56dd65502a:
+    version: 1.4.0
   fb40deff-b429-4a82-b6dd-b69e5f7a0d2d:
     version: 0.6.0
 format-version: "2"
