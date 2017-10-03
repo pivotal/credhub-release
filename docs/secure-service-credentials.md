@@ -18,8 +18,8 @@ This guide provides instructions on how to enable [Secure Service Delivery for C
 Required manifest modifications are in the [secure-service-credentials.yml](https://github.com/cloudfoundry/cf-deployment/blob/master/operations/experimental/secure-service-credentials.yml) ops file. Here is the summary the changes:
 * Adds a CredHub instance group to cf deployment
 * Adds a database
-* Enables [Instance Identity](https://github.com/cloudfoundry/diego-release/blob/develop/docs/instance-identity.md) on Diego
-* Adds CredHub's server CA to the container trust store
+* Adds CredHub's server CA to the container and diego cell trust stores
+* Provides CredHub's server CA to the Cloud Controller job
 
 ### Deploy Cloud Foundry
 
@@ -28,7 +28,7 @@ bosh -e <env> deploy \
   cf-deployment.yml \
   -d cf \
   -v system_domain=<your_system_domain> \
-  -o operations/bypass-cc-bridge.yml \
+  -o operations/experimental/enable-instance-identity-credentials.yml \
   -o operations/experimental/secure-service-credentials.yml
 ```
 
