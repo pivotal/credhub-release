@@ -1,0 +1,9 @@
+processes:
+  credhub:
+    executable: /var/vcap/jobs/credhub/bin/credhub
+    env:
+      - RUN_DIR=/var/vcap/data/run/credhub
+      - LOG_DIR=/var/vcap/sys/log/credhub
+      - TMP_DIR=/var/vcap/data/credhub
+      - JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+      - MAX_HEAP_SIZE=<%= p('credhub.max_heap_size') %>
