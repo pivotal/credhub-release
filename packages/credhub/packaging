@@ -1,7 +1,3 @@
 set -ex
 
-unzip -j ${BOSH_COMPILE_TARGET}/credhub/credhub.jar BOOT-INF/lib/jna-*.jar -d .
-unzip -j jna*.jar com/sun/jna/linux-x86-64/libjnidispatch.so -d ${BOSH_INSTALL_TARGET}
-chmod +x ${BOSH_INSTALL_TARGET}/libjnidispatch.so
-
 cp ${BOSH_COMPILE_TARGET}/credhub/credhub.jar ${BOSH_INSTALL_TARGET}
