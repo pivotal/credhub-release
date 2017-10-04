@@ -24,6 +24,33 @@ end
 describe 'ctl.erb template' do
   it 'sets the max heap size correctly' do
     template = render_ctl_template(false, max_heap_size=512)
-    expect(template).to include('export MAX_HEAP_SIZE=512')
+    expect(template).to include('MAX_HEAP_SIZE=512')
+    expect(template).to include('-Xmx${MAX_HEAP_SIZE}m')
+  end
+
+  context 'with credhub.data_storage.require_tls set to false' do
+    it 'does not add java trust store properties' do
+      template = render_ctl_template(false)
+      expect(template).to_not include('-Djavax.net.ssl.trustStore')
+      expect(template).to_not include('-Djavax.net.ssl.trustStorePassword')
+    end
+
+    it 'does not emit extra newlines in the java command' do
+      template = render_ctl_template(false)
+      expect(template).to_not match(/\\\n\s*\n/)
+    end
+  end
+
+  context 'with credhub.data_storage.require_tls set to true' do
+    it 'does add java trust store properties' do
+      template = render_ctl_template(true)
+      expect(template).to include('-Djavax.net.ssl.trustStore')
+      expect(template).to include('-Djavax.net.ssl.trustStorePassword')
+    end
+
+    it 'does not emit extra newlines in the java command' do
+      template = render_ctl_template(true)
+      expect(template).to_not match(/\\\n\s*\n/)
+    end
   end
 end

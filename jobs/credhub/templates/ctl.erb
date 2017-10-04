@@ -1,14 +1,34 @@
 #!/bin/bash
 
+<%
+java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
+\t\t-Xmx${MAX_HEAP_SIZE}m \\
+\t\t-Dspring.profiles.active=prod \\
+\t\t-Dspring.config.location=/var/vcap/jobs/credhub/config/application.yml \\
+\t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+\t\t-Djava.security.egd=file:/dev/urandom \\
+\t\t-Djava.io.tmpdir=$TMP_DIR \\\n"
+
+if p('credhub.data_storage.require_tls')
+  java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks\\
+\t\t-Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER\\\n"
+end
+
+java_command += "\t\t-ea -jar *.jar"
+%>
+
+
 RUN_DIR=/var/vcap/sys/run/credhub
 LOG_DIR=/var/vcap/sys/log/credhub
 TMP_DIR=/var/vcap/jobs/credhub/tmp
 PIDFILE=${RUN_DIR}/pid
 RUNAS=vcap
-export MAX_HEAP_SIZE=<%= p('credhub.max_heap_size') %>
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+MAX_HEAP_SIZE=<%= p('credhub.max_heap_size') %>
 
 mkdir -p /var/vcap/jobs/credhub/tmp
+
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+export PATH=$JAVA_HOME/bin:$PATH
 
 exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout)   | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${LOG_DIR}/credhub.stdout.log)
 exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${LOG_DIR}/credhub.stderr.log)
@@ -21,7 +41,8 @@ case $1 in
 
     echo $$ > $PIDFILE
 
-    /var/vcap/jobs/credhub/bin/credhub
+    cd /var/vcap/packages/credhub
+    <%= java_command %>
     ;;
 
   stop)
