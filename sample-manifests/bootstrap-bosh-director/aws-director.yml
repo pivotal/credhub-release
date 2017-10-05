@@ -4,7 +4,7 @@
 ##
 ## To deploy (requires BOSH v2 CLI) - `bosh create-env aws-director.yml --vars-file aws-director-config.yml --vars-store aws-director-credentials.yml`
 ---
-name: &name aws-director-credhub
+name: aws-director-credhub
 
 releases:
 - name: bosh
@@ -117,7 +117,7 @@ variables:
   type: password
 
 instance_groups:
-- name: *name
+- name: credhub
   instances: 1
   resource_pool: vms
   persistent_disk_pool: disks

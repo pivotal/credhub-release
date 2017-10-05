@@ -1,0 +1,41 @@
+## This manifest snippet shows an example configuration for deploying CredHub with a Luna HSM encryption provider. 
+##
+
+- type: remove
+  path: /variables/name=credhub-encryption-password
+
+- type: replace 
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/encryption
+  value: 
+    keys:
+      - provider_name: hsm-provider
+        encryption_key_name: com.example.key
+        active: true
+    providers:
+      - name: hsm-provider
+        type: hsm
+        partition: partition-name
+        partition_password: example-password
+        client_certificate: |
+          -----BEGIN CERTIFICATE-----
+          ...
+          -----END CERTIFICATE-----
+        client_key: |
+          -----BEGIN RSA PRIVATE KEY-----
+          ...
+          -----END RSA PRIVATE KEY-----
+        servers: 
+        - host: 10.0.0.100
+          port: 1792
+          partition_serial_number: 123123
+          certificate: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+        - host: 10.0.0.200
+          port: 1792
+          partition_serial_number: 234234
+          certificate: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----

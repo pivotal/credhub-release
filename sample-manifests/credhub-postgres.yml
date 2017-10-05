@@ -57,7 +57,7 @@ variables:
   type: password
 
 instance_groups: 
-- name: credhub-postgres
+- name: credhub
   instances: 1
   vm_type: medium
   persistent_disk_type: 10GB

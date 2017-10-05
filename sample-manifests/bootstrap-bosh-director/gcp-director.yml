@@ -4,7 +4,7 @@
 ##
 ## To deploy (requires BOSH v2 CLI) - `bosh create-env gcp-director.yml --vars-file gcp-director-config.yml --vars-store gcp-director-credentials.yml`
 ---
-name: &name gcp-director-credhub
+name: gcp-director-credhub
 
 releases:
 - name: bosh
@@ -119,7 +119,7 @@ variables:
   type: password
 
 instance_groups:
-- name: *name
+- name: credhub
   instances: 1
   resource_pool: vms
   persistent_disk_pool: disks

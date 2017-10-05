@@ -1,0 +1,25 @@
+## This ops file modifies a base manifest configuration to use BOSH Process Manager.
+##
+## To view the structure of the composed manifest, run `bosh int credhub.yml -o ops-enable-bosh-process-manager.yml`
+##
+## You can deploy like `bosh deploy credhub.yml -o ops-enable-bosh-process-manager.yml`
+
+- type: replace 
+  path: /releases/-
+  value: 
+    name: bpm
+    url: http://bosh.io/d/github.com/cloudfoundry-incubator/bpm-release?v=0.1.0
+    sha1: a4b793b631a53ed5bc7966772222292938c0ca5f
+    version: 0.1.0
+
+- type: replace 
+  path: /instance_groups/name=credhub/jobs/name=bpm?
+  value: 
+    name: bpm
+    release: bpm
+    properties: {}
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/bpm?/enabled?
+  value: true
+

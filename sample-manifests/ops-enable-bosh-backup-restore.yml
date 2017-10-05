@@ -1,0 +1,21 @@
+## This ops file modifies a base manifest configuration to add the necessary release for BOSH Backup and Restore. 
+##
+## To view the structure of the composed manifest, run `bosh int credhub.yml -o ops-enable-bosh-backup-restore.yml`
+##
+## You can deploy like `bosh deploy credhub.yml -o ops-enable-bosh-backup-restore.yml`
+
+- type: replace 
+  path: /releases/-
+  value: 
+    name: backup-and-restore-sdk
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/backup-and-restore-sdk-release?v=1.1.0
+    sha1: 3ead0c752ce5a63a8453de35fff452661d2cd6b7
+    version: 1.1.0
+
+- type: replace 
+  path: /instance_groups/name=credhub/jobs/name=database-backup-restorer?
+  value: 
+    name: database-backup-restorer
+    release: backup-and-restore-sdk
+    properties: {}
+
