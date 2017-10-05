@@ -158,7 +158,8 @@ properties:
     description: "Enables CBC TLS cipher suites to enable TLS communication with Java 7 clients"
     default: false
 
-  bpm.enabled:
+  # BPM
+  credhub.bpm.enabled:
     description: "Enable Bosh Process Manager"
     default: false
 
