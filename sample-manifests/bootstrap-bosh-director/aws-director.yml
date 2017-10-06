@@ -260,7 +260,7 @@ instance_groups:
     properties:
       director: &director
         address: ((external-ip))
-        name: *name
+        name: aws-director-credhub
         config_server:
           enabled: true
           url: https://((external-ip)):8844/api/
