@@ -159,7 +159,7 @@ properties:
     default: false
 
   # BPM
-  credhub.bpm.enabled:
+  bpm.enabled:
     description: "Enable Bosh Process Manager"
     default: false
 
