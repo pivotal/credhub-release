@@ -8,17 +8,17 @@ name: aws-director-credhub
 
 releases:
 - name: bosh
-  url: https://s3.amazonaws.com/ch-compiled-releases/bosh-263.3.0-ubuntu-trusty-3468-20171009-053539-310901927.tgz
+  url: https://s3.amazonaws.com/ch-compiled-releases/bosh-263.3.0-ubuntu-trusty-3468-20171009-054655-194659769.tgz
   version: "263.3.0"
-  sha1: 39a0c2a4bb478a01861dc2ff7cce35b1be79a34c 
+  sha1: 8fd3ecfe954bb9ca99613d5976a1893ca9c765a1
 - name: uaa
-  url: https://s3.amazonaws.com/ch-compiled-releases/uaa-51-ubuntu-trusty-3468-20171009-053351-948780086.tgz
+  url: https://s3.amazonaws.com/ch-compiled-releases/uaa-51-ubuntu-trusty-3468-20171009-054637-979405773.tgz
   version: "51"
-  sha1: 869b8e6bf58f5431b3579f730f142814aae39d71
+  sha1: b00753e4bd5ea43db30fe973d9e82c7a08eb3d66
 - name: credhub
-  url: https://s3.amazonaws.com/ch-compiled-releases/credhub-1.5.0-ubuntu-trusty-3468-20171009-053546-993729526.tgz
+  url: https://s3.amazonaws.com/ch-compiled-releases/credhub-1.5.0-ubuntu-trusty-3468-20171009-054705-876854047.tgz
   version: "1.5.0"
-  sha1: f965d47c261c9c554399ea02cf7ab343b7b7f843 
+  sha1: c94b4ccd67ddc9f5401ec043583a1d089dac49ec
 - name: bosh-aws-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=66
   version: "66"
