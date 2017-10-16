@@ -9,6 +9,7 @@ def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
   option_yaml = <<-EOF
         properties:
           credhub:
+            port: 8844
             encryption:
               keys:
                 - provider_name: active_hsm
@@ -34,6 +35,12 @@ def render_pre_start_erb(data_storage_yaml, tls_yaml = '')
 end
 
 RSpec.describe "the template" do
+  it "checks if credhub port is open" do
+    result = render_pre_start_erb('{}', 'tls: {certificate: "foo", private_key: "bar"}')
+    expect(result).to include "lsof -i :8844"
+    expect(result).to include "fail_unless_credhub_port_is_open"
+  end
+
   context "with hsm" do
     context "with TLS properties" do
       it "raises an error when either credhub.tls.certificate or credhub.tls.private_key is missing" do
@@ -54,6 +61,7 @@ RSpec.describe "the template" do
       option_yaml = <<-EOF
         properties:
           credhub:
+            port: 8844
             encryption:
               keys:
                 - provider_name: dev-key

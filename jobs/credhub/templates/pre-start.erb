@@ -1,15 +1,9 @@
 #!/bin/bash
 
-set -eu
-
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
-
-chown -R vcap /var/vcap/jobs/credhub/config
-chmod 600 /var/vcap/jobs/credhub/config/*
-
 <% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
 <% active_provider_name = active_key['provider_name'] %>
 <% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+<% port = p('credhub.port') %>
 
 <%
   begin
@@ -19,6 +13,27 @@ chmod 600 /var/vcap/jobs/credhub/config/*
     raise "credhub.tls.certificate and credhub.tls.private_key must both be set."
   end
 %>
+
+fail_unless_credhub_port_is_open() {
+  set +e
+    lsof -i :<%= port %>
+    exit_code=$?;
+  set -e
+
+  if [[ $exit_code -eq 0 ]]; then
+    echo 'It appears that CredHub process is already running on port: <%= port %>'
+    exit 1;
+  fi
+}
+
+set -eu
+
+fail_unless_credhub_port_is_open
+
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+
+chown -R vcap /var/vcap/jobs/credhub/config
+chmod 600 /var/vcap/jobs/credhub/config/*
 
 if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.yml | wc -l` -eq 0 ]; then
   echo "Key store appears to be initialized. Skipping key store and cert initialization."
