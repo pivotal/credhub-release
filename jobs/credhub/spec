@@ -34,11 +34,22 @@ provides:
   type: credhub
   properties:
   - credhub.port
+  - credhub.ca_certificate
 
 properties:
   credhub.port:
     description: "Listening port for the CredHub API"
     default: 8844
+
+# CA certificate used for credhub TLS
+  credhub.ca_certificate:
+    description: "CA certificate for TLS connection to CredHub API"
+    type: certificate
+    default: ""
+    example: |
+        -----BEGIN CERTIFICATE-----
+        ...
+        -----END CERTIFICATE-----
 
   # Encryption properties
   credhub.encryption.keys:
