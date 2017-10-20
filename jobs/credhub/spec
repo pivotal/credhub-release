@@ -35,6 +35,7 @@ provides:
   properties:
   - credhub.port
   - credhub.ca_certificate
+  - credhub.internal_url
 
 properties:
   credhub.port:
@@ -50,6 +51,12 @@ properties:
         -----BEGIN CERTIFICATE-----
         ...
         -----END CERTIFICATE-----
+
+  # Internal URL
+  credhub.internal_url:
+    description: "Optional parameter to provide the CredHub internal URL as a link"
+    default: ""
+    example: "credhub.service.cf.internal"
 
   # Encryption properties
   credhub.encryption.keys:
