@@ -4,6 +4,9 @@ require 'yaml'
 require 'open-uri'
 require 'fileutils'
 
+$java_base_version = '1.8'
+puts "\nThis script is pinned to base version: #{$java_base_version}"
+
 def latest_for(yaml_url, package_name)
   yaml = YAML.load(open(yaml_url).read)
   yaml = yaml.inject({}) do |memo, (key, value)|
@@ -11,7 +14,9 @@ def latest_for(yaml_url, package_name)
     memo
   end
 
-  sorted_versions = yaml.keys.sort
+  # Filter results to match pinned base version, then sort
+  matching_versions = yaml.select { |key, value| key.to_s.match(/^#{$java_base_version}/) }
+  sorted_versions = matching_versions.keys.sort
 
   yaml[sorted_versions.last].tap do |latest|
     puts "Guessed latest #{package_name}: #{latest} (please confirm!)"
@@ -38,13 +43,14 @@ File.open(pre_packaging_script_path, 'w') do |f|
 end
 
 # Download current JRE
-FileUtils.mkdir_p("blobs/openjdk_1.8.0")
-system "cd blobs/openjdk_1.8.0 && curl \"#{jre_url}\" -o \"#{jre_filename}\""
+blobs_dir = "blobs/openjdk_#{$java_base_version}.0"
+FileUtils.mkdir_p(blobs_dir)
+system "cd #{blobs_dir} && curl \"#{jre_url}\" -o \"#{jre_filename}\""
 
 # Update blobs/openjdk_1.8.0/spec
-spec_path = 'packages/openjdk_1.8.0/spec'
+spec_path = 'packages/openjdk_'+ $java_base_version + '.0/spec'
 spec = YAML.load_file(spec_path)
-spec['files'][0] = "openjdk_1.8.0/#{jre_filename}"
+spec['files'][0] = "openjdk_#{$java_base_version}.0/#{jre_filename}"
 File.open(spec_path, 'w') { |f| f.puts YAML.dump(spec) }
 
 puts "\nIf this looks good, do a dev release for testing, and finally \"bosh upload blobs\" and commit when you're happy."
