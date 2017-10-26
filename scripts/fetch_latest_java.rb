@@ -34,7 +34,6 @@ end
 jre_url = latest_jre
 jdk_url = latest_jdk
 jre_filename = File.basename(URI(jre_url).path)
-jdk_filename = File.basename(URI(jdk_url).path)
 
 # Write JDK URL to the packages/credhub/pre_packaging script. We need the JDK to build our code on CI.
 pre_packaging_script_path = 'packages/credhub/pre_packaging'
@@ -48,18 +47,7 @@ blobs_dir = "blobs/openjdk_#{$java_base_version}.0"
 FileUtils.mkdir_p(blobs_dir)
 system "cd #{blobs_dir} && curl \"#{jre_url}\" -o \"#{jre_filename}\""
 
-# Download current JDK and add it as a blob
-openjdk_dir = "openjdk_#{$java_base_version}.0"
-FileUtils.mkdir(openjdk_dir)
-system "cd #{openjdk_dir} && curl \"#{jdk_url}\" -o \"#{jdk_filename}\""
-
 # Update blobs/openjdk_1.8.0/spec
-spec_path = 'packages/openjdk_'+ $java_base_version + '.0/spec'
-spec = YAML.load_file(spec_path)
-spec['files'][0] = "openjdk_#{$java_base_version}.0/#{jre_filename}"
-File.open(spec_path, 'w') { |f| f.puts YAML.dump(spec) }
-
-# Add new JDK to blobs
 spec_path = 'packages/openjdk_'+ $java_base_version + '.0/spec'
 spec = YAML.load_file(spec_path)
 spec['files'][0] = "openjdk_#{$java_base_version}.0/#{jre_filename}"
