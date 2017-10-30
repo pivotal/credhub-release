@@ -10,6 +10,8 @@ templates:
   restore.erb: bin/bbr/restore
   pre-backup-lock.sh: bin/bbr/pre-backup-lock
   post-backup-unlock.sh: bin/bbr/post-backup-unlock
+  pre-restore-lock.sh: bin/bbr/pre-restore-lock
+  post-restore-unlock.sh: bin/bbr/post-restore-unlock
   # Other scripts
   ctl.erb: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh
