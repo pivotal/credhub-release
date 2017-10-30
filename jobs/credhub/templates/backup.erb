@@ -56,5 +56,6 @@ export MYSQL_PWD="<%= dbpassword %>"
     <% end %>
 
 <% else %>
-echo "Skipping backup, as database is not Postgres or Mysql"
+echo "Cannot backup, as database is not Postgres or Mysql"
+exit 1
 <% end %>
