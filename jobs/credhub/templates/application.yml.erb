@@ -102,6 +102,7 @@
         if datastorage_type == 'mysql'
           connection_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true' if require_tls
           connection_url << '&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER'
+          connection_url << '&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2'
           connection_url << "&trustCertificateKeyStoreUrl=#{credhub_conf_dir}/db_trust_store.jks"
         elsif datastorage_type == 'postgres'
           connection_url << '&ssl=true' if require_tls
