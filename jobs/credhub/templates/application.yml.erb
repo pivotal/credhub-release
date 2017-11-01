@@ -105,7 +105,10 @@
         raise 'credhub.data_storage.require_tls must be set to `true` or `false`.'
       end
 
-      datasource_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true' if require_tls
+      if require_tls
+        datasource_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true'
+        datasource_url << '&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2'
+      end
     end
 
     if_p('credhub.data_storage.tls_ca') do |tls_cas|
