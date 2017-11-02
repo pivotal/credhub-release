@@ -26,6 +26,10 @@ export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
     <% end %>
   <% end %>
 
+if exec /var/vcap/jobs/credhub/bin/bbr/wait-for-stop | grep 9.6.*; then
+export PGUTILS_DIR=/var/vcap/packages/database-backup-restorer-postgres-9.6;
+fi
+
 "${PGUTILS_DIR}/bin/pg_restore" \
   --user="<%= dbusername %>" \
   --host="<%= dbhost %>" \

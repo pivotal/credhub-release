@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+<%
+  dbusername = p('credhub.data_storage.username')
+  dbpassword = p('credhub.data_storage.password')
+  dbhost = p('credhub.data_storage.host')
+  dbport = p('credhub.data_storage.port')
+  dbname = p('credhub.data_storage.database')
+%>
+
+export PGUTILS_DIR=/var/vcap/packages/database-backup-restorer-postgres-9.4
+export PGPASSWORD="<%= dbpassword %>"
+<% if_p('credhub.data_storage.require_tls') do |require_tls|
+  if require_tls %>
+        export PGSSLMODE="verify-full"
+        export PGSSLROOTCERT=/var/vcap/jobs/credhub/config/database_ca.pem
+    <% end %>
+<% end %>
+
+"${PGUTILS_DIR}/bin/psql" \
+--user="<%= dbusername %>" \
+--host="<%= dbhost %>" \
+--port="<%= dbport %>" \
+"<%= dbname %>" > \
+--command="show server_version;" \
+--tuples-only > /tmp/version.txt
+
+echo "$(cat /tmp/version.txt)"
