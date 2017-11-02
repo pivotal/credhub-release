@@ -17,12 +17,10 @@ export PGPASSWORD="<%= dbpassword %>"
     <% end %>
 <% end %>
 
-"${PGUTILS_DIR}/bin/psql" \
+echo "$("${PGUTILS_DIR}/bin/psql" \
 --user="<%= dbusername %>" \
 --host="<%= dbhost %>" \
 --port="<%= dbport %>" \
-"<%= dbname %>" > \
+"<%= dbname %>" \
 --command="show server_version;" \
---tuples-only > /tmp/version.txt
-
-echo "$(cat /tmp/version.txt)"
+--tuples-only)"
