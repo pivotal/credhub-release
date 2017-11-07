@@ -12,6 +12,8 @@ is_bootstrap_vm = !!spec.bootstrap
 
 set -eu
 
+export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
+
 <% if !is_bootstrap_vm %>
 echo 'Deferring to the bootstrap VM to perform backup'
 <% elsif dbtype == "postgres" %>
