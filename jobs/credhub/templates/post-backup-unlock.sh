@@ -2,11 +2,8 @@
 
 set -u
 
-export PATH=/var/vcap/bosh/bin:$PATH
-
-echo "at start of unlock script for credhub ...."
-monit start credhub
+export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
 
 echo "waiting for credhub to start after backup"
 
-exec /var/vcap/jobs/credhub/bin/post-start
+exec post-start

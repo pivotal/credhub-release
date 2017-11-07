@@ -39,6 +39,7 @@ fi
   --clean \
   --dbname="<%= dbname %>" "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
+    monit start credhub
 <% elsif dbtype == "mysql" %>
 export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql
 export MYSQL_PWD="<%= dbpassword %>"
@@ -56,8 +57,7 @@ if require_tls %>
 -h "<%= dbhost %>" \
 -P "<%= dbport %>" \
 "<%= dbname %>" < "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
-<% end %>
-
+<% end %>monit start credhub
 <% end %>
 
 <% else %>

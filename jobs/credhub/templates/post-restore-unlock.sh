@@ -2,9 +2,7 @@
 
 set -u
 
-export PATH=/var/vcap/bosh/bin:$PATH
-
-monit restart credhub
+export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
 
 echo "waiting for credhub to restart"
 
