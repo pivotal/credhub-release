@@ -20,6 +20,8 @@ while [ $SECONDS -lt $EXPIRATION ]; do
     then
         echo "credhub has been stopped"
         exit 0
+    else
+      monit stop credhub
     fi
     sleep 1
 done
