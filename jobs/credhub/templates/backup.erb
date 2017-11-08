@@ -13,7 +13,6 @@ is_bootstrap_vm = !!spec.bootstrap
 set -eu
 
 export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
-echo "at start of backup script for credhub ...."
 <% if !is_bootstrap_vm %>
 echo 'Deferring to the bootstrap VM to perform backup'
 <% elsif dbtype == "postgres" %>
@@ -36,8 +35,6 @@ fi
   --port="<%= dbport %>" \
   --format="custom" \
   "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
-
-monit start credhub
 
 <% elsif dbtype == "mysql" %>
 export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql
@@ -67,4 +64,3 @@ export MYSQL_PWD="<%= dbpassword %>"
 echo "Cannot backup, as database is not Postgres or Mysql"
 exit 1
 <% end %>
-echo "at end of backup script for credhub ...."

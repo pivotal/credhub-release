@@ -3,7 +3,5 @@
 set -u
 
 export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
-
-echo "waiting for credhub to start after backup"
-
+monit restart credhub
 exec post-start
