@@ -22,6 +22,8 @@ while [ $SECONDS -lt $EXPIRATION ]; do
     then
         echo "credhub post start health check successful"
         exit 0
+    else
+        monit start credhub
     fi
     sleep 1
 done
