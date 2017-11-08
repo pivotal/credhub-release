@@ -59,7 +59,6 @@ export MYSQL_PWD="<%= dbpassword %>"
 "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
         <% end %>
     <% end %>
-    monit start credhub
 <% else %>
 echo "Cannot backup, as database is not Postgres or Mysql"
 exit 1
