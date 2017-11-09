@@ -86,12 +86,26 @@
   if datastorage_type == 'in-memory'
     flyway_locations << 'classpath:/db/migration/h2'
   elsif datastorage_type == 'postgres' || datastorage_type == 'mysql'
-    db_params = ['host', 'port', 'database']
-      .map {|name| "credhub.data_storage.#{name}"}
-      .map {|property| p(property)}
+    dbname = p('credhub.data_storage.database')
+    dbport = p('credhub.data_storage.port')
+
+    if datastorage_type == "postgres"
+      dbhost = p('credhub.data_storage.host', "")
+
+      if_link("postgres") do |db|
+        dbhost = db.instances.first.address
+      end if dbhost.empty?
+
+      if dbhost.empty?
+        raise "postgres.host not set and no 'postgres' link available"
+      end
+    elsif datastorage_type == 'mysql'
+      dbhost = p('credhub.data_storage.host')
+    end
+
     jdbc_driver = datastorage_type == 'postgres' ? 'postgresql' : 'mariadb'
-    db_params.unshift(jdbc_driver)
-    connection_url = sprintf 'jdbc:%s://%s:%s/%s?autoReconnect=true', *db_params
+
+    connection_url = sprintf 'jdbc:%s://%s:%s/%s?autoReconnect=true', jdbc_driver, dbhost, dbport, dbname
 
     if_p('credhub.data_storage.require_tls') do |require_tls|
       if !is_boolean(require_tls)

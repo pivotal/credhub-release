@@ -4,10 +4,21 @@
 dbusername = p('credhub.data_storage.username')
 dbpassword = p('credhub.data_storage.password')
 dbtype = p('credhub.data_storage.type')
-dbhost = p('credhub.data_storage.host')
-dbport = p('credhub.data_storage.port')
 dbname = p('credhub.data_storage.database')
+
+dbhost = p('credhub.data_storage.host', "")
+dbport = p('credhub.data_storage.port')
 is_bootstrap_vm = !!spec.bootstrap
+
+if dbtype == "postgres"
+  if_link("postgres") do |db|
+    dbhost = db.instances.first.address
+  end if dbhost.empty?
+
+  if dbhost.empty?
+    raise "postgres.host not set and no 'postgres' link available"
+  end
+end
 %>
 
 set -eu
