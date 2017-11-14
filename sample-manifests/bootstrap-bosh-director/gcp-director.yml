@@ -8,17 +8,17 @@ name: gcp-director-credhub
 
 releases:
 - name: bosh
-  url: https://s3.amazonaws.com/ch-compiled-releases/bosh-263.3.0-ubuntu-trusty-3468-20171009-054655-194659769.tgz
-  version: "263.3.0"
-  sha1: 8fd3ecfe954bb9ca99613d5976a1893ca9c765a1
+  url: https://s3.amazonaws.com/ch-compiled-releases/bosh-264.1-ubuntu-trusty-3468.5-20171109-001949-93327961.tgz
+  version: "264.1.0"
+  sha1: 9561c88fb884bf980c5a395ecfb56589b40aec31
 - name: uaa
-  url: https://s3.amazonaws.com/ch-compiled-releases/uaa-51-ubuntu-trusty-3468-20171009-054637-979405773.tgz
-  version: "51"
-  sha1: b00753e4bd5ea43db30fe973d9e82c7a08eb3d66
+  url: https://s3.amazonaws.com/ch-compiled-releases/uaa-52.2-ubuntu-trusty-3468.5-20171107-010509-955327287.tgz
+  version: "52.2"
+  sha1: a777291f270aa0ed624e90bd50cb014fd997fe17
 - name: credhub
-  url: https://s3.amazonaws.com/ch-compiled-releases/credhub-1.5.0-ubuntu-trusty-3468-20171009-054705-876854047.tgz
-  version: "1.5.0"
-  sha1: c94b4ccd67ddc9f5401ec043583a1d089dac49ec
+  url: https://s3.amazonaws.com/ch-compiled-releases/credhub-1.6.4-ubuntu-trusty-3468.5-20171107-010147-537523233.tgz
+  version: "1.6.4"
+  sha1: ef801f338d3a0bad227e6bd743e6d8efca6dfc86
 - name: bosh-google-cpi
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-google-cpi-release?v=25.10.0
   version: "25.10.0"
@@ -28,8 +28,8 @@ resource_pools:
 - name: vms
   network: private
   stemcell:
-    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3468
-    sha1: f632bdc5955e642985b6daa0317301e1fe9ea533
+    url: https://bosh.io/d/stemcells/bosh-google-kvm-ubuntu-trusty-go_agent?v=3468.5
+    sha1: 53cc03a3ab829f8538b527f3c7c02b2340897aa4
   cloud_properties:
     zone: ((gcp-zone))
     machine_type: n1-standard-4
