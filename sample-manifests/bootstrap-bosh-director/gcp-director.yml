@@ -348,7 +348,7 @@ instance_groups:
     release: bosh-google-cpi
     properties:
       google: &google_properties
-        project: cf-security-credhub-main
+        project: ((gcp-project-id))
         json_key: ((gcp-escaped-json-key))
       ntp: &ntp
       - 0.pool.ntp.org

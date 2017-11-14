@@ -2,6 +2,7 @@
 ##
 ## To deploy (requires BOSH v2 CLI) - `bosh create-env gcp-director.yml --vars-file gcp-director-config.yml --vars-store gcp-director-credentials.yml`
 
+gcp-project-id:
 gcp-zone: 
 gcp-network-name: 
 gcp-subnet-name: 
