@@ -41,16 +41,27 @@
 
   application_config['server'] = server_config
 
-  # Security Config
-  application_config['security'] = {
-    'oauth2' => {
-      'resource' => {
-        'jwt' => {
-          'key_value' => p('credhub.authentication.uaa.verification_key')
+  application_config['security'] = {}
+
+  if p("credhub.authentication.uaa.enabled")
+      # Security Config
+      application_config['security'] = {
+        'oauth2' => {
+          'enabled' => true,
+          'resource' => {
+            'jwt' => {
+              'key_value' => p('credhub.authentication.uaa.verification_key')
+            }
+          }
         }
       }
-    }
-  }
+      # Auth Server
+        application_config['auth_server'] = {
+          'url' => p('credhub.authentication.uaa.url'),
+          'trust_store' => "#{credhub_conf_dir}/auth_server_trust_store.jks",
+          'trust_store_password' => 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
+        }
+  end
 
   acls_enabled = false
   if_p('credhub.authorization.acls.enabled') do |are_acls_enabled|
@@ -63,12 +74,6 @@
     }
   }
 
-  # Auth Server
-  application_config['auth_server'] = {
-    'url' => p('credhub.authentication.uaa.url'),
-    'trust_store' => "#{credhub_conf_dir}/auth_server_trust_store.jks",
-    'trust_store_password' => 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
-  }
 
   # Database Config
   application_config['spring'] = {

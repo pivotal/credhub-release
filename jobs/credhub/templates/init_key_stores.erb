@@ -82,7 +82,7 @@ EOL
 
 <% end %>
 
-<%
+<% if p('credhub.authentication.uaa.enabled')
 invalid_auth_server_ca_certs = "At least one trusted CA certificate for UAA must be provided. Please add a value at 'credhub.authentication.uaa.ca_certs[]' and redeploy."
 
 begin
@@ -116,7 +116,7 @@ EOL
 else
   raise invalid_auth_server_ca_certs
 end
-%>
+end %>
 
 # remove intermediate files
 rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}

@@ -168,6 +168,11 @@ properties:
     description: "Enables authorization via credential access control lists"
     default: false
 
+  # Authorization
+  credhub.authentication.uaa.enabled:
+    description: "Enables authorization via OAuth using UAA"
+    default: true
+
   # Logging
   credhub.log_level:
     description: "Application log level. Accepted values are none, error, warn, info or debug"
