@@ -8,13 +8,13 @@ name: gcp-director-credhub
 
 releases:
 - name: bosh
-  url: https://s3.amazonaws.com/ch-compiled-releases/bosh-264.1-ubuntu-trusty-3468.5-20171109-001949-93327961.tgz
-  version: "264.1.0"
-  sha1: 9561c88fb884bf980c5a395ecfb56589b40aec31
+  url: https://s3.amazonaws.com/ch-compiled-releases/bosh-264.3.0-ubuntu-trusty-3468.11-20171127-225209-817866565.tgz
+  version: "264.3.0"
+  sha1: fe8042da536a3506187036a410ae196127e88c47
 - name: uaa
-  url: https://s3.amazonaws.com/ch-compiled-releases/uaa-52.2-ubuntu-trusty-3468.5-20171107-010509-955327287.tgz
-  version: "52.2"
-  sha1: a777291f270aa0ed624e90bd50cb014fd997fe17
+  url: https://s3.amazonaws.com/ch-compiled-releases/uaa-52.4-ubuntu-trusty-3468.5-20171116-233710-943145012.tgz
+  version: "52.4"
+  sha1: 2ab6a07723ba24a660801bbb796dc8c8bd12a701
 - name: credhub
   url: https://s3.amazonaws.com/ch-compiled-releases/credhub-1.6.4-ubuntu-trusty-3468.5-20171107-010147-537523233.tgz
   version: "1.6.4"
