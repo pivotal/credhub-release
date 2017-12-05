@@ -211,12 +211,12 @@ Validate:
  * You can validate that the partition password was rejected by reviewing 'login attempt left' metric of the partition with command `partition show -partition partition_name`. If the number decrements per deployment, the provided password is being rejected. You may reset the partition password as described in the previous bullet.
 
 ***
-#### [Post-start error] Error creating bean with name 'encryptionKeyService' or 'encryptionKeyCanaryMapper' or Failed to instantiate [io.pivotal.security.service.BCEncryptionService]
+#### [Post-start error] Error creating bean with name 'encryptionKeyService' or 'encryptionKeyCanaryMapper' or Failed to instantiate [org.cloudfoundry.credhub.service.BCEncryptionService]
 
 This failure indicates that CredHub was unable to start its data encryption service from the provided configuration. This is caused by a configuration of the keys and/or providers section of the manifest. Validate that the specified `encryption.keys` contain valid values for `encryption_password` or `encryption_key_name`. Also validate that the `encryption.providers` specified include valid values.
 
 ***
-#### [Post-start error] io.pivotal.security.service.EncryptionKeyCanaryMapper required a bean of type 'io.pivotal.security.service.EncryptionService' that could not be found
+#### [Post-start error] org.cloudfoundry.credhub.service.EncryptionKeyCanaryMapper required a bean of type 'org.cloudfoundry.credhub.service.EncryptionService' that could not be found
 
 This failure indicates that the active encryption provider type has not be defined or is an invalid value. Check the `encryption.providers.type` value in your manifest.
 
