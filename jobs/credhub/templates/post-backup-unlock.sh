@@ -5,4 +5,4 @@ set -u
 export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
 
 monit restart credhub
-exec /var/vcap/jobs/credhub/bin/post-start
+exec /var/vcap/jobs/credhub/bin/post-bbr-start
