@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -u
+
+SECONDS=0
+EXPIRATION=600
+
+health_check() {
+  json=`curl -k --silent https://localhost:<%= p("credhub.port") %>/health`
+  if [ $? -ne 0 ]; then
+    echo "Could not curl the credhub server"
+    return 1
+  fi
+  [ `echo $json | grep '"status":"UP"' | wc -l` -eq 1 ];
+}
+
+echo "performing post start healthcheck until $EXPIRATION seconds have passed"
+
+while [ $SECONDS -lt $EXPIRATION ]; do
+    health_check
+    if [ $? == 0 ]
+    then
+        echo "credhub post start health check successful"
+        exit 0
+    else
+        monit start credhub
+    fi
+    sleep 1
+done
+echo "credhub post start health check failed"
+exit 1
