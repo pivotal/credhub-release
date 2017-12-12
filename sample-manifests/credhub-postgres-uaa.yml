@@ -61,10 +61,9 @@ variables:
   type: certificate
   options:
     ca: credhub-ca
-    common_name: ((internal-ip-address))
+    common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
-    - ((internal-ip-address))
 - name: uaa-jwt
   type: rsa
   options:
@@ -141,7 +140,7 @@ instance_groups:
     release: uaa
     properties:
       uaa:
-        url: &uaa-url https://((internal-ip-address)):8443
+        url: &uaa-url https://((external-ip-address)):8443 
         scim:
           users:
           - name: admin
