@@ -63,6 +63,7 @@ variables:
     ca: credhub-ca
     common_name: ((internal-ip-address))
     alternative_names:
+    - 127.0.0.1
     - ((external-ip-address))
     - ((internal-ip-address))
 - name: uaa-jwt
