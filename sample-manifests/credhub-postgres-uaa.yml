@@ -141,7 +141,7 @@ instance_groups:
     release: uaa
     properties:
       uaa:
-        url: &uaa-url https://127.0.0.1:8443
+        url: &uaa-url https://((internal-ip-address)):8443
         scim:
           users:
           - name: admin
