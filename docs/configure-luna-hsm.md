@@ -1,4 +1,4 @@
-This guide provides instructions to create new AWS CloudHSM devices and configure them to work with CredHub. If you choose to use a Luna SafeNet HSM that is not provided by AWS, you may skip over the device allocation portion to [initialize and configured your HSMs.](#initialize-and-configure-new-hsms)
+This guide provides instructions to create new AWS CloudHSM Classic devices and configure them to work with CredHub. If you choose to use a Luna SafeNet HSM that is not provided by AWS, you may skip over the device allocation portion to [initialize and configured your HSMs.](#initialize-and-configure-new-hsms)
 
 It is recommended that you configure at least two HSMs if the data stored in CredHub is critical. Appropriately configured HSMs allow key replication which provides redundancy of the key material in the event of an HSM device failure. If you choose to run a single HSM, your CredHub data will not be accessible in the event of a device failure. 
 
@@ -11,7 +11,7 @@ It is recommended that you configure at least two HSMs if the data stored in Cre
 1. The Security Group must allow traffic from the CredHub security group on ports 22 (SSH) and 1792 (HSM)
 
 #### Create New Devices
-1. [Install `cloudhsm` CLI](http://docs.aws.amazon.com/cloudhsm/latest/userguide/install_cli.html)
+1. [Install `cloudhsm` CLI](http://docs.aws.amazon.com/cloudhsm/classic/userguide/install_cli.html)
 
 1. Create SSH keypairs for all planned HSMs
   
@@ -28,7 +28,7 @@ It is recommended that you configure at least two HSMs if the data stored in Cre
     aws_region=<value>
     ```
   
-    More about the configuration file for `cloudhsm` CLI can be found [here](http://docs.aws.amazon.com/cloudhsm/latest/userguide/cli-getting-started.html#config_files).
+    More about the configuration file for `cloudhsm` CLI can be found [here](http://docs.aws.amazon.com/cloudhsm/classic/userguide/cli-getting-started.html#config_files).
 
 1. Run the following command to create each HSM and place it in the appropriate subnet
 
