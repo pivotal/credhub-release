@@ -56,11 +56,15 @@
         }
       }
       # Auth Server
-        application_config['auth_server'] = {
-          'url' => p('credhub.authentication.uaa.url'),
-          'trust_store' => "#{credhub_conf_dir}/auth_server_trust_store.jks",
-          'trust_store_password' => 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
-        }
+      application_config['auth_server'] = {
+        'url' => p('credhub.authentication.uaa.url'),
+        'trust_store' => "#{credhub_conf_dir}/auth_server_trust_store.jks",
+        'trust_store_password' => 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
+      }
+
+      if_p('credhub.authentication.uaa.internal_url') do |internal_url|
+        application_config['auth_server']['internal_url'] = internal_url
+      end
   end
 
   acls_enabled = false
