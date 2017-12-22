@@ -7,16 +7,18 @@ dbtype = p('credhub.data_storage.type')
 dbhost = p('credhub.data_storage.host')
 dbport = p('credhub.data_storage.port')
 dbname = p('credhub.data_storage.database')
-is_bootstrap_vm = !!spec.bootstrap
 %>
 
 set -eu
 
 export PATH=/var/vcap/bosh/bin:/var/vcap/jobs/credhub/bin:$PATH
 
-<% if !is_bootstrap_vm %>
-echo 'Deferring to the bootstrap VM to perform restore'
-<% elsif dbtype == "postgres" %>
+if [ ! -f "$BBR_ARTIFACT_DIRECTORY/credhubdb_dump" ]; then
+  echo "No BBR artifact found, exiting"
+  exit 0
+fi
+
+<% if dbtype == "postgres" %>
 export PGUTILS_DIR=/var/vcap/packages/database-backup-restorer-postgres-9.4
 export PGPASSWORD="<%= dbpassword %>"
   <% if_p('credhub.data_storage.require_tls') do |require_tls|
