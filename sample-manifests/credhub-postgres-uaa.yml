@@ -139,6 +139,8 @@ instance_groups:
   - name: uaa
     release: uaa
     properties:
+      bpm:
+        enabled: false
       uaa:
         url: &uaa-url https://((external-ip-address)):8443 
         scim:
