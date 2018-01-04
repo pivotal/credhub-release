@@ -2,6 +2,8 @@
 ## 
 ## This deployment is intended for development testing only. You will lose all of your stored data in the event of an issue with the VM or mounted disks. 
 ## 
+## This manifest is not regularly maintained and may fall out of date.
+## 
 ## This manifest assumes that you are deploying with a BOSH Director that has CredHub enabled. If this is not the case, you must replace the values below with ((variable)) syntax with actual values. If you are using BOSH with CredHub enabled, these values will be generated automatically, with the exception of '/uaa/jwt', which you must set to the public verification key for you UAA provider.
 ## 
 ## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace the external_ip and uaa_url with an accurate values. 
