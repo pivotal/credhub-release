@@ -1,5 +1,7 @@
 ## This manifest deploys CredHub. This configuration assumes that you have an existing database and UAA server deployed at known locations.
 ##
+## This manifest is not regularly maintained and may fall out of date.
+##
 ## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace any value using the ((variable)) syntax with accurate values.
 ---
 name: sample-credhub
