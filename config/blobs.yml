@@ -2,7 +2,7 @@ lunaclient_5.3.0-11/lunaclient_5.3.0-11.tar.gz:
   size: 7306782
   object_id: 2ceaec43-ce10-43d8-92c3-a06654b6f3c7
   sha: 09f0136a78ecbf7cbfe78d78419ab6b8ff5891cb
-openjdk_1.8.0/openjdk-1.8.0_152.tar.gz:
-  size: 45661256
-  object_id: c5c89d39-426c-407c-67fa-784a5aca1690
-  sha: 0d5758ed6f0e040684ea8bdf410ba44422f29f47
+openjdk_1.8.0/openjdk-1.8.0_162.tar.gz:
+  size: 45665574
+  object_id: f88da63e-a39e-46ef-4f0b-4a4c717405c5
+  sha: 4c9585480714e9be5acd2ebc1d666cfd40fb8215
