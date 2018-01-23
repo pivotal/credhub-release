@@ -8,7 +8,9 @@ java_command = "\tjava \\
 \t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
 \t\t-Djava.security.egd=file:/dev/urandom \\
 \t\t-Djna.boot.library.path=/var/vcap/packages/credhub/\\
-\t\t-Djava.io.tmpdir=${TMP_DIR} \\\n"
+\t\t-Djava.io.tmpdir=${TMP_DIR} \\
+\t\t-Djdk.tls.ephemeralDHKeySize=3072 \\
+\t\t-Djdk.tls.namedGroups=\"secp384r1\" \\\n"
 
 if p('credhub.data_storage.require_tls')
   java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks\\
