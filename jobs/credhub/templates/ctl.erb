@@ -8,13 +8,13 @@ java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
 -Djava.security.egd=file:/dev/urandom \\
 -Djna.boot.library.path=/var/vcap/packages/credhub/ \\
--Djava.io.tmpdir=$TMP_DIR "
+-Djava.io.tmpdir=$TMP_DIR \\
+-Djdk.tls.ephemeralDHKeySize=3072 \\
+-Djdk.tls.namedGroups=\"secp384r1\" "
 
 if p('credhub.data_storage.require_tls')
   java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks \\
--Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER \\
--Djdk.tls.ephemeralDHKeySize=3072 \\
--Djdk.tls.namedGroups=\"secp384r1\" "
+-Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER "
 end
 
 java_command += "-ea -jar *.jar"
