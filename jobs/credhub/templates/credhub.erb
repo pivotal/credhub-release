@@ -12,9 +12,9 @@ java_command = "\tjava \\
 \t\t-Djdk.tls.ephemeralDHKeySize=3072 \\
 \t\t-Djdk.tls.namedGroups=\"secp384r1\" \\\n"
 
-if p('credhub.data_storage.require_tls')
-  java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/db_trust_store.jks\\
-\t\t-Djavax.net.ssl.trustStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER\\\n"
+if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
+  java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks\\
+\t\t-Djavax.net.ssl.trustStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER\\\n"
 end
 
 java_command += "\t\t-ea -jar *.jar"

@@ -158,8 +158,6 @@ properties:
   credhub.authentication.uaa.internal_url:
     description: "Optional URL for reaching UAA server over internal networking"
     example: "https://uaa.example.internal:8443"
-  credhub.authentication.uaa.verification_key:
-    description: "Public key of UAA server for verifying signature of tokens presented for authentication"
   credhub.authentication.uaa.ca_certs:
     description: "List of CAs trusted when making TLS connections to UAA server"
 

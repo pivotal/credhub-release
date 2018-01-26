@@ -47,19 +47,14 @@
       # Security Config
       application_config['security'] = {
         'oauth2' => {
-          'enabled' => true,
-          'resource' => {
-            'jwt' => {
-              'key_value' => p('credhub.authentication.uaa.verification_key')
-            }
-          }
+          'enabled' => true
         }
       }
       # Auth Server
       application_config['auth_server'] = {
         'url' => p('credhub.authentication.uaa.url'),
-        'trust_store' => "#{credhub_conf_dir}/auth_server_trust_store.jks",
-        'trust_store_password' => 'AUTH_SERVER_TRUST_STORE_PASSWORD_PLACEHOLDER'
+        'trust_store' => "#{credhub_conf_dir}/trust_store.jks",
+        'trust_store_password' => 'TRUST_STORE_PASSWORD_PLACEHOLDER'
       }
 
       if_p('credhub.authentication.uaa.internal_url') do |internal_url|
@@ -111,8 +106,8 @@
         if datastorage_type == 'mysql'
           connection_url << '&useSSL=true&requireSSL=true&verifyServerCertificate=true' if require_tls
           connection_url << '&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2'
-          connection_url << '&trustCertificateKeyStorePassword=KEY_STORE_PASSWORD_PLACEHOLDER'
-          connection_url << "&trustCertificateKeyStoreUrl=#{credhub_conf_dir}/db_trust_store.jks"
+          connection_url << '&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER'
+          connection_url << "&trustCertificateKeyStoreUrl=#{credhub_conf_dir}/trust_store.jks"
         elsif datastorage_type == 'postgres'
           connection_url << '&ssl=true' if require_tls
         end
