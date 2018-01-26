@@ -1,8 +1,9 @@
-<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
-<% active_provider_name = active_key['provider_name'] %>
-<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+<% encryption_providers = p('credhub.encryption.providers').to_a
+hsm_providers = encryption_providers.select{|p| p['type'] == 'hsm'}
 
-<% if active_provider['type'] == 'hsm' %>
+if hsm_providers.any?
+  hsm_provider = hsm_providers.first %>
+
 Chrystoki2 = {
   LibUNIX = /var/vcap/packages/lunaclient/lib/libCryptoki2.so;
   LibUNIX64 = /var/vcap/packages/lunaclient/lib/libCryptoki2_64.so;
@@ -35,7 +36,7 @@ LunaSA Client = {
   ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
   NetClient = 1;
   HtlDir = /var/vcap/packages/lunaclient/htl/;
-<% active_provider['servers'].each_with_index do |hsm_server, i| %>
+<% hsm_provider['servers'].each_with_index do |hsm_server, i| %>
   ServerName0<%= i %> = <%= hsm_server['host'] %>;
   ServerPort0<%= i %> = <%= hsm_server['port'] || 1792 %>;
   ServerHtl0<%= i %> = 0;

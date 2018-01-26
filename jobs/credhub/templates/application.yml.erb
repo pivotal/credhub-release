@@ -138,13 +138,8 @@
   # Encryption Config
 
   encryption_keys = p('credhub.encryption.keys').to_a
-  encryption_providers = p('credhub.encryption.providers')
+  encryption_providers = p('credhub.encryption.providers').to_a
   active_keys = encryption_keys.select {|key| key['active']}
-  active_key = active_keys.first
-
-  if encryption_keys.collect{|k| k['provider_name']}.uniq.count > 1
-    raise 'Data migration between encryption providers is not currently supported. Please update your manifest to use a single encryption provider.'
-  end
 
   if active_keys.empty? || active_keys.size > 1
     raise 'Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.'
@@ -156,9 +151,15 @@
     raise 'The provided encryption provider type is not valid. Valid provider types are "hsm" and "internal".'
   end
 
-  active_provider = encryption_providers.select {|p| p['name'] == active_key['provider_name']}.first
+  hsm_providers = encryption_providers.select{|p| p['type'] == 'hsm'}
+
+  if hsm_providers.size > 1
+    raise 'More than one hsm provider is not supported. Please update your configuration to proceed.'
+  end
 
   keys = encryption_keys.each do |k|
+    provider = encryption_providers.detect {|p| p['name'] == k['provider_name'] }
+    k['provider_type'] = provider['type']
     k.delete 'provider_name'
 
     if k.key?('encryption_password')
@@ -177,15 +178,16 @@
   end
 
   application_config['encryption'] = {
-    'provider' => active_provider['type'],
     'keys' => keys,
     'key_creation_enabled' => !!spec.bootstrap
   }
 
-  if active_provider['type'] == 'hsm'
+
+  if hsm_providers.any?
+    hsm_provider = hsm_providers.first
     application_config['hsm'] = {
-      'partition' => active_provider['partition'],
-      'partition_password' => active_provider['partition_password']
+      'partition' => hsm_provider['partition'],
+      'partition_password' => hsm_provider['partition_password']
     }
   end
 

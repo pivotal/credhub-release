@@ -1,8 +1,6 @@
 #!/bin/bash
 
-<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
-<% active_provider_name = active_key['provider_name'] %>
-<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+<% using_hsm = p('credhub.encryption.providers').any? { |provider| provider['type'] == "hsm" } %>
 <% port = p('credhub.port') %>
 
 <%
@@ -42,7 +40,7 @@ else
   /var/vcap/jobs/credhub/bin/init_key_stores.sh
 fi
 
-<% if active_provider['type'] == 'hsm' %>
+<% if using_hsm %>
 /var/vcap/jobs/credhub/bin/configure_hsm.sh
 <% end %>
 

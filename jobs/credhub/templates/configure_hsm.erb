@@ -3,20 +3,17 @@
 set -eu
 
 <%
-  active_key = p('credhub.encryption.keys').find { |key| key.key?('active') }
-  active_provider_name = active_key['provider_name']
-  active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name }
-  hsm_servers = active_provider['servers'] || []
-
-  if active_provider['type'] == 'hsm'
+  hsm_provider = p('credhub.encryption.providers').find  { |provider| provider['type'] == "hsm" }
+  if hsm_provider
+    hsm_servers = hsm_provider['servers']
 %>
 
 cat > /var/vcap/jobs/credhub/config/client_cert.pem <<EOL
-<%= active_provider['client_certificate'] %>
+<%= hsm_provider['client_certificate'] %>
 EOL
 
 cat > /var/vcap/jobs/credhub/config/client_key.pem <<EOL
-<%= active_provider['client_key'] %>
+<%= hsm_provider['client_key'] %>
 EOL
 
 cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
@@ -33,7 +30,7 @@ cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/lib/ext/
 <%
   primary_server = hsm_servers.shift
   primary_serial_number = primary_server['partition_serial_number']
-  ha_group_label = active_provider['partition']
+  ha_group_label = hsm_provider['partition']
 %>
 
 PATH=$PATH:/var/vcap/packages/lunaclient/bin
@@ -43,7 +40,7 @@ if [ $(vtl haAdmin show | egrep -c 'HA Group Label:\s+<%= ha_group_label %>(\s|$
 
   echo "Creating new HSM HA group."
 
-  NEW_GROUP_OUTPUT=$(echo copy | vtl haAdmin newGroup -label "<%= ha_group_label %>" -serialNum <%= primary_serial_number %> -password <%= active_provider['partition_password'] %>)
+  NEW_GROUP_OUTPUT=$(echo copy | vtl haAdmin newGroup -label "<%= ha_group_label %>" -serialNum <%= primary_serial_number %> -password <%= hsm_provider['partition_password'] %>)
   GROUPID=$(echo $NEW_GROUP_OUTPUT | grep -o -E 'HA Group Number: .*' | awk '{print $4}')
 
   echo "Adding members to HSM HA group."
@@ -51,13 +48,13 @@ if [ $(vtl haAdmin show | egrep -c 'HA Group Label:\s+<%= ha_group_label %>(\s|$
 <% hsm_servers.each do |hsm_server| %>
   echo "Adding server with partition serial number <%= hsm_server['partition_serial_number'] %> to HSM HA group."
 
-  echo copy | vtl haAdmin addMember -group $GROUPID -serialNum <%= hsm_server['partition_serial_number'] %> -password <%= active_provider['partition_password'] %>
+  echo copy | vtl haAdmin addMember -group $GROUPID -serialNum <%= hsm_server['partition_serial_number'] %> -password <%= hsm_provider['partition_password'] %>
 <% end %>
 
   echo "Finished adding members to HSM HA group."
 
   echo "Synchronizing HSM HA group."
-  vtl haAdmin synchronize -group $GROUPID -password <%= active_provider['partition_password'] %>
+  vtl haAdmin synchronize -group $GROUPID -password <%= hsm_provider['partition_password'] %>
 else
   echo "HSM HA appears to be initialized. Skipping HSM HA setup."
 fi
