@@ -75,14 +75,14 @@ variables:
 - name: uaa-login
   type: password
 
-instance_groups: 
+instance_groups:
 - name: credhub
   instances: 1
   vm_type: medium
-  azs: [west]
+  azs: [z1]
   stemcell: default
   networks:
-  - name: west
+  - name: default
     static_ips: [((internal-ip-address))]
     default: [dns, gateway]
   - name: public
