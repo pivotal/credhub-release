@@ -21,6 +21,41 @@ java_command += "-ea -jar *.jar"
 %>
 
 
+<% if p("credhub.authentication.uaa.enabled") %>
+
+uaa_health_check() {
+    status=`curl -k --silent <%= p("credhub.authentication.uaa.url") %>/healthz`
+    if [ $? -ne 0 ]; then
+      echo "Could not reach the UAA server"
+      return 1
+    fi
+
+    if [ $status == "ok" ]; then
+      return 0
+    else
+      return 1
+    fi
+}
+
+SECONDS=0
+EXPIRATION=300
+uaa_health_loop(){
+  echo "performing pre start check for UAA until $EXPIRATION seconds have passed"
+    while [ $SECONDS -lt $EXPIRATION ]; do
+      echo "inside while... seconds=" $SECONDS
+      uaa_health_check
+      if [ $? == 0 ]
+      then
+        echo "credhub start UAA verification successful"
+        return 0
+      fi
+      sleep 1
+    done
+  echo "credhub start failed; unable to reach UAA!"
+  return 1
+}
+<% end %>
+
 RUN_DIR=/var/vcap/sys/run/credhub
 LOG_DIR=/var/vcap/sys/log/credhub
 TMP_DIR=/var/vcap/jobs/credhub/tmp
@@ -39,6 +74,10 @@ exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | grep -E
 case $1 in
 
   start)
+    <% if p("credhub.authentication.uaa.enabled") %>
+    uaa_health_loop
+    if [ $? == 0 ]; then
+    <% end %>
     mkdir -p $RUN_DIR $LOG_DIR
     chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $TMP_DIR
 
@@ -46,6 +85,9 @@ case $1 in
 
     cd /var/vcap/packages/credhub
     <%= java_command %>
+    <% if p("credhub.authentication.uaa.enabled") %>
+    fi
+    <% end %>
     ;;
 
   stop)
