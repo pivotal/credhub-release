@@ -24,8 +24,8 @@ stemcells:
 update:
   canaries: 1
   max_in_flight: 10
-  update_watch_time: 10000-400000
-  canary_watch_time: 10000-400000
+  update_watch_time: 10000-200000
+  canary_watch_time: 10000-200000
 
 variables:
 - name: credhub-encryption-password

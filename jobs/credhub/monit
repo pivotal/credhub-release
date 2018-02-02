@@ -8,7 +8,6 @@ check process credhub
 check process credhub
   with pidfile /var/vcap/sys/run/credhub/pid
   start program "/var/vcap/jobs/credhub/bin/ctl start"
-    with timeout 305 seconds
   stop program "/var/vcap/jobs/credhub/bin/ctl stop"
   group vcap
 <% end %>
