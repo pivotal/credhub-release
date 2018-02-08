@@ -12,7 +12,7 @@ releases:
 - name: credhub
   version: latest
 - name: postgres
-  version: latest
+  version: 25
 - name: uaa
   version: latest
 
