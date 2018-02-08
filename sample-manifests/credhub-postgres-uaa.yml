@@ -97,6 +97,7 @@ instance_groups:
         authentication:
           uaa:
             url: *uaa-url
+            internal_url: https://localhost:8443
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((uaa-tls.ca)) 
