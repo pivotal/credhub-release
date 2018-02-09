@@ -2,7 +2,12 @@
 hsm_providers = encryption_providers.select{|p| p['type'] == 'hsm'}
 
 if hsm_providers.any?
-  hsm_provider = hsm_providers.first %>
+  hsm_provider = hsm_providers.first
+
+  if hsm_provider.has_key?("connection_properties")
+    hsm_provider = hsm_provider["connection_properties"]
+  end
+%>
 
 Chrystoki2 = {
   LibUNIX = /var/vcap/packages/lunaclient/lib/libCryptoki2.so;

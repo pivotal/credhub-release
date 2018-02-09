@@ -180,6 +180,9 @@
 
   if hsm_providers.any?
     hsm_provider = hsm_providers.first
+    if hsm_provider.has_key?('connection_properties')
+      hsm_provider = hsm_provider['connection_properties']
+    end
     application_config['hsm'] = {
       'partition' => hsm_provider['partition'],
       'partition_password' => hsm_provider['partition_password']

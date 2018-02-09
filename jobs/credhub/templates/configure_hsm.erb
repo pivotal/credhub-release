@@ -5,6 +5,9 @@ set -eu
 <%
   hsm_provider = p('credhub.encryption.providers').find  { |provider| provider['type'] == "hsm" }
   if hsm_provider
+    if hsm_provider.has_key?("connection_properties")
+      hsm_provider = hsm_provider["connection_properties"]
+    end
     hsm_servers = hsm_provider['servers']
 %>
 
