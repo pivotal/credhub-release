@@ -239,6 +239,15 @@ This failure indicates that the CredHub server was unable to get the needed conf
 1. Validate that the UAA target is reachable from the CredHub instance. If the UAA address is external, the instance may need internet access to reach it.
 1. Validate that the provided CA certificate in the manifest at `credhub.authentication.uaa.ca_certs[n]` is the CA which signed the targeted UAA TLS certificate.
 
+#### [Post-start error] java.sql.SQLNonTransientConnectionException: Could not connect to localhost:3306: Unsupported record version Unknown-0.0
+This error is caused by CredHub trying to establish an TLS 1.2 connection to a version of MySQL/MariaDB compiled with YaSSL. It may also appear as
+"Caused by: javax.net.ssl.SSLHandshakeException: Remote host terminated the handshake" when connecting to MySQL.  
+
+To configure this release to work with MySQL Community Server, at this time you must disable database TLS by setting the property
+`credhub.data_storage.require_tls` to `false`.
+
+More information is available [here](https://mariadb.com/kb/en/library/using-tlsssl-with-mariadb-connectorj/).
+
 ## Usability Failures
 
 Usability failures occur after a successful deployment of CredHub. These errors are primarily related to the server's ability to reach dependent components. 
