@@ -58,15 +58,14 @@ variables:
 - name: database-admin
   type: password
 
-instance_groups: 
+instance_groups:
 - name: credhub
   instances: 1
   vm_type: medium
-  persistent_disk_type: 10GB
-  azs: [west]
+  azs: [z1]
   stemcell: default
   networks:
-  - name: west
+  - name: default
     static_ips: [((internal-ip-address))]
     default: [dns, gateway]
   - name: public
@@ -81,9 +80,9 @@ instance_groups:
         authentication:
           uaa:
             url: ((uaa-url))
-            verification_key: ((uaa-jwt.public_key))
+            verification_key: ((uaa-jwt))
             ca_certs:
-            - ((uaa-tls.ca)) 
+            - ((uaa-tls))
         data_storage:
           type: postgres
           username: admin
