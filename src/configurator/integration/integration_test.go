@@ -44,7 +44,7 @@ var _ = Describe("Configurator", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Eventually(session).Should(Exit(1))
-			Eventually(session.Err).Should(gbytes.Say("Usage: configurator <config-json>"))
+			Eventually(session.Err).Should(gbytes.Say("Usage: <json> | configurator"))
 		})
 	})
 
@@ -190,9 +190,182 @@ var _ = Describe("Configurator", func() {
 
 	Describe("encryption keys", func() {
 		It("populates their type by mapping from the provider", func() {
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "hsm",
+				},
+				{
+					Name: "notfoo",
+					Type: "internal",
+				},
+			}
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:       "foo",
+					EncryptionPassword: "bar",
+				},
+			}
 
+			result := runCli(cli)
+			Expect(result.Encryption.Keys).To(HaveLen(1))
+			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
+			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+		})
+
+		It("populates encryption password when key properties is not available", func() {
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "hsm",
+				},
+				{
+					Name: "notfoo",
+					Type: "internal",
+				},
+			}
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:       "notfoo",
+					EncryptionPassword: "bar",
+				},
+			}
+
+			result := runCli(cli)
+			Expect(result.Encryption.Keys).To(HaveLen(1))
+			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("internal"))
+			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+		})
+
+		It("populates encryption key name when key properties is not available", func() {
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "hsm",
+				},
+				{
+					Name: "notfoo",
+					Type: "internal",
+				},
+			}
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:      "foo",
+					EncryptionKeyName: "bar",
+				},
+			}
+
+			result := runCli(cli)
+			Expect(result.Encryption.Keys).To(HaveLen(1))
+			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
+			Expect(result.Encryption.Keys[0].EncryptionKeyName).To(Equal("bar"))
+		})
+
+		It("populates encryption password when key properties is available", func() {
+
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "internal",
+				},
+			}
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
+				},
+			}
+
+			result := runCli(cli)
+			Expect(result.Encryption.Keys).To(HaveLen(1))
+			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("internal"))
+			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+		})
+
+		It("populates encryption key name when key properties is available", func() {
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "hsm",
+				},
+			}
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
+				},
+			}
+
+			result := runCli(cli)
+			Expect(result.Encryption.Keys).To(HaveLen(1))
+			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
+			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+		})
+
+	})
+
+	Describe("providers", func() {
+		It("populates partition and partition password when connection properties is not available", func() {
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name:              "foo",
+					Type:              "hsm",
+					Partition:         "some-partition",
+					PartitionPassword: "some-partition-password",
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:       "foo",
+					EncryptionPassword: "bar",
+					EncryptionKeyName:  "baz",
+				},
+			}
+
+			result := runCli(cli)
+			Expect(result.Hsm.Partition).To(Equal("some-partition"))
+			Expect(result.Hsm.PartitionPassword).To(Equal("some-partition-password"))
+		})
+
+		It("populates partition and partition password when connection properties is available", func() {
+
+			connectionProperties := config.ConnectionProperties{
+				Partition:         "connection-some-partition",
+				PartitionPassword: "connection-some-partition-password",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name:                 "foo",
+					Type:                 "hsm",
+					ConnectionProperties: connectionProperties,
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:       "foo",
+					EncryptionPassword: "bar",
+					EncryptionKeyName:  "baz",
+				},
+			}
+
+			result := runCli(cli)
+			Expect(result.Hsm.Partition).To(Equal("connection-some-partition"))
+			Expect(result.Hsm.PartitionPassword).To(Equal("connection-some-partition-password"))
 		})
 	})
+
 })
 
 func runCli(cli *ConfiguratorCLI) config.CredhubConfig {
@@ -200,6 +373,8 @@ func runCli(cli *ConfiguratorCLI) config.CredhubConfig {
 	Expect(err).NotTo(HaveOccurred())
 	EventuallyWithOffset(1, session).Should(Exit(0))
 	var result config.CredhubConfig
+	contents := string(session.Out.Contents())
+	_ = contents
 	Expect(yaml.Unmarshal(session.Out.Contents(), &result)).To(Succeed())
 	return result
 }
@@ -210,7 +385,7 @@ type ConfiguratorCLI struct {
 }
 
 func (c *ConfiguratorCLI) RunWithoutConfig() (*Session, error) {
-	configuratorCmd := exec.Command(c.Path)
+	configuratorCmd := exec.Command(c.Path, "/tmp/some-file")
 	return Start(configuratorCmd, GinkgoWriter, GinkgoWriter)
 }
 
@@ -219,7 +394,7 @@ func (c *ConfiguratorCLI) RunWithConfig() (*Session, error) {
 	if err != nil {
 		return nil, err
 	}
-	configuratorCmd := exec.Command(c.Path)
+	configuratorCmd := exec.Command(c.Path, "/tmp/some-file")
 	configuratorCmd.Stdin = bytes.NewReader(configJson)
 
 	return Start(configuratorCmd, GinkgoWriter, GinkgoWriter)
