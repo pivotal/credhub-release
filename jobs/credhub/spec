@@ -49,6 +49,10 @@ provides:
   - credhub.ca_certificate
   - credhub.internal_url
 
+consumes:
+- name: postgres
+  type: database
+
 properties:
   credhub.port:
     description: "Listening port for the CredHub API"
@@ -198,4 +202,3 @@ properties:
   bpm.enabled:
     description: "Enable Bosh Process Manager"
     default: false
-

@@ -1,8 +1,20 @@
 <%=
 
+require 'json'
+
 config = p("credhub")
 config['bootstrap'] = !!spec.bootstrap
 
-config.to_json
+if p("credhub.data_storage.type") == "postgres"
+    if_link("postgres") do |db|
+        config["data_storage"]["host"] = db.instances.first.address
+        config["data_storage"]["port"] = db.p('databases.port')
+    end
+end
+
+
+JSON.pretty_generate(
+    config
+)
 
 %>
