@@ -52,6 +52,7 @@ provides:
 consumes:
 - name: postgres
   type: database
+  optional: true
 
 properties:
   credhub.port:
