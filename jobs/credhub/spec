@@ -6,8 +6,6 @@ templates:
   post-start.erb: bin/post-start
   drain.erb: bin/drain
   # bbr scripts
-  backup.erb: bin/bbr/backup
-  restore.erb: bin/bbr/restore
   pre-backup-lock.sh: bin/bbr/pre-backup-lock
   post-backup-unlock.sh: bin/bbr/post-backup-unlock
   pre-restore-lock.sh: bin/bbr/pre-restore-lock
@@ -48,6 +46,9 @@ provides:
   - credhub.port
   - credhub.ca_certificate
   - credhub.internal_url
+- name: credhub_db
+  type: credhub_db
+  properties: [credhub.data_storage]
 
 consumes:
 - name: postgres

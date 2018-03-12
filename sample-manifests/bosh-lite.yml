@@ -4,13 +4,16 @@ name: credhub
 releases:
 - name: credhub
   version: latest
-  url: https://bosh.io/d/github.com/pivotal-cf/credhub-release
+  # url: https://bosh.io/d/github.com/pivotal-cf/credhub-release
 - name: postgres
   version: 25
-  url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=25
+  # url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=25
 - name: uaa
   version: 55
-  url: https://bosh.io/d/github.com/cloudfoundry/uaa-release?v=55
+  # url: https://bosh.io/d/github.com/cloudfoundry/uaa-release?v=55
+- name: backup-and-restore-sdk
+  # url: https://bosh.io/d/github.com/cloudfoundry-incubator/backup-and-restore-sdk-release
+  version: latest
 
 stemcells:
 - alias: default
@@ -76,6 +79,12 @@ instance_groups:
     default: [dns, gateway]
 
   jobs:
+  - name: database-backup-restorer
+    release: backup-and-restore-sdk
+  - name: bbr-credhubdb
+    release: credhub
+    properties:
+      release_level_backup: true
   - name: credhub
     release: credhub
     properties:

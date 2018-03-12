@@ -1,0 +1,30 @@
+<%=
+  require 'json'
+
+  db = link("credhub_db")
+
+  config = {
+    username: db.p("credhub.data_storage.username"),
+    password: db.p("credhub.data_storage.password"),
+    port: db.p("credhub.data_storage.port"),
+    database: db.p("credhub.data_storage.database"),
+    adapter: db.p("credhub.data_storage.type"),
+  }
+
+  db.if_p("credhub.data_storage.host") do |host|
+    config[:host] = host
+  end.else do
+    config[:host] = db.instances[0].address
+  end
+
+  if db.p("credhub.data_storage.require_tls")
+    config[:tls] = {
+      cert: {
+        ca: db.p("credhub.data_storage.tls_ca"),
+      }
+    }
+  end
+
+
+  JSON.pretty_generate(config)
+%>

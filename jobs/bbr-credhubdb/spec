@@ -1,0 +1,18 @@
+---
+name: bbr-credhubdb
+
+templates:
+  bbr.json.erb: config/bbr.json
+  backup.sh.erb: bin/bbr/backup
+  restore.sh.erb: bin/bbr/restore
+
+packages: []
+
+consumes:
+- name: credhub_db
+  type: credhub_db
+
+properties:
+  release_level_backup:
+    default: false
+    description: "Include credhub DB in backup and restore operations"

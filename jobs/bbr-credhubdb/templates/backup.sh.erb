@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+<% if p('release_level_backup') %>
+set -ex
+
+JOB_PATH="/var/vcap/jobs/bbr-credhubdb"
+SDK_PATH="/var/vcap/jobs/database-backup-restorer"
+
+BBR_ARTIFACT_FILE_PATH="${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
+CONFIG_PATH="${JOB_PATH}/config/bbr.json"
+
+"${SDK_PATH}/bin/backup" --config "${CONFIG_PATH}" --artifact-file "${BBR_ARTIFACT_FILE_PATH}"
+<% else %>
+echo "script deactivated due to release_level_backup being set to FALSE\n"
+<% end %>
