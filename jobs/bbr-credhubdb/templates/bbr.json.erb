@@ -1,7 +1,12 @@
 <%=
   require 'json'
-
-  db = link("credhub_db")
+  links = false
+  if self.methods(false).include?(:link)
+    db = link("credhub_db")
+    links = true
+  else
+    db = self
+  end
 
   config = {
     username: db.p("credhub.data_storage.username"),
@@ -14,7 +19,9 @@
   db.if_p("credhub.data_storage.host") do |host|
     config[:host] = host
   end.else do
-    config[:host] = db.instances[0].address
+    if links
+      config[:host] = db.instances[0].address
+    end
   end
 
   if db.p("credhub.data_storage.require_tls")

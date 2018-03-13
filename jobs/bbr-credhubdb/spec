@@ -16,3 +16,23 @@ properties:
   release_level_backup:
     default: false
     description: "Include credhub DB in backup and restore operations"
+
+  # Data storage
+  credhub.data_storage.type:
+    description: "Database type. Accepted values are in-memory, mysql, or postgres"
+  credhub.data_storage.username:
+    description: "Username for authenticating with targeted database server"
+  credhub.data_storage.password:
+    description: "Password for authenticating with targeted database server"
+  credhub.data_storage.host:
+    description: "Host address of targeted database server"
+  credhub.data_storage.port:
+    description: "Listening port of targeted database server"
+  credhub.data_storage.database:
+    description: "Name of database in which to store data on targeted database server (must exist prior to deployment)"
+    default: "credhub"
+  credhub.data_storage.require_tls:
+    description: "Requires only TLS connections to targeted database server"
+    default: true
+  credhub.data_storage.tls_ca:
+    description: "CA trusted for making TLS connections to targeted database server"
