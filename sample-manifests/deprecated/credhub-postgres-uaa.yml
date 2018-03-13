@@ -6,10 +6,10 @@
 ##
 ## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace the external_ip and uaa_url with an accurate values.
 ---
-name: ((deployment_name))
+name: sample-credhub-postgres-uaa
 
 releases:
-- name: ((release_name))
+- name: credhub
   version: latest
 - name: postgres
   version: latest
@@ -90,7 +90,7 @@ instance_groups:
 
   jobs:
   - name: credhub
-    release: ((release_name))
+    release: credhub
     properties:
       credhub:
         tls: ((credhub-tls))
@@ -104,8 +104,11 @@ instance_groups:
           type: postgres
           username: admin
           password: ((database-admin))
+          host: 127.0.0.1
+          port: 5432
           database: credhub
           require_tls: true
+          tls_ca: ((database-tls.ca))
         encryption:
           keys: 
           - provider_name: int
