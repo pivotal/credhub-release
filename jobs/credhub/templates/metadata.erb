@@ -1,0 +1,9 @@
+#!/usr/bin/env bash 
+
+<% if p("credhub.authentication.uaa.enabled") %>
+echo "---
+restore_should_be_locked_before:
+- job_name: uaa
+  release: uaa"
+
+<% end %>
