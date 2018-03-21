@@ -79,10 +79,10 @@ instance_groups:
         tls: ((credhub-tls))
         authentication:
           uaa:
-            url: ((uaa-url))
-            verification_key: ((uaa-jwt))
+            url: ((/uaa-url))
+            verification_key: ((/uaa-jwt))
             ca_certs:
-            - ((uaa-tls))
+            - ((/uaa-tls))
         data_storage:
           type: postgres
           username: admin
