@@ -12,6 +12,15 @@ appender.SECURITY_EVENTS_FILE.fileName=/var/vcap/sys/log/credhub/credhub_securit
 appender.SECURITY_EVENTS_FILE.layout.type=PatternLayout
 appender.SECURITY_EVENTS_FILE.layout.pattern=%m%n
 
+appender.audit.name=Audit
+appender.audit.type=Console
+appender.audit.target=SYSTEM_OUT
+appender.audit.layout.type=PatternLayout
+appender.audit.layout.pattern=%msg%n
+
+logger.audit.name=CEFAudit
+logger.audit.appenderRef.foo.ref=Audit
+
 rootLogger.appenderRef.FILE.ref=CREDHUB
 
 logger.SECURITY_EVENTS_FILE.name=CREDHUB_SECURITY_EVENTS
