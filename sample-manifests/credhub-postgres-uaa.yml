@@ -16,8 +16,8 @@ releases:
 - name: uaa
   version: latest
 
-stemcells: 
-- alias: default 
+stemcells:
+- alias: default
   os: ubuntu-trusty
   version: latest
 
@@ -48,7 +48,7 @@ variables:
     - 127.0.0.1
 - name: database-tls
   type: certificate
-  options: 
+  options:
     ca: credhub-ca
     common_name: ((external-ip-address))
     alternative_names:
@@ -64,6 +64,8 @@ variables:
     common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
 - name: uaa-jwt
   type: rsa
   options:
@@ -100,7 +102,7 @@ instance_groups:
             internal_url: https://localhost:8443
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
-            - ((uaa-tls.ca)) 
+            - ((uaa-tls.ca))
         data_storage:
           type: postgres
           username: admin
@@ -111,27 +113,27 @@ instance_groups:
           require_tls: true
           tls_ca: ((database-tls.ca))
         encryption:
-          keys: 
+          keys:
           - provider_name: int
             encryption_password: ((credhub-encryption-password))
             active: true
-          providers: 
+          providers:
           - name: int
             type: internal
 
   - name: postgres
     release: postgres
-    properties: 
+    properties:
       databases:
         address: 127.0.0.1
         port: 5432
-        databases: 
+        databases:
         - name: credhub
         - name: uaa
-        roles: 
+        roles:
         - name: admin
           password: ((database-admin))
-        tls: 
+        tls:
           ca: ((database-tls.ca))
           certificate: ((database-tls.certificate))
           private_key: ((database-tls.private_key))
@@ -180,7 +182,7 @@ instance_groups:
         port: 5432
         db_scheme: postgresql
         # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
-        tls_enabled: false 
+        tls_enabled: false
         databases:
         - tag: uaa
           name: uaa
