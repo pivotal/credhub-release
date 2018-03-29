@@ -64,8 +64,7 @@ variables:
     common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
-    - ((internal-ip-address))
-    - 127.0.0.1
+    - localhost
 - name: uaa-jwt
   type: rsa
   options:
@@ -99,7 +98,7 @@ instance_groups:
         authentication:
           uaa:
             url: *uaa-url
-            internal_url: https://127.0.0.1:8443
+            internal_url: https://localhost:8443
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((uaa-tls.ca))
