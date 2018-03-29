@@ -9,7 +9,7 @@
 name: sample-credhub-postgres-uaa
 
 releases:
-- name: credhub
+- name: credub
   version: latest
 - name: postgres
   version: 25
@@ -96,6 +96,8 @@ instance_groups:
       credhub:
         tls: ((credhub-tls))
         authentication:
+          trusted_cas:
+            - ((credhub-ca.certificate))
           uaa:
             url: *uaa-url
             internal_url: https://localhost:8443
