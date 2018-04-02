@@ -37,7 +37,7 @@ fi
   "<%= dbname %>" > "${BBR_ARTIFACT_DIRECTORY}/credhubdb_dump"
 
 <% elsif dbtype == "mysql" %>
-export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mysql
+export MYSQLUTILS_DIR=/var/vcap/packages/database-backup-restorer-mariadb
 export MYSQL_PWD="<%= dbpassword %>"
     <% if_p('credhub.data_storage.require_tls') do |require_tls|
       if require_tls %>
