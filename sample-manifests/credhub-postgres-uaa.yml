@@ -9,7 +9,7 @@
 name: sample-credhub-postgres-uaa
 
 releases:
-- name: credub
+- name: credhub
   version: latest
 - name: postgres
   version: 25
