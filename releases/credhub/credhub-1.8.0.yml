@@ -1,0 +1,45 @@
+name: credhub
+version: 1.8.0
+commit_hash: 23ded84
+uncommitted_changes: false
+jobs:
+- name: bbr-credhubdb
+  version: ce4d40745a309b99b15372db31d8c2bf0fe59391
+  fingerprint: ce4d40745a309b99b15372db31d8c2bf0fe59391
+  sha1: ff84aa57e275182a0c0907ba1fa8a41b201ad310
+- name: credhub
+  version: 2a10d15b2257c78d0a042179d714e3393a05ee93
+  fingerprint: 2a10d15b2257c78d0a042179d714e3393a05ee93
+  sha1: ba7f00006864a21a89c6fb1da4feecee97d37cdb
+packages:
+- name: configurator
+  version: efd5d34031f66099f8c90853b035f5e1445b5582
+  fingerprint: efd5d34031f66099f8c90853b035f5e1445b5582
+  sha1: 5708e406d535af657f9fb54ec0e88bce4ab2aa71
+  dependencies:
+  - golang-1.9-linux
+- name: credhub
+  version: 24ff90f5bcc536b97fcee02d6f3eb60a9dd17847
+  fingerprint: 24ff90f5bcc536b97fcee02d6f3eb60a9dd17847
+  sha1: 414211648d8783cf4e46928bfd59dada887e2b9f
+  dependencies:
+  - openjdk_1.8.0
+- name: golang-1.9-linux
+  version: 8d6c67abda8684ce454f0bc74050a213456573ff
+  fingerprint: 8d6c67abda8684ce454f0bc74050a213456573ff
+  sha1: e9dd8e92accad2091d9f19d6ffabc8e019e58f6b
+  dependencies: []
+- name: lunaclient
+  version: b922e045db5246ec742f0c4d1496844942d6167a
+  fingerprint: b922e045db5246ec742f0c4d1496844942d6167a
+  sha1: 84355cd3e736944c91af8e4f492973caf5d635be
+  dependencies: []
+- name: openjdk_1.8.0
+  version: 992d517cbe2e4977e4d948ed159134bbed7a8c20
+  fingerprint: 992d517cbe2e4977e4d948ed159134bbed7a8c20
+  sha1: b95808dd85f33dcf81359fa41fc00d3049dc33d0
+  dependencies: []
+license:
+  version: 08f2aa9f376c717e823b012885bc61cecf8c816e
+  fingerprint: 08f2aa9f376c717e823b012885bc61cecf8c816e
+  sha1: a712018cf0d024dae909cdd472b49bf6bd95135b
