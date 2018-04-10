@@ -88,11 +88,12 @@ func main() {
 
 		if key.KeyProperties.EncryptionKeyName != "" {
 			encryptionKeyName = key.KeyProperties.EncryptionKeyName
-		} else if key.KeyProperties.EncryptionPassword != "" {
+		} else if key.EncryptionKeyName != "" {
+			encryptionKeyName = key.EncryptionKeyName
+		}
+		if key.KeyProperties.EncryptionPassword != "" {
 			encryptionKeyPassword = key.KeyProperties.EncryptionPassword
- 		} else if key.EncryptionKeyName != "" {
- 			encryptionKeyName = key.EncryptionKeyName
-		} else if key.EncryptionPassword != "" {
+ 		}  else if key.EncryptionPassword != "" {
 			encryptionKeyPassword = key.EncryptionPassword
 		}
 

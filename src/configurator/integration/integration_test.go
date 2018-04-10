@@ -204,6 +204,7 @@ var _ = Describe("Configurator", func() {
 				{
 					ProviderName:       "foo",
 					EncryptionPassword: "bar",
+					EncryptionKeyName:  "baz",
 				},
 			}
 
@@ -211,6 +212,7 @@ var _ = Describe("Configurator", func() {
 			Expect(result.Encryption.Keys).To(HaveLen(1))
 			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
 			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+			Expect(result.Encryption.Keys[0].EncryptionKeyName).To(Equal("baz"))
 		})
 
 		It("populates encryption password when key properties is not available", func() {
