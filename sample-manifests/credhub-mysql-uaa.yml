@@ -1,0 +1,210 @@
+## This manifest deploys CredHub, a MySQL database server and UAA on one VM
+---
+name: sample-credhub-mysql-uaa
+
+releases:
+- name: credhub
+  version: latest
+- name: cf-mysql
+  version: latest
+- name: uaa
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  update_watch_time: 10000-200000
+  canary_watch_time: 10000-200000
+
+variables:
+- name: credhub-encryption-password
+  type: password
+  options:
+    length: 40
+- name: credhub-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub CA
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternative_names:
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
+- name: database-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternative_names:
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
+- name: database-admin
+  type: password
+- name: credhub-db
+  type: password
+- name: uaa-db
+  type: password
+- name: uaa-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: ((external-ip-address))
+    alternative_names:
+    - ((external-ip-address))
+    - localhost
+- name: uaa-jwt
+  type: rsa
+  options:
+    key_length: 4096
+- name: uaa-users-admin
+  type: password
+- name: uaa-admin
+  type: password
+- name: uaa-login
+  type: password
+- name: galera-healthcheck-db
+  type: password
+- name: galera-healthcheck-endpoint
+  type: password
+- name: cluster-health
+  type: password
+
+instance_groups:
+- name: credhub
+  instances: 1
+  vm_type: medium
+  azs: [z1]
+  stemcell: default
+  persistent_disk: 10240
+  networks:
+  - name: default
+    static_ips: [((internal-ip-address))]
+    default: [dns, gateway]
+  - name: public
+    static_ips: [((external-ip-address))]
+
+  jobs:
+  - name: credhub
+    release: credhub
+    properties:
+      credhub:
+        tls: ((credhub-tls))
+        authentication:
+          trusted_cas:
+            - ((credhub-ca.certificate))
+          uaa:
+            url: *uaa-url
+            internal_url: https://localhost:8443
+            verification_key: ((uaa-jwt.public_key))
+            ca_certs:
+            - ((uaa-tls.ca))
+        data_storage:
+          type: mysql
+          username: credhub
+          password: ((credhub-db))
+          host: 127.0.0.1
+          port: 3306
+          database: credhub
+          require_tls: true
+          tls_ca: ((database-tls.ca))
+        encryption:
+          keys:
+          - provider_name: int
+            encryption_password: ((credhub-encryption-password))
+            active: true
+          providers:
+          - name: int
+            type: internal
+
+  - name: mysql
+    release: cf-mysql
+    properties:
+      cf_mysql:
+        mysql:
+          admin_username: admin
+          admin_password: ((database-admin))
+          tls:
+            ca_certificate: ((database-tls.ca))
+            server_certificate: ((database-tls.certificate))
+            server_key: ((database-tls.private_key))
+          seeded_databases:
+            - name: credhub
+              username: credhub
+              password: ((credhub-db))
+            - name: uaa
+              username: uaa
+              password: ((uaa-db))
+          galera_healthcheck:
+            db_password: ((galera-healthcheck-db))
+            endpoint_password: ((galera-healthcheck-endpoint))
+          cluster_health:
+            password: ((cluster-health))
+
+  - name: uaa
+    release: uaa
+    properties:
+      bpm:
+        enabled: false
+      uaa:
+        url: &uaa-url https://((external-ip-address)):8443
+        catalina_opts: -Djava.security.egd=file:/dev/./urandom -Xmx768m -XX:MaxMetaspaceSize=256m
+        scim:
+          users:
+          - name: admin
+            password: ((uaa-users-admin))
+            groups:
+              - scim.write
+              - scim.read
+              - bosh.admin
+              - credhub.read
+              - credhub.write
+        clients:
+          credhub_cli:
+            override: true
+            authorized-grant-types: password,refresh_token
+            scope: credhub.read,credhub.write
+            authorities: uaa.resource
+            access-token-validity: 30
+            refresh-token-validity: 3600
+            secret: ""
+        admin: {client_secret: ((uaa-admin))}
+        login: {client_secret: ((uaa-login))}
+        zones: {internal: {hostnames: []}}
+        sslCertificate: ((uaa-tls.certificate))
+        sslPrivateKey: ((uaa-tls.private_key))
+        jwt:
+          revocable: true
+          policy:
+            active_key_id: key-1
+            keys:
+              key-1:
+                signingKey: ((uaa-jwt.private_key))
+      uaadb:
+        address: 127.0.0.1
+        port: 3306
+        db_scheme: mysql
+        # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
+        tls_enabled: false
+        databases:
+        - tag: uaa
+          name: uaa
+        roles:
+        - tag: admin
+          name: uaa
+          password: ((uaa-db))
+      login:
+        saml:
+          serviceProviderCertificate: ((uaa-tls.certificate))
+          serviceProviderKey: ((uaa-tls.private_key))
+          serviceProviderKeyPassword: ""
