@@ -1,0 +1,370 @@
+---
+name: ((deployment_name))
+releases:
+- name: bosh
+  version: latest
+- name: bosh-google-cpi
+  version: latest
+- name: uaa
+  version: latest
+- name: os-conf
+  version: latest
+- name: ((release_name))
+  version: latest
+- name: backup-and-restore-sdk
+  version: latest
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+update:
+  canaries: 1
+  max_in_flight: 10
+  update_watch_time: 10000-120000
+  canary_watch_time: 10000-120000
+instance_groups:
+- name: bosh
+  instances: 1
+  azs:
+  - z1
+  vm_type: vms
+  persistent_disk_type: disks
+  stemcell: default
+  networks:
+  - name: default
+    static_ips:
+    - ((private_ip))
+    default:
+    - dns
+    - gateway
+  - name: public
+    static_ips:
+    - ((elastic_ip))
+  jobs:
+  - name: user_add
+    release: os-conf
+    properties:
+      users:
+      - name: jumpbox
+        public_key: ((jumpbox-ssh.public_key))
+  - name: nats
+    release: bosh
+    properties:
+      nats: &2
+        address: ((private_ip))
+        user: nats
+        password: ((nats-password))
+        tls:
+          ca: ((nats-default-ca.certificate))
+          client_ca:
+            certificate: ((nats-default-ca.certificate))
+            private_key: ((nats-default-ca.private_key))
+          server:
+            certificate: ((nats-server-cert.certificate))
+            private_key: ((nats-server-cert.private_key))
+          director:
+            certificate: ((director-client-cert.certificate))
+            private_key: ((director-client-cert.private_key))
+          health_monitor:
+            certificate: ((health-monitor-client-cert.certificate))
+            private_key: ((health-monitor-client-cert.private_key))
+  - name: postgres-9.4
+    release: bosh
+    properties:
+      postgres: &1
+        host: 127.0.0.1
+        port: 5432
+        user: postgres
+        password: ((postgres-password))
+        database: bosh
+        additional_databases:
+        - uaa
+        - credhub
+        adapter: postgres
+  - name: blobstore
+    release: bosh
+    properties:
+      blobstore: &3
+        address: ((private_ip))
+        port: 25250
+        provider: dav
+        director:
+          user: director
+          password: ((blobstore-director-password))
+        agent:
+          user: agent
+          password: ((blobstore-agent-password))
+  - name: director
+    release: bosh
+    properties:
+      director: &4
+        address: 127.0.0.1
+        name: ((deployment_name))
+        ssl:
+          cert: ((director-tls.certificate))
+          key: ((director-tls.private_key))
+        db: *1
+        cpi_job: google_cpi
+        max_threads: 10
+        enable_snapshots: false
+        user_management:
+          provider: local
+          local:
+            users:
+            - name: admin
+              password: ((director-password))
+            - name: hm
+              password: ((hm-password))
+        config_server:
+          enabled: true
+          url: https://localhost:8844/api/
+          ca_cert: ((credhub-root-ca.certificate))
+          uaa:
+            url: https://localhost:8443
+            client_id: director_credhub
+            client_secret: ((director-client-secret))
+            ca_cert: ((credhub-root-ca.certificate))
+      nats: *2
+      blobstore: *3
+  - name: health_monitor
+    release: bosh
+    properties:
+      hm:
+        director_account:
+          user: hm
+          password: ((hm-password))
+        resurrector_enabled: false
+      director: *4
+      nats: *2
+  - name: registry
+    release: bosh
+    properties:
+      registry: &5
+        address: ((private_ip))
+        host: ((private_ip))
+        db: *1
+        http:
+          user: admin
+          password: ((registry-password))
+          port: 25777
+        username: admin
+        password: ((registry-password))
+        port: 25777
+  - name: google_cpi
+    release: bosh-google-cpi
+    properties:
+      google:
+        project: ((gcp-project-id))
+        json_key: ((gcp-json-key))
+      agent:
+        mbus: nats://nats:((nats-password))@((private_ip)):4222
+        blobstore: *3
+      ntp:
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org
+      registry: *5
+      blobstore: *3
+  - name: uaa
+    release: uaa
+    properties:
+      login:
+        saml:
+          serviceProviderKey: ((uaa-tls.private_key))
+          serviceProviderKeyPassword: ((saml-provider-key-password))
+          serviceProviderCertificate: ((uaa-tls.certificate))
+      uaa:
+        url: https://((elastic_ip)):8443
+        sslCertificate: ((uaa-tls.certificate))
+        sslPrivateKey: ((uaa-tls.private_key))
+        scim:
+          users:
+          - name: admin
+            password: ((uaa-admin-password))
+            groups:
+            - scim.write
+            - scim.read
+          - name: credhub_cli
+            password: ((uaa-credhub-cli-user-password))
+            groups:
+            - credhub.read
+            - credhub.write
+        jwt:
+          signing_key: ((uaa-jwt.private_key))
+          verification_key: ((uaa-jwt.public_key))
+          revocable: true
+        clients:
+          credhub_cli:
+            override: true
+            authorized-grant-types: password,refresh_token
+            scope: credhub.read,credhub.write
+            authorities: uaa.resource
+            access-token-validity: 120
+            refresh-token-validity: 86400
+            secret: ''
+          director_credhub:
+            override: true
+            authorized-grant-types: client_credentials
+            scope: uaa.none
+            authorities: credhub.read,credhub.write
+            access-token-validity: 43200
+            secret: ((director-client-secret))
+          credhub_client:
+            override: true
+            authorized-grant-types: client_credentials
+            scope: uaa.none
+            authorities: credhub.read,credhub.write
+            access-token-validity: 43200
+            secret: ((client-secret))
+        admin:
+          client_secret: ((uaa-admin-secret))
+        login:
+          client_secret: ((uaa-login-secret))
+        zones:
+          internal:
+            hostnames: []
+      uaadb:
+        address: 127.0.0.1
+        port: 5432
+        db_scheme: postgresql
+        databases:
+        - tag: uaa
+          name: uaa
+        roles:
+        - tag: admin
+          name: postgres
+          password: ((postgres-password))
+  - name: database-backup-restorer
+    release: backup-and-restore-sdk
+  - name: bbr-credhubdb
+    release: credhub
+    properties:
+      release_level_backup: true
+      credhub:
+        data_storage:
+          type: postgres
+          host: 127.0.0.1
+          port: 5432
+          username: postgres
+          password: ((postgres-password))
+          database: credhub
+          require_tls: false
+  - name: credhub
+    release: ((release_name))
+    properties:
+      credhub:
+        log_level: debug
+        authentication:
+          uaa:
+            url: https://((elastic_ip)):8443
+            verification_key: ((uaa-jwt.public_key))
+            ca_certs:
+            - ((credhub-root-ca.certificate))
+        tls: ((credhub-tls))
+        data_storage:
+          type: postgres
+          host: 127.0.0.1
+          port: 5432
+          username: postgres
+          password: ((postgres-password))
+          database: credhub
+          require_tls: false
+        encryption:
+          providers:
+          - name: int
+            type: internal
+          keys:
+          - provider_name: int
+            key_properties:
+              encryption_password: ((encryption-password))
+            active: true
+variables:
+- name: jumpbox-ssh
+  type: ssh
+- name: uaa-jwt
+  type: rsa
+- name: director-client-secret
+  type: password
+- name: saml-provider-key-password
+  type: password
+- name: uaa-admin-secret
+  type: password
+- name: uaa-login-secret
+  type: password
+- name: uaa-admin-password
+  type: password
+- name: uaa-credhub-cli-user-password
+  type: password
+- name: postgres-password
+  type: password
+- name: registry-password
+  type: password
+- name: blobstore-agent-password
+  type: password
+- name: blobstore-director-password
+  type: password
+- name: director-password
+  type: password
+- name: hm-password
+  type: password
+- name: nats-password
+  type: password
+- name: client-secret
+  type: password
+- name: encryption-password
+  type: password
+- name: credhub-root-ca
+  type: certificate
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-root-ca
+    common_name: ((elastic_ip))
+    alternative_names:
+    - ((elastic_ip))
+    - localhost
+    - credhub-mysql-hsm.security.cf-app.com
+- name: director-tls
+  type: certificate
+  options:
+    ca: credhub-root-ca
+    common_name: ((elastic_ip))
+    alternative_names:
+    - ((elastic_ip))
+    - localhost
+    - credhub-mysql-hsm.security.cf-app.com
+- name: uaa-tls
+  type: certificate
+  options:
+    ca: credhub-root-ca
+    common_name: ((elastic_ip))
+    alternative_names:
+    - ((elastic_ip))
+    - localhost
+    - credhub-mysql-hsm.security.cf-app.com
+- name: nats-default-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: bosh-nats-ca
+- name: nats-server-cert
+  type: certificate
+  options:
+    ca: nats-default-ca
+    common_name: default.nats.bosh-internal
+    alternative_names: [((private_ip))]
+    extended_key_usage:
+      - server_auth
+- name: director-client-cert
+  type: certificate
+  options:
+    ca: nats-default-ca
+    common_name: default.director.bosh-internal
+    extended_key_usage:
+      - client_auth
+- name: health-monitor-client-cert
+  type: certificate
+  options:
+    ca: nats-default-ca
+    common_name: default.hm.bosh-internal
+    extended_key_usage:
+      - client_auth
