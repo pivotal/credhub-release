@@ -279,3 +279,7 @@ If you encounter this error when using the CLI, this occurs because the feature 
 
 This error occurs if the request does not include a valid content-type header. For example, using curl will send content-type header `application/x-www-form-urlencoded` if not provided. To resolve this error, always include a header for `content-type: application/json` in your requests to CredHub. 
 
+***
+#### com.safenetinc.luna.LunaException: Alias is null
+
+This error occurs when trying to run CredHub with an HSM but where you have misconfigured the encryption key name and a null is being passed to the LunaEncryptionService.
