@@ -7,11 +7,7 @@ releases:
   version: latest
 - name: uaa
   version: latest
-- name: os-conf
-  version: latest
 - name: ((release_name))
-  version: latest
-- name: backup-and-restore-sdk
   version: latest
 stemcells:
 - alias: default
@@ -23,35 +19,29 @@ update:
   update_watch_time: 10000-120000
   canary_watch_time: 10000-120000
 instance_groups:
-- name: bosh
+- name: credhub
   instances: 1
   azs:
   - z1
-  vm_type: vms
-  persistent_disk_type: disks
+  vm_type: default
+  persistent_disk_type: 50GB
   stemcell: default
   networks:
   - name: default
     static_ips:
-    - ((private_ip))
+    - ((internal-ip-address))
     default:
     - dns
     - gateway
   - name: public
     static_ips:
-    - ((elastic_ip))
+    - ((external-ip-address))
   jobs:
-  - name: user_add
-    release: os-conf
-    properties:
-      users:
-      - name: jumpbox
-        public_key: ((jumpbox-ssh.public_key))
   - name: nats
     release: bosh
     properties:
       nats: &2
-        address: ((private_ip))
+        address: ((internal-ip-address))
         user: nats
         password: ((nats-password))
         tls:
@@ -85,7 +75,7 @@ instance_groups:
     release: bosh
     properties:
       blobstore: &3
-        address: ((private_ip))
+        address: ((internal-ip-address))
         port: 25250
         provider: dav
         director:
@@ -140,8 +130,8 @@ instance_groups:
     release: bosh
     properties:
       registry: &5
-        address: ((private_ip))
-        host: ((private_ip))
+        address: ((internal-ip-address))
+        host: ((internal-ip-address))
         db: *1
         http:
           user: admin
@@ -157,7 +147,7 @@ instance_groups:
         project: ((gcp-project-id))
         json_key: ((gcp-json-key))
       agent:
-        mbus: nats://nats:((nats-password))@((private_ip)):4222
+        mbus: nats://nats:((nats-password))@((internal-ip-address)):4222
         blobstore: *3
       ntp:
       - 0.pool.ntp.org
@@ -173,7 +163,7 @@ instance_groups:
           serviceProviderKeyPassword: ((saml-provider-key-password))
           serviceProviderCertificate: ((uaa-tls.certificate))
       uaa:
-        url: https://((elastic_ip)):8443
+        url: https://((external-ip-address)):8443
         sslCertificate: ((uaa-tls.certificate))
         sslPrivateKey: ((uaa-tls.private_key))
         scim:
@@ -233,21 +223,6 @@ instance_groups:
         - tag: admin
           name: postgres
           password: ((postgres-password))
-  - name: database-backup-restorer
-    release: backup-and-restore-sdk
-  - name: bbr-credhubdb
-    release: credhub
-    properties:
-      release_level_backup: true
-      credhub:
-        data_storage:
-          type: postgres
-          host: 127.0.0.1
-          port: 5432
-          username: postgres
-          password: ((postgres-password))
-          database: credhub
-          require_tls: false
   - name: credhub
     release: ((release_name))
     properties:
@@ -255,10 +230,12 @@ instance_groups:
         log_level: debug
         authentication:
           uaa:
-            url: https://((elastic_ip)):8443
+            url: https://((external-ip-address)):8443
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((credhub-root-ca.certificate))
+        mutual_tls:
+          trusted_cas: [((credhub_mtls_ca.certificate))]
         tls: ((credhub-tls))
         data_storage:
           type: postgres
@@ -278,8 +255,6 @@ instance_groups:
               encryption_password: ((encryption-password))
             active: true
 variables:
-- name: jumpbox-ssh
-  type: ssh
 - name: uaa-jwt
   type: rsa
 - name: director-client-secret
@@ -314,31 +289,34 @@ variables:
   type: password
 - name: credhub-root-ca
   type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub CA
 - name: credhub-tls
   type: certificate
   options:
     ca: credhub-root-ca
-    common_name: ((elastic_ip))
+    common_name: ((external-ip-address))
     alternative_names:
-    - ((elastic_ip))
+    - ((external-ip-address))
     - localhost
     - credhub-mysql-hsm.security.cf-app.com
 - name: director-tls
   type: certificate
   options:
     ca: credhub-root-ca
-    common_name: ((elastic_ip))
+    common_name: ((external-ip-address))
     alternative_names:
-    - ((elastic_ip))
+    - ((external-ip-address))
     - localhost
     - credhub-mysql-hsm.security.cf-app.com
 - name: uaa-tls
   type: certificate
   options:
     ca: credhub-root-ca
-    common_name: ((elastic_ip))
+    common_name: ((external-ip-address))
     alternative_names:
-    - ((elastic_ip))
+    - ((external-ip-address))
     - localhost
     - credhub-mysql-hsm.security.cf-app.com
 - name: nats-default-ca
@@ -351,7 +329,7 @@ variables:
   options:
     ca: nats-default-ca
     common_name: default.nats.bosh-internal
-    alternative_names: [((private_ip))]
+    alternative_names: [((internal-ip-address))]
     extended_key_usage:
       - server_auth
 - name: director-client-cert
@@ -368,3 +346,8 @@ variables:
     common_name: default.hm.bosh-internal
     extended_key_usage:
       - client_auth
+- name: credhub_mtls_ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: credhub-mtls-ca
