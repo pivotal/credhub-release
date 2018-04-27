@@ -234,8 +234,8 @@ instance_groups:
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((credhub-root-ca.certificate))
-        mutual_tls:
-          trusted_cas: [((credhub_mtls_ca.certificate))]
+          mutual_tls:
+            trusted_cas: [((credhub_mtls_ca.certificate))]
         tls: ((credhub-tls))
         data_storage:
           type: postgres
