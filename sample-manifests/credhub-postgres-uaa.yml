@@ -16,8 +16,8 @@ releases:
 - name: uaa
   version: latest
 
-stemcells: 
-- alias: default 
+stemcells:
+- alias: default
   os: ubuntu-trusty
   version: latest
 
@@ -48,7 +48,7 @@ variables:
     - 127.0.0.1
 - name: database-tls
   type: certificate
-  options: 
+  options:
     ca: credhub-ca
     common_name: ((external-ip-address))
     alternative_names:
@@ -78,6 +78,11 @@ variables:
   type: password
 - name: credhub-admin-user-password
   type: password
+- name: credhub-mtls-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: credhub-mtls-ca
 
 instance_groups:
 - name: credhub
@@ -103,7 +108,9 @@ instance_groups:
             url: *uaa-url
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
-            - ((uaa-tls.ca)) 
+            - ((uaa-tls.ca))
+            mutual_tls:
+              trusted_cas: [((credhub-mtls-ca.certificate))]
         data_storage:
           type: postgres
           username: admin
