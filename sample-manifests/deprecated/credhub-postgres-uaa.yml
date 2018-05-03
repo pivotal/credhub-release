@@ -179,13 +179,13 @@ instance_groups:
             access-token-validity: 30
             refresh-token-validity: 3600
             secret: ""
-           credhub_admin_client:
-             override: true
-             authorized-grant-types: client_credentials
-             scope: uaa.none
-             authorities: credhub.read,credhub.write
-             access-token-validity: 3600
-             secret: ((credhub-admin-client-password))
+          credhub_admin_client:
+            override: true
+            authorized-grant-types: client_credentials
+            scope: uaa.none
+            authorities: credhub.read,credhub.write
+            access-token-validity: 3600
+            secret: ((credhub-admin-client-password))
         admin: {client_secret: ((uaa-admin))}
         login: {client_secret: ((uaa-login))}
         zones: {internal: {hostnames: []}}
