@@ -173,11 +173,6 @@ instance_groups:
             groups:
             - scim.write
             - scim.read
-          - name: credhub_cli
-            password: ((uaa-credhub-cli-user-password))
-            groups:
-            - credhub.read
-            - credhub.write
         jwt:
           signing_key: ((uaa-jwt.private_key))
           verification_key: ((uaa-jwt.public_key))
@@ -198,13 +193,13 @@ instance_groups:
             authorities: credhub.read,credhub.write
             access-token-validity: 43200
             secret: ((director-client-secret))
-          credhub_client:
+          credhub_admin_client:
             override: true
             authorized-grant-types: client_credentials
             scope: uaa.none
             authorities: credhub.read,credhub.write
-            access-token-validity: 43200
-            secret: ((client-secret))
+            access-token-validity: 3600
+            secret: ((credhub-admin-client-password))
         admin:
           client_secret: ((uaa-admin-secret))
         login:
@@ -267,8 +262,6 @@ variables:
   type: password
 - name: uaa-admin-password
   type: password
-- name: uaa-credhub-cli-user-password
-  type: password
 - name: postgres-password
   type: password
 - name: registry-password
@@ -282,8 +275,6 @@ variables:
 - name: hm-password
   type: password
 - name: nats-password
-  type: password
-- name: client-secret
   type: password
 - name: encryption-password
   type: password
@@ -351,3 +342,7 @@ variables:
   options:
     is_ca: true
     common_name: credhub-mtls-ca
+- name: credhub-admin-client-password
+  type: password
+- name: credhub-admin-user-password
+  type: password

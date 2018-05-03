@@ -74,6 +74,10 @@ variables:
   type: password
 - name: uaa-login
   type: password
+- name: credhub-admin-client-password
+  type: password
+- name: credhub-admin-user-password
+  type: password
 
 instance_groups:
 - name: credhub
@@ -154,6 +158,11 @@ instance_groups:
               - bosh.admin
               - credhub.read
               - credhub.write
+          - name: credhub_admin_user
+            password: ((credhub-admin-user-password))
+            groups:
+              - credhub.read
+              - credhub.write
         clients:
           credhub_cli:
             override: true
@@ -163,6 +172,13 @@ instance_groups:
             access-token-validity: 30
             refresh-token-validity: 3600
             secret: ""
+          credhub_admin_client:
+            override: true
+            authorized-grant-types: client_credentials
+            scope: uaa.none
+            authorities: credhub.read,credhub.write
+            access-token-validity: 3600
+            secret: ((credhub-admin-client-password))
         admin: {client_secret: ((uaa-admin))}
         login: {client_secret: ((uaa-login))}
         zones: {internal: {hostnames: []}}
@@ -180,7 +196,7 @@ instance_groups:
         port: 5432
         db_scheme: postgresql
         # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
-        tls_enabled: false 
+        tls_enabled: false
         databases:
         - tag: uaa
           name: uaa
