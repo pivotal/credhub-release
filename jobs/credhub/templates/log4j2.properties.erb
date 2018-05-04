@@ -18,6 +18,7 @@ logger.audit.name=CEFAudit
 logger.audit.appenderRefs=SECURITY_EVENTS_FILE
 logger.audit.appenderRef.SECURITY_EVENTS_FILE.ref=CREDHUB_SECURITY_EVENTS
 logger.audit.level=<%= p('credhub.log_level') %>
+logger.audit.additivity=false
 
 # turn off logging for files that leak sensitive data
 logger.EntityPrinter.name=org.hibernate.internal.util.EntityPrinter
