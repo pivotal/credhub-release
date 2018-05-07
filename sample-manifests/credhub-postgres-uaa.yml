@@ -243,3 +243,7 @@ instance_groups:
           database: credhub
           require_tls: true
           tls_ca: ((database-tls.ca))
+
+  - name: database-backup-restorer
+    release: backup-and-restore-sdk
+    properties: {}
