@@ -209,10 +209,11 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Encryption.Keys).To(HaveLen(1))
-			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
-			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
-			Expect(result.Encryption.Keys[0].EncryptionKeyName).To(Equal("baz"))
+			Expect(result.Encryption.Providers).To(HaveLen(2))
+			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
+			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
+			Expect(result.Encryption.Providers[0].Keys[0].EncryptionPassword).To(Equal("bar"))
+			Expect(result.Encryption.Providers[0].Keys[0].EncryptionKeyName).To(Equal("baz"))
 		})
 
 		It("populates encryption password when key properties is not available", func() {
@@ -234,9 +235,10 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Encryption.Keys).To(HaveLen(1))
-			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("internal"))
-			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+			Expect(result.Encryption.Providers).To(HaveLen(2))
+			Expect(result.Encryption.Providers[1].Keys).To(HaveLen(1))
+			Expect(result.Encryption.Providers[1].ProviderType).To(Equal("internal"))
+			Expect(result.Encryption.Providers[1].Keys[0].EncryptionPassword).To(Equal("bar"))
 		})
 
 		It("populates encryption key name when key properties is not available", func() {
@@ -258,9 +260,10 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Encryption.Keys).To(HaveLen(1))
-			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
-			Expect(result.Encryption.Keys[0].EncryptionKeyName).To(Equal("bar"))
+			Expect(result.Encryption.Providers).To(HaveLen(2))
+			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
+			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
+			Expect(result.Encryption.Providers[0].Keys[0].EncryptionKeyName).To(Equal("bar"))
 		})
 
 		It("populates encryption password when key properties is available", func() {
@@ -283,9 +286,10 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Encryption.Keys).To(HaveLen(1))
-			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("internal"))
-			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+			Expect(result.Encryption.Providers).To(HaveLen(1))
+			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
+			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("internal"))
+			Expect(result.Encryption.Providers[0].Keys[0].EncryptionPassword).To(Equal("bar"))
 		})
 
 		It("populates encryption key name when key properties is available", func() {
@@ -307,9 +311,10 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Encryption.Keys).To(HaveLen(1))
-			Expect(result.Encryption.Keys[0].ProviderType).To(Equal("hsm"))
-			Expect(result.Encryption.Keys[0].EncryptionPassword).To(Equal("bar"))
+			Expect(result.Encryption.Providers).To(HaveLen(1))
+			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
+			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
+			Expect(result.Encryption.Providers[0].Keys[0].EncryptionPassword).To(Equal("bar"))
 		})
 
 	})
@@ -335,8 +340,8 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Hsm.Partition).To(Equal("some-partition"))
-			Expect(result.Hsm.PartitionPassword).To(Equal("some-partition-password"))
+			Expect(result.Encryption.Providers[0].Config.Partition).To(Equal("some-partition"))
+			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("some-partition-password"))
 		})
 
 		It("populates partition and partition password when connection properties is available", func() {
@@ -363,8 +368,8 @@ var _ = Describe("Configurator", func() {
 			}
 
 			result := runCli(cli)
-			Expect(result.Hsm.Partition).To(Equal("connection-some-partition"))
-			Expect(result.Hsm.PartitionPassword).To(Equal("connection-some-partition-password"))
+			Expect(result.Encryption.Providers[0].Config.Partition).To(Equal("connection-some-partition"))
+			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("connection-some-partition-password"))
 		})
 	})
 

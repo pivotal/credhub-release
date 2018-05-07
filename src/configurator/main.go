@@ -62,50 +62,42 @@ func main() {
 		credhubConfig.Flyway.Enabled = true
 	}
 
-	for _, key := range boshConfig.Encryption.Keys {
-		var providerType string
+	for _, provider := range boshConfig.Encryption.Providers {
+		credhubProvider := config.Provider{
+			ProviderName: provider.Name,
+			ProviderType: provider.Type,
+		}
 
-		for _, provider := range boshConfig.Encryption.Providers {
-			if provider.Name == key.ProviderName {
-				providerType = provider.Type
+		if provider.ConnectionProperties.Partition != "" && provider.ConnectionProperties.PartitionPassword != "" {
+			credhubProvider.Config.PartitionPassword = provider.ConnectionProperties.PartitionPassword
+			credhubProvider.Config.Partition = provider.ConnectionProperties.Partition
+		} else if provider.Partition != "" && provider.PartitionPassword != "" {
+			credhubProvider.Config.PartitionPassword = provider.PartitionPassword
+			credhubProvider.Config.Partition = provider.Partition
+		}
 
-				if provider.Type == "hsm" {
-					if provider.ConnectionProperties.Partition != "" && provider.ConnectionProperties.PartitionPassword != "" {
-						credhubConfig.Hsm.Partition = provider.ConnectionProperties.Partition
-						credhubConfig.Hsm.PartitionPassword = provider.ConnectionProperties.PartitionPassword
-					} else {
-						credhubConfig.Hsm.Partition = provider.Partition
-						credhubConfig.Hsm.PartitionPassword = provider.PartitionPassword
-					}
+		credhubProvider.Config.Port = provider.ConnectionProperties.Port
+		credhubProvider.Config.Host = provider.ConnectionProperties.Host
+
+		for _, key := range boshConfig.Encryption.Keys {
+			if key.ProviderName == provider.Name {
+				credhubKey := config.Key{
+					Active: key.Active,
 				}
-				break
+
+				if key.KeyProperties.EncryptionPassword != "" || key.KeyProperties.EncryptionKeyName != "" {
+					credhubKey.EncryptionPassword = key.KeyProperties.EncryptionPassword
+					credhubKey.EncryptionKeyName = key.KeyProperties.EncryptionKeyName
+				} else if key.EncryptionPassword != "" || key.EncryptionKeyName != "" {
+					credhubKey.EncryptionPassword = key.EncryptionPassword
+					credhubKey.EncryptionKeyName = key.EncryptionKeyName
+				}
+
+				credhubProvider.Keys = append(credhubProvider.Keys, credhubKey)
 			}
-
 		}
 
-		var encryptionKeyName string
-		var encryptionKeyPassword string
-
-		if key.KeyProperties.EncryptionKeyName != "" {
-			encryptionKeyName = key.KeyProperties.EncryptionKeyName
-		} else if key.EncryptionKeyName != "" {
-			encryptionKeyName = key.EncryptionKeyName
-		}
-		if key.KeyProperties.EncryptionPassword != "" {
-			encryptionKeyPassword = key.KeyProperties.EncryptionPassword
- 		}  else if key.EncryptionPassword != "" {
-			encryptionKeyPassword = key.EncryptionPassword
-		}
-
-		configKey := config.Key{
-			ProviderType:       providerType,
-			EncryptionKeyName:  encryptionKeyName,
-			EncryptionPassword: encryptionKeyPassword,
-			Active:             key.Active,
-		}
-
-		credhubConfig.Encryption.Keys = append(credhubConfig.Encryption.Keys, configKey)
-
+		credhubConfig.Encryption.Providers = append(credhubConfig.Encryption.Providers, credhubProvider)
 	}
 
 	switch boshConfig.DataStorage.Type {
