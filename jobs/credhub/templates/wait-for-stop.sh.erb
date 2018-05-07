@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+SECONDS=0
+EXPIRATION=600
+
+status_check() {
+  json=`curl -k --silent https://localhost:<%= p("credhub.port") %>/health`
+  if [ $? -ne 0 ]; then
+    echo "Could not curl the credhub server"
+    return 1
+  fi
+  [ `echo $json | grep '"status":"UP"' | wc -l` -eq 1 ];
+}
+
+echo "performing status check until $EXPIRATION seconds have passed"
+
+while [ $SECONDS -lt $EXPIRATION ]; do
+    status_check
+    if [ $? == 1 ]
+    then
+        echo "credhub has been stopped"
+        exit 0
+    else
+      monit stop credhub
+    fi
+    sleep 1
+done
+
+echo "credhub has not stopped after $EXPIRATION seconds"
+exit 1
