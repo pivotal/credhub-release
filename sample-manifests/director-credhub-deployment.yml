@@ -108,12 +108,12 @@ instance_groups:
         config_server:
           enabled: true
           url: https://localhost:8844/api/
-          ca_cert: ((credhub-root-ca.certificate))
+          ca_cert: ((credhub-ca.certificate))
           uaa:
             url: https://localhost:8443
             client_id: director_credhub
             client_secret: ((director-client-secret))
-            ca_cert: ((credhub-root-ca.certificate))
+            ca_cert: ((credhub-ca.certificate))
       nats: *2
       blobstore: *3
   - name: health_monitor
@@ -173,11 +173,6 @@ instance_groups:
             groups:
             - scim.write
             - scim.read
-          - name: credhub_cli
-            password: ((uaa-credhub-cli-user-password))
-            groups:
-            - credhub.read
-            - credhub.write
         jwt:
           signing_key: ((uaa-jwt.private_key))
           verification_key: ((uaa-jwt.public_key))
@@ -198,13 +193,13 @@ instance_groups:
             authorities: credhub.read,credhub.write
             access-token-validity: 43200
             secret: ((director-client-secret))
-          credhub_client:
+          credhub_admin_client:
             override: true
             authorized-grant-types: client_credentials
             scope: uaa.none
             authorities: credhub.read,credhub.write
-            access-token-validity: 43200
-            secret: ((client-secret))
+            access-token-validity: 3600
+            secret: ((credhub-admin-client-password))
         admin:
           client_secret: ((uaa-admin-secret))
         login:
@@ -233,9 +228,9 @@ instance_groups:
             url: https://((external-ip-address)):8443
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
-            - ((credhub-root-ca.certificate))
-        mutual_tls:
-          trusted_cas: [((credhub_mtls_ca.certificate))]
+            - ((credhub-ca.certificate))
+          mutual_tls:
+            trusted_cas: [((credhub-mtls-ca.certificate))]
         tls: ((credhub-tls))
         data_storage:
           type: postgres
@@ -267,8 +262,6 @@ variables:
   type: password
 - name: uaa-admin-password
   type: password
-- name: uaa-credhub-cli-user-password
-  type: password
 - name: postgres-password
   type: password
 - name: registry-password
@@ -283,11 +276,9 @@ variables:
   type: password
 - name: nats-password
   type: password
-- name: client-secret
-  type: password
 - name: encryption-password
   type: password
-- name: credhub-root-ca
+- name: credhub-ca
   type: certificate
   options:
     is_ca: true
@@ -295,7 +286,7 @@ variables:
 - name: credhub-tls
   type: certificate
   options:
-    ca: credhub-root-ca
+    ca: credhub-ca
     common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
@@ -304,7 +295,7 @@ variables:
 - name: director-tls
   type: certificate
   options:
-    ca: credhub-root-ca
+    ca: credhub-ca
     common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
@@ -313,7 +304,7 @@ variables:
 - name: uaa-tls
   type: certificate
   options:
-    ca: credhub-root-ca
+    ca: credhub-ca
     common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
@@ -346,8 +337,12 @@ variables:
     common_name: default.hm.bosh-internal
     extended_key_usage:
       - client_auth
-- name: credhub_mtls_ca
+- name: credhub-mtls-ca
   type: certificate
   options:
     is_ca: true
     common_name: credhub-mtls-ca
+- name: credhub-admin-client-password
+  type: password
+- name: credhub-admin-user-password
+  type: password

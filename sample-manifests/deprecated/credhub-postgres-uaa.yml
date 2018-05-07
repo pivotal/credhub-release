@@ -16,8 +16,8 @@ releases:
 - name: uaa
   version: latest
 
-stemcells: 
-- alias: default 
+stemcells:
+- alias: default
   os: ubuntu-trusty
   version: latest
 
@@ -48,7 +48,7 @@ variables:
     - 127.0.0.1
 - name: database-tls
   type: certificate
-  options: 
+  options:
     ca: credhub-ca
     common_name: ((external-ip-address))
     alternative_names:
@@ -74,6 +74,16 @@ variables:
   type: password
 - name: uaa-login
   type: password
+- name: credhub-mtls-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: credhub-mtls-ca
+- name: credhub-admin-client-password
+  type: password
+- name: credhub-admin-user-password
+  type: password
+
 
 instance_groups:
 - name: credhub
@@ -99,7 +109,9 @@ instance_groups:
             url: *uaa-url
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
-            - ((uaa-tls.ca)) 
+            - ((uaa-tls.ca))
+            mutual_tls:
+              trusted_cas: [((credhub-mtls-ca.certificate))]
         data_storage:
           type: postgres
           username: admin
@@ -110,27 +122,27 @@ instance_groups:
           require_tls: true
           tls_ca: ((database-tls.ca))
         encryption:
-          keys: 
+          keys:
           - provider_name: int
             encryption_password: ((credhub-encryption-password))
             active: true
-          providers: 
+          providers:
           - name: int
             type: internal
 
   - name: postgres
     release: postgres
-    properties: 
+    properties:
       databases:
         address: 127.0.0.1
         port: 5432
-        databases: 
+        databases:
         - name: credhub
         - name: uaa
-        roles: 
+        roles:
         - name: admin
           password: ((database-admin))
-        tls: 
+        tls:
           ca: ((database-tls.ca))
           certificate: ((database-tls.certificate))
           private_key: ((database-tls.private_key))
@@ -153,6 +165,11 @@ instance_groups:
               - bosh.admin
               - credhub.read
               - credhub.write
+          - name: credhub_admin_user
+            password: ((credhub-admin-user-password))
+            groups:
+              - credhub.read
+              - credhub.write
         clients:
           credhub_cli:
             override: true
@@ -162,6 +179,13 @@ instance_groups:
             access-token-validity: 30
             refresh-token-validity: 3600
             secret: ""
+          credhub_admin_client:
+            override: true
+            authorized-grant-types: client_credentials
+            scope: uaa.none
+            authorities: credhub.read,credhub.write
+            access-token-validity: 3600
+            secret: ((credhub-admin-client-password))
         admin: {client_secret: ((uaa-admin))}
         login: {client_secret: ((uaa-login))}
         zones: {internal: {hostnames: []}}
@@ -179,7 +203,7 @@ instance_groups:
         port: 5432
         db_scheme: postgresql
         # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
-        tls_enabled: false 
+        tls_enabled: false
         databases:
         - tag: uaa
           name: uaa
