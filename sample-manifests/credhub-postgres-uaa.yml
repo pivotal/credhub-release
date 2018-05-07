@@ -59,6 +59,7 @@ variables:
     - ((external-ip-address))
     - ((internal-ip-address))
     - 127.0.0.1
+    - localhost
 - name: database-admin
   type: password
 - name: uaa-tls
@@ -238,7 +239,7 @@ instance_groups:
           type: postgres
           username: admin
           password: ((database-admin))
-          host: 127.0.0.1
+          host: localhost
           port: 5432
           database: credhub
           require_tls: true
