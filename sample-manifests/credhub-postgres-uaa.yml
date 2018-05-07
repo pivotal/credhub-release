@@ -15,6 +15,10 @@ releases:
   version: latest
 - name: uaa
   version: latest
+- name: backup-and-restore-sdk
+  version: latest
+- name: os-conf
+  version: latest
 
 stemcells:
 - alias: default
@@ -83,6 +87,8 @@ variables:
   options:
     is_ca: true
     common_name: credhub-mtls-ca
+- name: jumpbox-ssh
+  type: ssh
 
 instance_groups:
 - name: credhub
@@ -96,7 +102,6 @@ instance_groups:
     default: [dns, gateway]
   - name: public
     static_ips: [((external-ip-address))]
-
   jobs:
   - name: credhub
     release: credhub
@@ -121,28 +126,28 @@ instance_groups:
           require_tls: true
           tls_ca: ((database-tls.ca))
         encryption:
-          keys: 
+          keys:
           - provider_name: int
             key_properties:
               encryption_password: ((credhub-encryption-password))
             active: true
-          providers: 
+          providers:
           - name: int
             type: internal
 
   - name: postgres
     release: postgres
-    properties: 
+    properties:
       databases:
         address: 127.0.0.1
         port: 5432
-        databases: 
+        databases:
         - name: credhub
         - name: uaa
-        roles: 
+        roles:
         - name: admin
           password: ((database-admin))
-        tls: 
+        tls:
           ca: ((database-tls.ca))
           certificate: ((database-tls.certificate))
           private_key: ((database-tls.private_key))
@@ -216,3 +221,25 @@ instance_groups:
           serviceProviderCertificate: ((uaa-tls.certificate))
           serviceProviderKey: ((uaa-tls.private_key))
           serviceProviderKeyPassword: ""
+
+  - name: user_add
+    release: os-conf
+    properties:
+      users:
+      - name: bbr
+        public_key: ((jumpbox-ssh.public_key))
+
+  - name: bbr-credhubdb
+    release: credhub
+    properties:
+      release_level_backup: true
+      credhub:
+        data_storage:
+          type: postgres
+          username: admin
+          password: ((database-admin))
+          host: 127.0.0.1
+          port: 5432
+          database: credhub
+          require_tls: true
+          tls_ca: ((database-tls.ca))
