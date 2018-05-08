@@ -12,6 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gbytes"
 	. "github.com/onsi/gomega/gexec"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -51,7 +52,8 @@ var _ = Describe("Configurator", func() {
 	It("outputs application config", func() {
 		cli.BoshConfig.Port = "8844"
 
-		result := runCli(cli)
+		result, err := runCli(cli, "")
+		Expect(err).NotTo(HaveOccurred())
 
 		expected := config.NewDefaultCredhubConfig()
 		expected.Server.Port = 8844
@@ -61,7 +63,8 @@ var _ = Describe("Configurator", func() {
 	Context("when Java 7 ciphers are enabled", func() {
 		It("includes Java 7 cipher suites", func() {
 			cli.BoshConfig.Java7TlsCiphersEnabled = true
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Server.SSL.Ciphers).To(Equal(config.Java7CipherSuites))
 		})
 	})
@@ -69,7 +72,8 @@ var _ = Describe("Configurator", func() {
 	Context("when mutual TLS is enabled", func() {
 		It("includes client trust store properties", func() {
 			cli.BoshConfig.Authentication.MutualTLS.TrustedCAs = []string{"some-ca"}
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 
 			expected := config.NewDefaultCredhubConfig().Server.SSL
 			expected.ClientAuth = "want"
@@ -86,7 +90,8 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.Authentication.UAA.Enabled = true
 			cli.BoshConfig.Authentication.UAA.Url = "some-uaa-url"
 			cli.BoshConfig.Authentication.UAA.InternalUrl = "some-internal-url"
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 
 			authServerConfig := config.AuthServerConfig{
 				URL:                "some-uaa-url",
@@ -101,7 +106,8 @@ var _ = Describe("Configurator", func() {
 	Context("when ACLs are enabled", func() {
 		It("includes ACLs", func() {
 			cli.BoshConfig.Authorization.ACLs.Enabled = true
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 
 			Expect(result.Security.Authorization.ACLs.Enabled).To(BeTrue())
 		})
@@ -110,7 +116,8 @@ var _ = Describe("Configurator", func() {
 	Context("when the storage is set to in-memory", func() {
 		It("adds flyway migrations to the flyway config", func() {
 			cli.BoshConfig.DataStorage.Type = "in-memory"
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Flyway.Locations).To(Equal(config.H2MigrationsPath))
 		})
 	})
@@ -126,7 +133,8 @@ var _ = Describe("Configurator", func() {
 		})
 
 		It("sets the database properties", func() {
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Spring.Datasource).To(Equal(config.SpringDatasource{
 				Username: "user",
 				Password: "pass",
@@ -138,7 +146,8 @@ var _ = Describe("Configurator", func() {
 		Context("when TLS is enabled", func() {
 			It("sets the TLS params in the connection URL", func() {
 				cli.BoshConfig.DataStorage.RequireTLS = true
-				result := runCli(cli)
+				result, err := runCli(cli, "")
+				Expect(err).NotTo(HaveOccurred())
 				Expect(result.Spring.Datasource.URL).To(Equal(
 					"jdbc:mariadb://localhost:3306/prod?" +
 						"autoReconnect=true&useSSL=true&requireSSL=true&" +
@@ -161,7 +170,8 @@ var _ = Describe("Configurator", func() {
 		})
 
 		It("sets the database properties", func() {
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Spring.Datasource).To(Equal(config.SpringDatasource{
 				Username: "user",
 				Password: "pass",
@@ -173,7 +183,8 @@ var _ = Describe("Configurator", func() {
 		Context("when TLS is enabled", func() {
 			It("sets the TLS params in the connection URL", func() {
 				cli.BoshConfig.DataStorage.RequireTLS = true
-				result := runCli(cli)
+				result, err := runCli(cli, "")
+				Expect(err).NotTo(HaveOccurred())
 				Expect(result.Spring.Datasource.URL).To(Equal(
 					"jdbc:postgresql://localhost:3306/prod?autoReconnect=true&ssl=true",
 				))
@@ -183,13 +194,14 @@ var _ = Describe("Configurator", func() {
 
 	It("enables flyway and key creation only on the bootstrap node", func() {
 		cli.BoshConfig.Bootstrap = true
-		result := runCli(cli)
+		result, err := runCli(cli, "")
+		Expect(err).NotTo(HaveOccurred())
 		Expect(result.Flyway.Enabled).To(BeTrue())
 		Expect(result.Encryption.KeyCreationEnabled).To(BeTrue())
 	})
 
 	Describe("encryption keys", func() {
-		It("populates their type by mapping from the provider", func() {
+		It("populates the providers with the keys by mapping name", func() {
 			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
 				{
 					Name: "foo",
@@ -208,7 +220,8 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers).To(HaveLen(2))
 			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
 			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
@@ -234,7 +247,8 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers).To(HaveLen(2))
 			Expect(result.Encryption.Providers[1].Keys).To(HaveLen(1))
 			Expect(result.Encryption.Providers[1].ProviderType).To(Equal("internal"))
@@ -259,7 +273,8 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers).To(HaveLen(2))
 			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
 			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
@@ -285,7 +300,8 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers).To(HaveLen(1))
 			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
 			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("internal"))
@@ -294,7 +310,7 @@ var _ = Describe("Configurator", func() {
 
 		It("populates encryption key name when key properties is available", func() {
 			keyProperties := config.KeyProperties{
-				EncryptionPassword: "bar",
+				EncryptionKeyName: "bar",
 			}
 
 			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
@@ -310,13 +326,85 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers).To(HaveLen(1))
 			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
 			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
-			Expect(result.Encryption.Providers[0].Keys[0].EncryptionPassword).To(Equal("bar"))
+			Expect(result.Encryption.Providers[0].Keys[0].EncryptionKeyName).To(Equal("bar"))
 		})
 
+		It("fails with a useful error message when an encryption key name is provided with internal", func() {
+			keyProperties := config.KeyProperties{
+				EncryptionKeyName: "bar",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "internal",
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
+				},
+			}
+
+			_, err := runCli(cli, "Internal providers require encryption_password.")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Internal providers require encryption_password."))
+		})
+
+		It("fails with a useful error message when an encryption password is provided with hsm", func() {
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "hsm",
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
+				},
+			}
+
+			_, err := runCli(cli, "Hsm providers require encryption_key_name.")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("Hsm providers require encryption_key_name."))
+		})
+
+		It("fails with a useful error message when an encryption password is provided with external", func() {
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name: "foo",
+					Type: "external",
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
+				},
+			}
+
+			_, err := runCli(cli, "External providers require encryption_key_name.")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(Equal("External providers require encryption_key_name."))
+		})
 	})
 
 	Describe("providers", func() {
@@ -339,7 +427,8 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers[0].Config.Partition).To(Equal("some-partition"))
 			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("some-partition-password"))
 		})
@@ -367,7 +456,8 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			result := runCli(cli)
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
 			Expect(result.Encryption.Providers[0].Config.Partition).To(Equal("connection-some-partition"))
 			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("connection-some-partition-password"))
 		})
@@ -375,15 +465,27 @@ var _ = Describe("Configurator", func() {
 
 })
 
-func runCli(cli *ConfiguratorCLI) config.CredhubConfig {
+func runCli(cli *ConfiguratorCLI, errorMessage string) (*config.CredhubConfig, error) {
 	session, err := cli.RunWithConfig()
-	Expect(err).NotTo(HaveOccurred())
-	EventuallyWithOffset(1, session).Should(Exit(0))
+	if err != nil {
+		return nil, err
+	}
+
+	if errorMessage == "" {
+		EventuallyWithOffset(1, session).Should(Exit(0))
+	} else {
+		EventuallyWithOffset(1, session).Should(Exit())
+		Expect(string(session.Err.Contents())).To(ContainSubstring(errorMessage))
+		return nil, errors.New(errorMessage)
+	}
+
 	var result config.CredhubConfig
 	contents := string(session.Out.Contents())
 	_ = contents
+
 	Expect(yaml.Unmarshal(session.Out.Contents(), &result)).To(Succeed())
-	return result
+
+	return &result, err
 }
 
 type ConfiguratorCLI struct {

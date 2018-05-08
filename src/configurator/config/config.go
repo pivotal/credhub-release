@@ -70,7 +70,7 @@ type BoshConfig struct {
 type BoshKey struct {
 	ProviderName       string `json:"provider_name"`
 	Active             bool
-	EncryptionKeyName  string        `json:"encryption_key_name"`  //deprecated
+	EncryptionKeyName  string        `json:"encryption_key_name"` //deprecated
 	EncryptionPassword string        `json:"encryption_password"` //deprecated
 	KeyProperties      KeyProperties `json:"key_properties"`
 }
@@ -140,8 +140,8 @@ type Key struct {
 }
 
 type Provider struct {
-	ProviderName string         `yaml:"encryption_password,omitempty"`
-	ProviderType string         `yaml:"encryption_key_name,omitempty"`
+	ProviderName string         `yaml:"provider_name,omitempty"`
+	ProviderType string         `yaml:"provider_type,omitempty"`
 	Keys         []Key          `yaml:"keys,omitempty"`
 	Config       ProviderConfig `yaml:"configuration,omitempty"`
 }

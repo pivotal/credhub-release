@@ -7,6 +7,8 @@ import (
 	"os"
 	//"io/ioutil"
 
+	"errors"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -83,6 +85,14 @@ func main() {
 			if key.ProviderName == provider.Name {
 				credhubKey := config.Key{
 					Active: key.Active,
+				}
+
+				if provider.Type == "internal" && (key.EncryptionPassword == "" && key.KeyProperties.EncryptionPassword == "") {
+					panic(errors.New("Internal providers require encryption_password."))
+				} else if provider.Type == "hsm" && (key.EncryptionKeyName == "" && key.KeyProperties.EncryptionKeyName == "") {
+					panic(errors.New("Hsm providers require encryption_key_name."))
+				} else if provider.Type == "external" && key.KeyProperties.EncryptionKeyName == "" {
+					panic(errors.New("External providers require encryption_key_name."))
 				}
 
 				if key.KeyProperties.EncryptionPassword != "" || key.KeyProperties.EncryptionKeyName != "" {
