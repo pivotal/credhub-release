@@ -115,8 +115,8 @@ instance_groups:
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
             - ((uaa-tls.ca))
-            mutual_tls:
-              trusted_cas: [((credhub-mtls-ca.certificate))]
+          mutual_tls:
+            trusted_cas: [((credhub-mtls-ca.certificate))]
         data_storage:
           type: postgres
           username: admin
