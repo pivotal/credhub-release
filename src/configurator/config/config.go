@@ -141,12 +141,12 @@ type Provider struct {
 
 type ProviderConfig struct {
 	Partition         string `yaml:"partition,omitempty"`
-	PartitionPassword string `yaml:"partition_password,omitempty",json:"partition_password"`
+	PartitionPassword string `yaml:"partition_password,omitempty" json:"partition_password"`
 	Host              string `yaml:"host,omitempty"`
 	Port              int    `yaml:"port,omitempty"`
-	ServerCa          string `yaml:"server_ca,omitempty",json:"server_ca"`
-	ClientCert        string `yaml:"client_cert,omitempty",json:"client_cert"`
-	ClientKey         string `yaml:"client_key,omitempty",json:"client_key"`
+	ServerCa          string `yaml:"server_ca,omitempty" json:"server_ca"`
+	ClientCert        string `yaml:"client_cert,omitempty" json:"client_certificate"`
+	ClientKey         string `yaml:"client_key,omitempty" json:"client_key"`
 }
 
 type SSLConfig struct {
