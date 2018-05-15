@@ -159,6 +159,9 @@ properties:
     description: "CA trusted for making TLS connections to targeted database server"
 
   # UAA Authentication
+  credhub.authentication.uaa.enabled:
+    description: "Enables authentication via OAuth using UAA"
+    default: true
   credhub.authentication.uaa.url:
     description: "URL of UAA server which issues trusted tokens for authentication"
     example: "https://uaa.example.com:8443"
@@ -177,11 +180,6 @@ properties:
   credhub.authorization.acls.enabled:
     description: "Enables authorization via credential access control lists"
     default: false
-
-  # Authorization
-  credhub.authentication.uaa.enabled:
-    description: "Enables authorization via OAuth using UAA"
-    default: true
 
   # Logging
   credhub.log_level:
