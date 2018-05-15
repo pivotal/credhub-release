@@ -408,14 +408,17 @@ var _ = Describe("Configurator", func() {
 	})
 
 	Describe("providers", func() {
-		It("populates partition and partition password when connection properties is not available", func() {
-
+		It("populates partition and partition password when they are specified outside the connection properties", func() {
 			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
 				{
 					Name:              "foo",
 					Type:              "hsm",
 					Partition:         "some-partition",
 					PartitionPassword: "some-partition-password",
+					ConnectionProperties: config.ProviderConfig{
+						Partition:         "other-partition",
+						PartitionPassword: "other-partition-password",
+					},
 				},
 			}
 
@@ -433,11 +436,15 @@ var _ = Describe("Configurator", func() {
 			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("some-partition-password"))
 		})
 
-		It("populates partition and partition password when connection properties is available", func() {
-
-			connectionProperties := config.ConnectionProperties{
+		It("populates partition, partition password, host, port, and mtls when connection properties is available", func() {
+			connectionProperties := config.ProviderConfig{
 				Partition:         "connection-some-partition",
 				PartitionPassword: "connection-some-partition-password",
+				ClientCert:        "client cert",
+				ClientKey:         "client key",
+				Host:              "host",
+				Port:              5555,
+				ServerCa:          "server ca",
 			}
 
 			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
@@ -458,8 +465,7 @@ var _ = Describe("Configurator", func() {
 
 			result, err := runCli(cli, "")
 			Expect(err).NotTo(HaveOccurred())
-			Expect(result.Encryption.Providers[0].Config.Partition).To(Equal("connection-some-partition"))
-			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("connection-some-partition-password"))
+			Expect(result.Encryption.Providers[0].Config).To(Equal(connectionProperties))
 		})
 	})
 

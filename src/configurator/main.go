@@ -70,16 +70,12 @@ func main() {
 			ProviderType: provider.Type,
 		}
 
-		if provider.ConnectionProperties.Partition != "" && provider.ConnectionProperties.PartitionPassword != "" {
-			credhubProvider.Config.PartitionPassword = provider.ConnectionProperties.PartitionPassword
-			credhubProvider.Config.Partition = provider.ConnectionProperties.Partition
-		} else if provider.Partition != "" && provider.PartitionPassword != "" {
+		credhubProvider.Config = provider.ConnectionProperties
+
+		if provider.Partition != "" && provider.PartitionPassword != "" {
 			credhubProvider.Config.PartitionPassword = provider.PartitionPassword
 			credhubProvider.Config.Partition = provider.Partition
 		}
-
-		credhubProvider.Config.Port = provider.ConnectionProperties.Port
-		credhubProvider.Config.Host = provider.ConnectionProperties.Host
 
 		for _, key := range boshConfig.Encryption.Keys {
 			if key.ProviderName == provider.Name {
