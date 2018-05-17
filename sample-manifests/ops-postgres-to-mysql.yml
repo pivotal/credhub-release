@@ -37,7 +37,7 @@
     type: password
 
 - type: replace
-  path: /instance_groups/name=credhub/persistent_disk
+  path: /instance_groups/name=credhub/persistent_disk?
   value: 10240
 
 - type: replace
