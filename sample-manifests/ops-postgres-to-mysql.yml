@@ -11,6 +11,9 @@
     version: latest
 
 - type: replace
+  path: /variables/name=uaa-tls/options/alternative_names/-
+  value: localhost
+- type: replace
   path: /variables/-
   value:
     name: credhub-db
