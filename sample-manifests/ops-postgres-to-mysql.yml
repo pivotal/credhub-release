@@ -37,6 +37,10 @@
     type: password
 
 - type: replace
+  path: /instance_groups/name=credhub/persistent_disk
+  value: 10240
+
+- type: replace
   path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage
   value: &data_storage
     type: mysql
