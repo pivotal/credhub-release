@@ -1,0 +1,95 @@
+- type: replace
+  path: /name
+  value: sample-credhub-mysql-uaa
+
+- type: remove
+  path: /releases/name=postgres
+- type: replace
+  path: /releases/-
+  value:
+    name: cf-mysql
+    version: latest
+
+- type: replace
+  path: /variables/-
+  value:
+    name: credhub-db
+    type: password
+- type: replace
+  path: /variables/-
+  value:
+    name: uaa-db
+    type: password
+- type: replace
+  path: /variables/-
+  value:
+    name: galera-healthcheck-db
+    type: password
+- type: replace
+  path: /variables/-
+  value:
+    name: galera-healthcheck-endpoint
+    type: password
+- type: replace
+  path: /variables/-
+  value:
+    name: cluster-health
+    type: password
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage
+  value: &data_storage
+    type: mysql
+    username: credhub
+    password: ((credhub-db))
+    host: 127.0.0.1
+    port: 3306
+    database: credhub
+    require_tls: true
+    tls_ca: ((database-tls.ca))
+
+- type: remove
+  path: /instance_groups/name=credhub/jobs/name=postgres
+- type: replace
+  path: /instance_groups/name=credhub/jobs/-
+  value:
+    name: mysql
+    release: cf-mysql
+    properties:
+      cf_mysql:
+        mysql:
+          admin_username: admin
+          admin_password: ((database-admin))
+          tls:
+            ca_certificate: ((database-tls.ca))
+            server_certificate: ((database-tls.certificate))
+            server_key: ((database-tls.private_key))
+          seeded_databases:
+            - name: credhub
+              username: credhub
+              password: ((credhub-db))
+            - name: uaa
+              username: uaa
+              password: ((uaa-db))
+          galera_healthcheck:
+            db_password: ((galera-healthcheck-db))
+            endpoint_password: ((galera-healthcheck-endpoint))
+          cluster_health:
+            password: ((cluster-health))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/port
+  value: 3306
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/db_scheme
+  value: mysql
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/roles/tag=admin/name
+  value: uaa
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/roles/tag=admin/password
+  value: ((uaa-db))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=bbr-credhubdb/properties/credhub/data_storage
+  value: *data_storage
