@@ -14,6 +14,9 @@
   path: /variables/name=uaa-tls/options/alternative_names/-
   value: localhost
 - type: replace
+  path: /variables/name=database-tls/options/common_name
+  value: 127.0.0.1
+- type: replace
   path: /variables/-
   value:
     name: credhub-db
