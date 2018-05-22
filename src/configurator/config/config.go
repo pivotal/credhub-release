@@ -145,7 +145,7 @@ type ProviderConfig struct {
 	Host              string `yaml:"host,omitempty"`
 	Port              int    `yaml:"port,omitempty"`
 	ServerCa          string `yaml:"server_ca,omitempty" json:"server_ca"`
-	ClientCert        string `yaml:"client_cert,omitempty" json:"client_certificate"`
+	ClientCert        string `yaml:"client_certificate,omitempty" json:"client_certificate"`
 	ClientKey         string `yaml:"client_key,omitempty" json:"client_key"`
 }
 

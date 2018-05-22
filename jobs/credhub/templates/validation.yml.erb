@@ -54,7 +54,7 @@
       properties = p['connection_properties']
       property_keys = properties.keys
 
-      if (property_keys.length != 2 || !property_keys.include?('host') || !property_keys.include?('port'))
+      if !property_keys.include?('host') || !property_keys.include?('port')
         raise 'connection_properties for a provider of type "external" must provide a "host" and "port".'
       end
     end

@@ -355,7 +355,6 @@ var _ = Describe("Configurator", func() {
 
 			_, err := runCli(cli, "Internal providers require encryption_password.")
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Internal providers require encryption_password."))
 		})
 
 		It("fails with a useful error message when an encryption password is provided with hsm", func() {
@@ -379,7 +378,6 @@ var _ = Describe("Configurator", func() {
 
 			_, err := runCli(cli, "Hsm providers require encryption_key_name.")
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("Hsm providers require encryption_key_name."))
 		})
 
 		It("fails with a useful error message when an encryption password is provided with external", func() {
@@ -403,7 +401,6 @@ var _ = Describe("Configurator", func() {
 
 			_, err := runCli(cli, "External providers require encryption_key_name.")
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("External providers require encryption_key_name."))
 		})
 	})
 
@@ -436,7 +433,7 @@ var _ = Describe("Configurator", func() {
 			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("some-partition-password"))
 		})
 
-		It("populates partition, partition password, host, port, and mtls when connection properties is available", func() {
+		It("throws an error if the client key is not PEM encoded", func() {
 			connectionProperties := config.ProviderConfig{
 				Partition:         "connection-some-partition",
 				PartitionPassword: "connection-some-partition-password",
@@ -463,10 +460,83 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
+			_, err := runCli(cli, "Provider client private key must be PEM encoded for provider: foo")
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("throws an error if the client key is not in PKCS1 format", func() {
+			connectionProperties := config.ProviderConfig{
+				Partition:         "connection-some-partition",
+				PartitionPassword: "connection-some-partition-password",
+				ClientCert:        "client cert",
+				ClientKey:         PKCS8KEY,
+				Host:              "host",
+				Port:              5555,
+				ServerCa:          "server ca",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name:                 "foo",
+					Type:                 "hsm",
+					ConnectionProperties: connectionProperties,
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:       "foo",
+					EncryptionPassword: "bar",
+					EncryptionKeyName:  "baz",
+				},
+			}
+
+			_, err := runCli(cli, "Provider client private key is not in PKCS1 format: [foo")
+			Expect(err).To(HaveOccurred())
+		})
+
+		It("populates partition, partition password, host, port, and mtls when connection properties is available", func() {
+			connectionProperties := config.ProviderConfig{
+				Partition:         "connection-some-partition",
+				PartitionPassword: "connection-some-partition-password",
+				ClientCert:        "client cert",
+				ClientKey:         CLIENTKEY,
+				Host:              "host",
+				Port:              5555,
+				ServerCa:          "server ca",
+			}
+
+			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
+				{
+					Name:                 "foo",
+					Type:                 "hsm",
+					ConnectionProperties: connectionProperties,
+				},
+			}
+
+			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
+				{
+					ProviderName:       "foo",
+					EncryptionPassword: "bar",
+					EncryptionKeyName:  "baz",
+				},
+			}
+
 			result, err := runCli(cli, "")
 			Expect(err).NotTo(HaveOccurred())
-			Expect(result.Encryption.Providers[0].Config).To(Equal(connectionProperties))
+
+			expectedProperties := config.ProviderConfig{
+				Partition:         connectionProperties.Partition,
+				PartitionPassword: connectionProperties.PartitionPassword,
+				ClientCert:        connectionProperties.ClientCert,
+				ClientKey:         PKCS8KEY,
+				Host:              connectionProperties.Host,
+				Port:              connectionProperties.Port,
+				ServerCa:          connectionProperties.ServerCa,
+			}
+			Expect(result.Encryption.Providers[0].Config).To(Equal(expectedProperties))
 		})
+
 	})
 
 })

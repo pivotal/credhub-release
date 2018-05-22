@@ -5,9 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	//"io/ioutil"
 
 	"errors"
+
+	"configurator/pkcs8"
+	"crypto/x509"
+	"encoding/pem"
+	"log"
 
 	"gopkg.in/yaml.v2"
 )
@@ -103,7 +107,29 @@ func main() {
 			}
 		}
 
+		if provider.ConnectionProperties.ClientKey != "" {
+			derKey, _ := pem.Decode([]byte(provider.ConnectionProperties.ClientKey))
+			if derKey == nil {
+				log.Fatalf("Provider client private key must be PEM encoded for provider: %s", provider.Name)
+			}
+			key, err := x509.ParsePKCS1PrivateKey(derKey.Bytes)
+			if err != nil {
+				log.Fatalf("Provider client private key is not in PKCS1 format: [%s, %s]", provider.Name, err)
+			}
+			pkcs8DERBytes, err := pkcs8.MarshalPKCS8PrivateKey(key)
+			if err != nil {
+				log.Fatalf("Error converting PKCS1 key to PKCS8 for provider: [%s, %s]", provider.Name, err)
+			}
+			pkcs8Block := &pem.Block{
+				Type:  "PRIVATE KEY",
+				Bytes: pkcs8DERBytes,
+			}
+			pkcs8Key := pem.EncodeToMemory(pkcs8Block)
+
+			credhubProvider.Config.ClientKey = string(pkcs8Key)
+		}
 		credhubConfig.Encryption.Providers = append(credhubConfig.Encryption.Providers, credhubProvider)
+
 	}
 
 	switch boshConfig.DataStorage.Type {
