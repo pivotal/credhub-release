@@ -91,6 +91,8 @@ variables:
     common_name: credhub-mtls-ca
 - name: jumpbox-ssh
   type: ssh
+- name: uaa-encryption-password
+  type: password
 
 instance_groups:
 - name: credhub
@@ -224,6 +226,11 @@ instance_groups:
           serviceProviderCertificate: ((uaa-tls.certificate))
           serviceProviderKey: ((uaa-tls.private_key))
           serviceProviderKeyPassword: ""
+      encryption:
+        active_key_label: key1
+        encryption_keys:
+        - label: key1
+          passphrase: ((uaa-encryption-password))
 
   - name: user_add
     release: os-conf

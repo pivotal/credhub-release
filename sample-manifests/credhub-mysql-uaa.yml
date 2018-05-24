@@ -79,6 +79,8 @@ variables:
   type: password
 - name: cluster-health
   type: password
+- name: uaa-encryption-password
+  type: password
 
 instance_groups:
 - name: credhub
@@ -208,3 +210,8 @@ instance_groups:
           serviceProviderCertificate: ((uaa-tls.certificate))
           serviceProviderKey: ((uaa-tls.private_key))
           serviceProviderKeyPassword: ""
+      encryption:
+        active_key_label: key1
+        encryption_keys:
+        - label: key1
+          passphrase: ((uaa-encryption-password))
