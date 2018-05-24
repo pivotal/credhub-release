@@ -64,6 +64,7 @@ variables:
     common_name: ((external-ip-address))
     alternative_names:
     - ((external-ip-address))
+    - localhost
 - name: uaa-jwt
   type: rsa
   options:
