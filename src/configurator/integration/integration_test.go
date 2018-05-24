@@ -464,7 +464,7 @@ var _ = Describe("Configurator", func() {
 			Expect(err).To(HaveOccurred())
 		})
 
-		It("throws an error if the client key is not in PKCS1 format", func() {
+		It("populates partition, partition password, host, port, and mtls when connection properties is available using pkcs8 key", func() {
 			connectionProperties := config.ProviderConfig{
 				Partition:         "connection-some-partition",
 				PartitionPassword: "connection-some-partition-password",
@@ -491,8 +491,19 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			_, err := runCli(cli, "Provider client private key is not in PKCS1 format: [foo")
-			Expect(err).To(HaveOccurred())
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
+
+			expectedProperties := config.ProviderConfig{
+				Partition:         connectionProperties.Partition,
+				PartitionPassword: connectionProperties.PartitionPassword,
+				ClientCert:        connectionProperties.ClientCert,
+				ClientKey:         PKCS8KEY,
+				Host:              connectionProperties.Host,
+				Port:              connectionProperties.Port,
+				ServerCa:          connectionProperties.ServerCa,
+			}
+			Expect(result.Encryption.Providers[0].Config).To(Equal(expectedProperties))
 		})
 
 		It("populates partition, partition password, host, port, and mtls when connection properties is available", func() {

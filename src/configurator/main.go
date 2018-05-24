@@ -112,13 +112,17 @@ func main() {
 			if derKey == nil {
 				log.Fatalf("Provider client private key must be PEM encoded for provider: %s", provider.Name)
 			}
-			key, err := x509.ParsePKCS1PrivateKey(derKey.Bytes)
+			pkcs8DERBytes := derKey.Bytes
+			_, err := x509.ParsePKCS8PrivateKey(derKey.Bytes)
 			if err != nil {
-				log.Fatalf("Provider client private key is not in PKCS1 format: [%s, %s]", provider.Name, err)
-			}
-			pkcs8DERBytes, err := pkcs8.MarshalPKCS8PrivateKey(key)
-			if err != nil {
-				log.Fatalf("Error converting PKCS1 key to PKCS8 for provider: [%s, %s]", provider.Name, err)
+				key, err := x509.ParsePKCS1PrivateKey(derKey.Bytes)
+				if err != nil {
+					log.Fatalf("Provider client private key is not in PKCS1 or PKCS8 format: [%s, %s]", provider.Name, err)
+				}
+				pkcs8DERBytes, err = pkcs8.MarshalPKCS8PrivateKey(key)
+				if err != nil {
+					log.Fatalf("Error converting PKCS1 key to PKCS8 for provider: [%s, %s]", provider.Name, err)
+				}
 			}
 			pkcs8Block := &pem.Block{
 				Type:  "PRIVATE KEY",
