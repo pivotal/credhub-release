@@ -8,6 +8,10 @@ templates:
 
 packages: []
 
+consumes:
+- name: credhub_db
+  type: credhub_db
+
 properties:
   release_level_backup:
     default: false

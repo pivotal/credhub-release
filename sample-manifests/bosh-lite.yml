@@ -6,10 +6,10 @@ releases:
   version: latest
   # url: https://bosh.io/d/github.com/pivotal-cf/credhub-release
 - name: postgres
-  version: 25
+  version: latest
   # url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=25
 - name: uaa
-  version: 55
+  version: latest
   # url: https://bosh.io/d/github.com/cloudfoundry/uaa-release?v=55
 - name: backup-and-restore-sdk
   # url: https://bosh.io/d/github.com/cloudfoundry-incubator/backup-and-restore-sdk-release
@@ -40,12 +40,14 @@ variables:
   type: certificate
   options:
     ca: credhub-ca
+    common_name: 127.0.0.1
     alternative_names:
     - credhub.bosh-lite.com
 - name: database-tls
   type: certificate
   options:
     ca: credhub-ca
+    common_name: 127.0.0.1
     alternative_names:
     - 127.0.0.1
 - name: database-admin
@@ -54,6 +56,7 @@ variables:
   type: certificate
   options:
     ca: credhub-ca
+    common_name: 127.0.0.1
     alternative_names:
     - uaa.bosh-lite.com
 - name: uaa-jwt
@@ -65,6 +68,8 @@ variables:
 - name: uaa-admin
   type: password
 - name: uaa-login
+  type: password
+- name: uaa-encryption-password
   type: password
 
 instance_groups:
@@ -85,16 +90,6 @@ instance_groups:
     release: credhub
     properties:
       release_level_backup: true
-      credhub:
-        data_storage:
-          type: postgres
-          username: admin
-          password: ((database-admin))
-          host: 127.0.0.1
-          port: 5432
-          database: credhub
-          require_tls: true
-          tls_ca: ((database-tls.ca))
   - name: credhub
     release: credhub
     properties:
@@ -199,3 +194,8 @@ instance_groups:
           serviceProviderCertificate: ((uaa-tls.certificate))
           serviceProviderKey: ((uaa-tls.private_key))
           serviceProviderKeyPassword: ""
+      encryption:
+        active_key_label: key1
+        encryption_keys:
+        - label: key1
+          passphrase: ((uaa-encryption-password))

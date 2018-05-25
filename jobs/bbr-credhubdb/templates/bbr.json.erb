@@ -1,22 +1,25 @@
 <%=
   require 'json'
 
+  props = self
+  if_link("credhub_db") { |db| props = db }
+
   config = {
-    username: p("credhub.data_storage.username"),
-    password: p("credhub.data_storage.password"),
-    port: p("credhub.data_storage.port"),
-    database: p("credhub.data_storage.database"),
-    adapter: p("credhub.data_storage.type"),
+    username: props.p("credhub.data_storage.username"),
+    password: props.p("credhub.data_storage.password"),
+    port: props.p("credhub.data_storage.port"),
+    database: props.p("credhub.data_storage.database"),
+    adapter: props.p("credhub.data_storage.type"),
   }
 
-  if_p("credhub.data_storage.host") do |host|
+  props.if_p("credhub.data_storage.host") do |host|
     config[:host] = host
   end
 
-  if p("credhub.data_storage.require_tls")
+  if props.p("credhub.data_storage.require_tls")
     config[:tls] = {
       cert: {
-        ca: p("credhub.data_storage.tls_ca"),
+        ca: props.p("credhub.data_storage.tls_ca"),
       }
     }
   end

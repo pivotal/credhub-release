@@ -46,6 +46,17 @@ provides:
   - credhub.port
   - credhub.ca_certificate
   - credhub.internal_url
+- name: credhub_db
+  type: credhub_db
+  properties:
+  - credhub.data_storage.database
+  - credhub.data_storage.host
+  - credhub.data_storage.password
+  - credhub.data_storage.port
+  - credhub.data_storage.require_tls
+  - credhub.data_storage.tls_ca
+  - credhub.data_storage.type
+  - credhub.data_storage.username
 
 consumes:
 - name: postgres
