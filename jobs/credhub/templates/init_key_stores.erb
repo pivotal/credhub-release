@@ -31,7 +31,7 @@ AUTH_SERVER_CA_ALIAS_BASE=auth_server_ca
 TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/trust_store.jks
 TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
 
-rm /var/vcap/jobs/credhub/config/*.jks
+rm -f /var/vcap/jobs/credhub/config/*.jks
 
 sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 sed -i "s/TRUST_STORE_PASSWORD_PLACEHOLDER/${TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
