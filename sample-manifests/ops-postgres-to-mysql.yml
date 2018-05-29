@@ -48,7 +48,7 @@
 
 - type: replace
   path: /instance_groups/name=credhub/jobs/name=credhub/properties/credhub/data_storage
-  value: &data_storage
+  value:
     type: mysql
     username: credhub
     password: ((credhub-db))
@@ -99,7 +99,3 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/roles/tag=admin/password
   value: ((uaa-db))
-
-- type: replace
-  path: /instance_groups/name=credhub/jobs/name=bbr-credhubdb/properties/credhub/data_storage
-  value: *data_storage
