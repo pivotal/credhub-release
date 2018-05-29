@@ -125,7 +125,7 @@ instance_groups:
           type: postgres
           username: admin
           password: ((database-admin))
-          host: 127.0.0.1
+          host: localhost
           port: 5432
           database: credhub
           require_tls: true
@@ -243,16 +243,6 @@ instance_groups:
     release: credhub
     properties:
       release_level_backup: true
-      credhub:
-        data_storage:
-          type: postgres
-          username: admin
-          password: ((database-admin))
-          host: localhost
-          port: 5432
-          database: credhub
-          require_tls: true
-          tls_ca: ((database-tls.ca))
 
   - name: database-backup-restorer
     release: backup-and-restore-sdk
