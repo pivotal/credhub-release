@@ -33,17 +33,16 @@ releases:
 
 CredHub issues frequent minor releases containing new features. If you wish to receive the latest new features, the most recent release should be used. If you choose to use the latest release line, you must update to a subsequent patch or minor release - which may contain new features - to receive security patches and bug fixes.
 
-If you wish to use a stable version with a less frequent feature release cycle, you may use a long term support version. LTS versions are patched for security vulnerabilities and bugs, but do not contain new features. New LTS versions are released quarterly. Patches are issued for LTS versions for 9 months following release (current–2 structure).
+If you wish to use a stable version with a less frequent feature release cycle, you may use a long term support version. LTS versions are patched for security vulnerabilities and bugs, but do not contain new features. New LTS versions are released quarterly. Patches are issued for LTS versions for at least 9 months following release.
 
-Current long term support versions
+Current long term support versions:
 
-| Version | Released    | Latest Patch | End of Patch Releases |
-|---------|-------------|--------------| -----------------------|
-| 1.0.x   | Jun-15-2017 | [1.0.8][4]   | Mar-15-2018            |
-| 1.3.x   | Aug-23-2017 | [1.3.4][5]   | Jun-15-2018            |
-
-[4]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.0.8
-[5]:https://github.com/pivotal-cf/credhub-release/releases/tag/1.3.4
+| Version | End of Patch Releases |
+|---------|-----------------------|
+| 1.3.x   | 2018-06-31            |
+| 1.6.x   | 2018-09-31            |
+| 1.7.x   | 2018-12-31            |
+| 1.9.x   | 2018-03-31            |
 
 ## Reporting a Vulnerability
 
