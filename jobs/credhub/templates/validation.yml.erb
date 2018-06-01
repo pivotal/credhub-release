@@ -86,10 +86,6 @@
       if k['encryption_password'].length < 20
         raise 'The encryption_password value must be at least 20 characters in length. Please update and redeploy.'
       end
-
-      if k.key?('encryption_key_name')
-        raise 'both credhub.encryption.key.encryption_key_name and credhub.encryption.key.encryption_password cannot be provided on a key'
-      end
     end
 
     if k.key?('dev_key')
