@@ -1,8 +1,9 @@
 #!/bin/bash
 
+set -euo pipefail
+
 <% using_hsm = p('credhub.encryption.providers').any? { |provider| provider['type'] == "hsm" } %>
 <% port = p('credhub.port') %>
-
 
 cat /var/vcap/jobs/credhub/config/config.json | /var/vcap/packages/configurator/bin/configurator/configurator > /var/vcap/jobs/credhub/config/application.yml
 
@@ -26,8 +27,6 @@ fail_unless_credhub_port_is_open() {
     exit 1;
   fi
 }
-
-set -eu
 
 fail_unless_credhub_port_is_open
 
