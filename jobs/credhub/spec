@@ -92,12 +92,18 @@ properties:
       The internal provider accepts an encryption_password (minimum length 20).
     example:
       - provider_name: internal-provider
-        encryption_password: example-encryption-password
+        key_properties:
+          encryption_password: example-encryption-password
       - provider_name: hsm-provider
-        encryption_key_name: active-hsm-key-name
+        key_properties:
+          encryption_key_name: active-hsm-key-name
         active: true
       - provider_name: hsm-provider
-        encryption_key_name: inactive-hsm-key-name
+        key_properties:
+          encryption_key_name: inactive-hsm-key-name
+      - provider_name: external-provider
+        key_properties:
+          encryption_key_name: external-key-name
 
   credhub.encryption.providers:
     description: |
@@ -107,19 +113,37 @@ properties:
     example:
       - name: internal-provider
         type: internal
+      - name: external-provider
+        type: external
+        connection_properties:
+          host: localhost
+          port: 50051
+          server_ca: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          client_certificate: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          client_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            ...
+            -----END RSA PRIVATE KEY-----
       - name: hsm-provider
         type: hsm
-        partition: my-hsm-partition
-        partition_password: example-hsm-password
-        client_certificate: |
-          -----BEGIN CERTIFICATE-----
-          ...
-          -----END CERTIFICATE-----
-        client_key: |
-          -----BEGIN RSA PRIVATE KEY-----
-          ...
-          -----END RSA PRIVATE KEY-----
-        servers:
+        connection_properties:
+          partition: my-hsm-partition
+          partition_password: example-hsm-password
+          client_certificate: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          client_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            ...
+            -----END RSA PRIVATE KEY-----
+          servers:
           - host: 10.0.1.1
             port: 1792
             partition_serial_number: 123123
