@@ -6,7 +6,7 @@
 ##
 ## You must update the vm_type (currently 'medium') and network name (currently 'west') according to your cloud config. You must also replace the external_ip and uaa_url with an accurate values.
 ---
-name: sample-credhub-postgres-uaa
+name: credhub
 
 releases:
 - name: credhub
