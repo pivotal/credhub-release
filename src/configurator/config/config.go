@@ -50,6 +50,7 @@ type BoshConfig struct {
 		ACLs struct {
 			Enabled bool
 		} `json:"acls"`
+		Permissions []BoshPermission `json:"permissions"`
 	}
 	DataStorage struct {
 		Type       string
@@ -65,6 +66,12 @@ type BoshConfig struct {
 		Providers []BoshProvider
 	}
 	Bootstrap bool
+}
+
+type BoshPermission struct {
+	Path string `json:"path"`
+	Actors []string `json:"actors"`
+	Operations []string `json:"operations"`
 }
 
 type BoshKey struct {
@@ -101,6 +108,7 @@ type CredhubConfig struct {
 			ACLs struct {
 				Enabled bool
 			}
+			Permissions []Permission
 		}
 	}
 	AuthServer AuthServerConfig `yaml:"auth_server"`
@@ -124,6 +132,12 @@ type CredhubConfig struct {
 	Logging struct {
 		Config string
 	}
+}
+
+type Permission struct {
+	Path string 		`yaml:"path,omitempty"`
+	Actors []string 	`yaml:"actors,omitempty"`
+	Operations []string `yaml:"operations,omitempty"`
 }
 
 type Key struct {

@@ -550,6 +550,86 @@ var _ = Describe("Configurator", func() {
 
 	})
 
+	Describe("authorization", func() {
+		It("populates the permissions when they are available", func() {
+			cli.BoshConfig.Authorization.Permissions = []config.BoshPermission{
+				{
+					Path:       "foo",
+					Actors: []string{"bar"},
+					Operations:  []string{"baz"},
+				},
+			}
+
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
+
+			expectedPermission := config.Permission{
+				"foo",
+				[]string{"bar"},
+				[]string{"baz"},
+			}
+
+			Expect(result.Security.Authorization.Permissions).To(Equal([]config.Permission{expectedPermission}))
+
+		})
+
+		It("populates the permission for multiple actors", func() {
+			cli.BoshConfig.Authorization.Permissions = []config.BoshPermission{
+				{
+					Path:       "foo",
+					Actors: []string{"bar", "bar2"},
+					Operations:  []string{"baz"},
+				},
+
+			}
+
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
+
+			expectedPermission := config.Permission{
+				"foo",
+				[]string{"bar", "bar2"},
+				[]string{"baz"},
+			}
+
+			Expect(result.Security.Authorization.Permissions).To(Equal([]config.Permission{expectedPermission}))
+		})
+
+		It("populates the permission for multiple permissions", func() {
+			cli.BoshConfig.Authorization.Permissions = []config.BoshPermission{
+				{
+					Path:       "foo",
+					Actors: []string{"bar"},
+					Operations:  []string{"baz"},
+				},
+
+				{
+					Path:       "foo2",
+					Actors: []string{"bar2", "bar3"},
+					Operations:  []string{"baz2"},
+				},
+
+			}
+
+			result, err := runCli(cli, "")
+			Expect(err).NotTo(HaveOccurred())
+
+			expectedPermission1 := config.Permission{
+				"foo",
+				[]string{"bar"},
+				[]string{"baz"},
+			}
+
+			expectedPermission2 := config.Permission{
+				"foo2",
+				[]string{"bar2", "bar3"},
+				[]string{"baz2"},
+			}
+
+			Expect(result.Security.Authorization.Permissions).To(Equal([]config.Permission{expectedPermission1, expectedPermission2}))
+		})
+	})
+
 })
 
 func runCli(cli *ConfiguratorCLI, errorMessage string) (*config.CredhubConfig, error) {

@@ -44,6 +44,16 @@ func main() {
 	credhubConfig.Server.Port = port
 	credhubConfig.Security.Authorization.ACLs.Enabled = boshConfig.Authorization.ACLs.Enabled
 
+	for _, permission := range boshConfig.Authorization.Permissions {
+		credhubPermission:= config.Permission{
+			Path: permission.Path,
+			Actors: permission.Actors,
+			Operations: permission.Operations,
+		}
+		credhubConfig.Security.Authorization.Permissions = append(credhubConfig.Security.Authorization.Permissions, credhubPermission)
+
+	}
+
 	if boshConfig.Java7TlsCiphersEnabled {
 		credhubConfig.Server.SSL.Ciphers = config.Java7CipherSuites
 	}

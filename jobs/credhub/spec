@@ -215,6 +215,19 @@ properties:
   credhub.authorization.acls.enabled:
     description: "Enables authorization via credential access control lists"
     default: false
+  credhub.authorization.permissions:
+    description: "Giving permission for a path to an actor"
+    example: |
+      - path: /your/credential
+        actors:
+        - uaa-user:me
+        - uaa-user:me2
+        operations:
+        - read
+        - write
+        - delete
+        - read_acl
+        - write_acl
 
   # Logging
   credhub.log_level:
