@@ -212,11 +212,16 @@ var _ = Describe("Configurator", func() {
 					Type: "internal",
 				},
 			}
+
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+				EncryptionKeyName:  "baz",
+			}
+
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
 					ProviderName:       "foo",
-					EncryptionPassword: "bar",
-					EncryptionKeyName:  "baz",
+					KeyProperties:      keyProperties,
 				},
 			}
 
@@ -227,58 +232,6 @@ var _ = Describe("Configurator", func() {
 			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
 			Expect(result.Encryption.Providers[0].Keys[0].EncryptionPassword).To(Equal("bar"))
 			Expect(result.Encryption.Providers[0].Keys[0].EncryptionKeyName).To(Equal("baz"))
-		})
-
-		It("populates encryption password when key properties is not available", func() {
-			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
-				{
-					Name: "foo",
-					Type: "hsm",
-				},
-				{
-					Name: "notfoo",
-					Type: "internal",
-				},
-			}
-			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
-				{
-					ProviderName:       "notfoo",
-					EncryptionPassword: "bar",
-				},
-			}
-
-			result, err := runCli(cli, "")
-			Expect(err).NotTo(HaveOccurred())
-			Expect(result.Encryption.Providers).To(HaveLen(2))
-			Expect(result.Encryption.Providers[1].Keys).To(HaveLen(1))
-			Expect(result.Encryption.Providers[1].ProviderType).To(Equal("internal"))
-			Expect(result.Encryption.Providers[1].Keys[0].EncryptionPassword).To(Equal("bar"))
-		})
-
-		It("populates encryption key name when key properties is not available", func() {
-			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
-				{
-					Name: "foo",
-					Type: "hsm",
-				},
-				{
-					Name: "notfoo",
-					Type: "internal",
-				},
-			}
-			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
-				{
-					ProviderName:      "foo",
-					EncryptionKeyName: "bar",
-				},
-			}
-
-			result, err := runCli(cli, "")
-			Expect(err).NotTo(HaveOccurred())
-			Expect(result.Encryption.Providers).To(HaveLen(2))
-			Expect(result.Encryption.Providers[0].Keys).To(HaveLen(1))
-			Expect(result.Encryption.Providers[0].ProviderType).To(Equal("hsm"))
-			Expect(result.Encryption.Providers[0].Keys[0].EncryptionKeyName).To(Equal("bar"))
 		})
 
 		It("populates encryption password when key properties is available", func() {
@@ -405,34 +358,6 @@ var _ = Describe("Configurator", func() {
 	})
 
 	Describe("providers", func() {
-		It("populates partition and partition password when they are specified outside the connection properties", func() {
-			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
-				{
-					Name:              "foo",
-					Type:              "hsm",
-					Partition:         "some-partition",
-					PartitionPassword: "some-partition-password",
-					ConnectionProperties: config.ProviderConfig{
-						Partition:         "other-partition",
-						PartitionPassword: "other-partition-password",
-					},
-				},
-			}
-
-			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
-				{
-					ProviderName:       "foo",
-					EncryptionPassword: "bar",
-					EncryptionKeyName:  "baz",
-				},
-			}
-
-			result, err := runCli(cli, "")
-			Expect(err).NotTo(HaveOccurred())
-			Expect(result.Encryption.Providers[0].Config.Partition).To(Equal("some-partition"))
-			Expect(result.Encryption.Providers[0].Config.PartitionPassword).To(Equal("some-partition-password"))
-		})
-
 		It("throws an error if the client key is not PEM encoded", func() {
 			connectionProperties := config.ProviderConfig{
 				Partition:         "connection-some-partition",
@@ -452,11 +377,15 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+				EncryptionKeyName:  "baz",
+			}
+
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
 					ProviderName:       "foo",
-					EncryptionPassword: "bar",
-					EncryptionKeyName:  "baz",
+					KeyProperties:      keyProperties,
 				},
 			}
 
@@ -483,11 +412,15 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+				EncryptionKeyName:  "baz",
+			}
+
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
 					ProviderName:       "foo",
-					EncryptionPassword: "bar",
-					EncryptionKeyName:  "baz",
+					KeyProperties:      keyProperties,
 				},
 			}
 
@@ -525,11 +458,16 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
+			keyProperties := config.KeyProperties{
+				EncryptionPassword: "bar",
+				EncryptionKeyName:  "baz",
+			}
+
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
 					ProviderName:       "foo",
-					EncryptionPassword: "bar",
-					EncryptionKeyName:  "baz",
+					KeyProperties:      keyProperties,
+
 				},
 			}
 
