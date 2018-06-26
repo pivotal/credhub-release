@@ -86,9 +86,9 @@ func main() {
 
 		credhubProvider.Config = provider.ConnectionProperties
 
-		if provider.Partition != "" && provider.PartitionPassword != "" {
-			credhubProvider.Config.PartitionPassword = provider.PartitionPassword
-			credhubProvider.Config.Partition = provider.Partition
+		if provider.ConnectionProperties.Partition != "" && provider.ConnectionProperties.PartitionPassword != "" {
+			credhubProvider.Config.PartitionPassword = provider.ConnectionProperties.PartitionPassword
+			credhubProvider.Config.Partition = provider.ConnectionProperties.Partition
 		}
 
 		for _, key := range boshConfig.Encryption.Keys {
@@ -97,21 +97,16 @@ func main() {
 					Active: key.Active,
 				}
 
-				if provider.Type == "internal" && (key.EncryptionPassword == "" && key.KeyProperties.EncryptionPassword == "") {
+				if provider.Type == "internal" && (key.KeyProperties.EncryptionPassword == "") {
 					panic(errors.New("Internal providers require encryption_password."))
-				} else if provider.Type == "hsm" && (key.EncryptionKeyName == "" && key.KeyProperties.EncryptionKeyName == "") {
+				} else if provider.Type == "hsm" && (key.KeyProperties.EncryptionKeyName == "") {
 					panic(errors.New("Hsm providers require encryption_key_name."))
 				} else if provider.Type == "external" && key.KeyProperties.EncryptionKeyName == "" {
 					panic(errors.New("External providers require encryption_key_name."))
 				}
 
-				if key.KeyProperties.EncryptionPassword != "" || key.KeyProperties.EncryptionKeyName != "" {
-					credhubKey.EncryptionPassword = key.KeyProperties.EncryptionPassword
-					credhubKey.EncryptionKeyName = key.KeyProperties.EncryptionKeyName
-				} else if key.EncryptionPassword != "" || key.EncryptionKeyName != "" {
-					credhubKey.EncryptionPassword = key.EncryptionPassword
-					credhubKey.EncryptionKeyName = key.EncryptionKeyName
-				}
+				credhubKey.EncryptionPassword = key.KeyProperties.EncryptionPassword
+				credhubKey.EncryptionKeyName = key.KeyProperties.EncryptionKeyName
 
 				credhubProvider.Keys = append(credhubProvider.Keys, credhubKey)
 			}

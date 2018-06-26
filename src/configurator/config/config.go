@@ -77,8 +77,6 @@ type BoshPermission struct {
 type BoshKey struct {
 	ProviderName       string `json:"provider_name"`
 	Active             bool
-	EncryptionKeyName  string        `json:"encryption_key_name"` //deprecated
-	EncryptionPassword string        `json:"encryption_password"` //deprecated
 	KeyProperties      KeyProperties `json:"key_properties"`
 }
 
@@ -90,8 +88,6 @@ type KeyProperties struct {
 type BoshProvider struct {
 	Name                 string
 	Type                 string
-	Partition            string         // deprecated
-	PartitionPassword    string         `json:"partition_password"` // deprecated
 	ConnectionProperties ProviderConfig `json:"connection_properties"`
 }
 
