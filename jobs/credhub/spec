@@ -214,7 +214,7 @@ properties:
   # Authorization
   credhub.authorization.acls.enabled:
     description: "Enables authorization via credential access control lists"
-    default: false
+    default: true
   credhub.authorization.permissions:
     description: "Giving permission for a path to an actor"
     example: |
