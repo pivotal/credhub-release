@@ -75,7 +75,7 @@ func main() {
 
 	if boshConfig.Bootstrap {
 		credhubConfig.Encryption.KeyCreationEnabled = true
-		credhubConfig.Flyway.Enabled = true
+		credhubConfig.Spring.Flyway.Enabled = true
 	}
 
 	for _, provider := range boshConfig.Encryption.Providers {
@@ -143,9 +143,9 @@ func main() {
 
 	switch boshConfig.DataStorage.Type {
 	case "in-memory":
-		credhubConfig.Flyway.Locations = config.H2MigrationsPath
+		credhubConfig.Spring.Flyway.Locations = config.H2MigrationsPath
 	case "mysql":
-		credhubConfig.Flyway.Locations = config.MysqlMigrationsPath
+		credhubConfig.Spring.Flyway.Locations = config.MysqlMigrationsPath
 		connectionString := config.MysqlConnectionString
 		if boshConfig.DataStorage.RequireTLS {
 			connectionString = config.MysqlTlsConnectionString
@@ -155,7 +155,7 @@ func main() {
 		credhubConfig.Spring.Datasource.Username = boshConfig.DataStorage.Username
 		credhubConfig.Spring.Datasource.Password = boshConfig.DataStorage.Password
 	case "postgres":
-		credhubConfig.Flyway.Locations = config.PostgresMigrationsPath
+		credhubConfig.Spring.Flyway.Locations = config.PostgresMigrationsPath
 		connectionString := config.PostgresConnectionString
 		if boshConfig.DataStorage.RequireTLS {
 			connectionString = config.PostgresTlsConnectionString

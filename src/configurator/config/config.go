@@ -107,7 +107,7 @@ type CredhubConfig struct {
 			Permissions []Permission
 		}
 	}
-	AuthServer AuthServerConfig `yaml:"auth_server"`
+	AuthServer AuthServerConfig `yaml:"auth-server"`
 	Spring     struct {
 		JPA struct {
 			Hibernate struct {
@@ -115,10 +115,10 @@ type CredhubConfig struct {
 			}
 		}
 		Datasource SpringDatasource
-	}
-	Flyway struct {
-		Locations []string
-		Enabled   bool
+		Flyway struct {
+			Locations []string
+			Enabled   bool
+		}
 	}
 	Encryption struct {
 		KeyCreationEnabled bool `yaml:"key_creation_enabled"`
