@@ -114,7 +114,7 @@ instance_groups:
         tls: ((credhub-tls))
         authentication:
           uaa:
-            url: *uaa-url
+            url: &uaa-url https://((external-ip-address)):8443
             internal_url: https://localhost:8443
             verification_key: ((uaa-jwt.public_key))
             ca_certs:
@@ -163,7 +163,7 @@ instance_groups:
       bpm:
         enabled: false
       uaa:
-        url: &uaa-url https://((external-ip-address)):8443
+        url: *uaa-url
         catalina_opts: -Djava.security.egd=file:/dev/./urandom -Xmx768m -XX:MaxMetaspaceSize=256m
         scim:
           users:
