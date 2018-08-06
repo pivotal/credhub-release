@@ -1,5 +1,6 @@
 #!/bin/bash
 
+trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
 <%
 java_command = "\tjava \\
 \t\t-Xmx${MAX_HEAP_SIZE}m \\
@@ -13,7 +14,7 @@ java_command = "\tjava \\
 
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
   java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks\\
-\t\t-Djavax.net.ssl.trustStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER\\\n"
+\t\t-Djavax.net.ssl.trustStorePassword=${trust_store_password}\\\n"
 end
 
 java_command += "\t\t-ea -jar *.jar"

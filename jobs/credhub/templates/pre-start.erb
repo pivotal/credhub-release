@@ -35,12 +35,7 @@ export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 chown -R vcap /var/vcap/jobs/credhub/config
 chmod 600 /var/vcap/jobs/credhub/config/*
 
-if [ `grep KEY_STORE_PASSWORD_PLACEHOLDER /var/vcap/jobs/credhub/config/application.yml | wc -l` -eq 0 ]; then
-  echo "Key store appears to be initialized. Skipping key store and cert initialization."
-else
-  echo "Key store appears to be uninitialized. Setting up key store and installing certs."
-  /var/vcap/jobs/credhub/bin/init_key_stores.sh
-fi
+/var/vcap/jobs/credhub/bin/init_key_stores.sh
 
 <% if using_hsm %>
 /var/vcap/jobs/credhub/bin/configure_hsm.sh

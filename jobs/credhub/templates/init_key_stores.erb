@@ -36,8 +36,8 @@ rm -f /var/vcap/jobs/credhub/config/*.jks
 sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 sed -i "s/MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER/${MTLS_TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
 sed -i "s/TRUST_STORE_PASSWORD_PLACEHOLDER/${TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/config/application.yml
-sed -i "s/TRUST_STORE_PASSWORD_PLACEHOLDER/${TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/bin/ctl
-sed -i "s/TRUST_STORE_PASSWORD_PLACEHOLDER/${TRUST_STORE_PASSWORD}/g" /var/vcap/jobs/credhub/bin/credhub
+sed -i "s/^\(trust_store_password=\).*/\1${TRUST_STORE_PASSWORD}/" /var/vcap/jobs/credhub/bin/ctl
+sed -i "s/^\(trust_store_password=\).*/\1${TRUST_STORE_PASSWORD}/" /var/vcap/jobs/credhub/bin/credhub
 
 rm -f ${CERT_FILE} ${PRIVATE_KEY_FILE}
 
