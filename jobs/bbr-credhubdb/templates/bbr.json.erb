@@ -2,7 +2,7 @@
   require 'json'
 
   props = self
-  if_link("credhub_db") { |db| props = db }
+  if_link("postgres") { |db| props = db }
 
   config = {
     username: props.p("credhub.data_storage.username"),
