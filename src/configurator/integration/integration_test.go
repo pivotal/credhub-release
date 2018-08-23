@@ -146,6 +146,8 @@ var _ = Describe("Configurator", func() {
 		Context("when TLS is enabled", func() {
 			It("sets the TLS params in the connection URL", func() {
 				cli.BoshConfig.DataStorage.RequireTLS = true
+				cli.BoshConfig.DataStorage.HostnameVerification.Enabled = true
+
 				result, err := runCli(cli, "")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result.Spring.Datasource.URL).To(Equal(
@@ -155,6 +157,24 @@ var _ = Describe("Configurator", func() {
 						"trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER&" +
 						"trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks",
 				))
+			})
+
+			Context("when hostname verification is disabled", func() {
+				It("disables hostname verification in the connection URL", func() {
+					cli.BoshConfig.DataStorage.RequireTLS = true
+					cli.BoshConfig.DataStorage.HostnameVerification.Enabled = false
+
+					result, err := runCli(cli, "")
+					Expect(err).NotTo(HaveOccurred())
+					Expect(result.Spring.Datasource.URL).To(Equal(
+						"jdbc:mariadb://localhost:3306/prod?" +
+							"autoReconnect=true&useSSL=true&requireSSL=true&" +
+							"verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2&" +
+							"trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER&" +
+							"trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks&" +
+							"disableSslHostnameVerification=true",
+					))
+				})
 			})
 		})
 	})
