@@ -51,6 +51,7 @@ provides:
   properties:
   - credhub.data_storage.database
   - credhub.data_storage.host
+  - credhub.data_storage.hostname_verification.enabled
   - credhub.data_storage.password
   - credhub.data_storage.port
   - credhub.data_storage.require_tls
@@ -189,6 +190,9 @@ properties:
     default: "credhub"
   credhub.data_storage.require_tls:
     description: "Requires only TLS connections to targeted database server"
+    default: true
+  credhub.data_storage.hostname_verification.enabled:
+    description: "Enables hostname verification for TLS connections to targeted database server. This property is only respected when targeting a MariaDB database. Hostname verification cannot be disabled for TLS connections to postgres databases."
     default: true
   credhub.data_storage.tls_ca:
     description: "CA trusted for making TLS connections to targeted database server"

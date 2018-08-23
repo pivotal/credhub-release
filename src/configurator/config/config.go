@@ -31,6 +31,7 @@ var (
 		"&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2" +
 		"&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER" +
 		"&trustCertificateKeyStoreUrl=" + DefaultTrustStorePath
+	MysqlTlsDisableHostnameVerification = "&disableSslHostnameVerification=true"
 )
 
 type BoshConfig struct {
@@ -53,13 +54,16 @@ type BoshConfig struct {
 		Permissions []BoshPermission `json:"permissions"`
 	}
 	DataStorage struct {
-		Type       string
-		Host       string
-		Database   string
-		Username   string
-		Password   string
-		Port       json.Number
-		RequireTLS bool `json:"require_tls"`
+		Type                 string
+		Host                 string
+		Database             string
+		Username             string
+		Password             string
+		Port                 json.Number
+		RequireTLS           bool `json:"require_tls"`
+		HostnameVerification struct {
+			Enabled bool
+		} `json:"hostname_verification"`
 	} `json:"data_storage"`
 	Encryption struct {
 		Keys      []BoshKey

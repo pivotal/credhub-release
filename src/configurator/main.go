@@ -149,6 +149,9 @@ func main() {
 		connectionString := config.MysqlConnectionString
 		if boshConfig.DataStorage.RequireTLS {
 			connectionString = config.MysqlTlsConnectionString
+			if !boshConfig.DataStorage.HostnameVerification.Enabled {
+				connectionString += config.MysqlTlsDisableHostnameVerification
+			}
 		}
 		credhubConfig.Spring.Datasource.URL = fmt.Sprintf(connectionString,
 			boshConfig.DataStorage.Host, boshConfig.DataStorage.Port, boshConfig.DataStorage.Database)
