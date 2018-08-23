@@ -240,8 +240,8 @@ var _ = Describe("Configurator", func() {
 
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
-					ProviderName:       "foo",
-					KeyProperties:      keyProperties,
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
 				},
 			}
 
@@ -404,8 +404,8 @@ var _ = Describe("Configurator", func() {
 
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
-					ProviderName:       "foo",
-					KeyProperties:      keyProperties,
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
 				},
 			}
 
@@ -439,8 +439,8 @@ var _ = Describe("Configurator", func() {
 
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
-					ProviderName:       "foo",
-					KeyProperties:      keyProperties,
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
 				},
 			}
 
@@ -485,9 +485,8 @@ var _ = Describe("Configurator", func() {
 
 			cli.BoshConfig.Encryption.Keys = []config.BoshKey{
 				{
-					ProviderName:       "foo",
-					KeyProperties:      keyProperties,
-
+					ProviderName:  "foo",
+					KeyProperties: keyProperties,
 				},
 			}
 
@@ -513,8 +512,8 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.Authorization.Permissions = []config.BoshPermission{
 				{
 					Path:       "foo",
-					Actors: []string{"bar"},
-					Operations:  []string{"baz"},
+					Actors:     []string{"bar"},
+					Operations: []string{"baz"},
 				},
 			}
 
@@ -535,10 +534,9 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.Authorization.Permissions = []config.BoshPermission{
 				{
 					Path:       "foo",
-					Actors: []string{"bar", "bar2"},
-					Operations:  []string{"baz"},
+					Actors:     []string{"bar", "bar2"},
+					Operations: []string{"baz"},
 				},
-
 			}
 
 			result, err := runCli(cli, "")
@@ -557,16 +555,15 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.Authorization.Permissions = []config.BoshPermission{
 				{
 					Path:       "foo",
-					Actors: []string{"bar"},
-					Operations:  []string{"baz"},
+					Actors:     []string{"bar"},
+					Operations: []string{"baz"},
 				},
 
 				{
 					Path:       "foo2",
-					Actors: []string{"bar2", "bar3"},
-					Operations:  []string{"baz2"},
+					Actors:     []string{"bar2", "bar3"},
+					Operations: []string{"baz2"},
 				},
-
 			}
 
 			result, err := runCli(cli, "")

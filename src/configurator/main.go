@@ -13,7 +13,7 @@ import (
 	"encoding/pem"
 	"log"
 
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 func main() {
@@ -45,9 +45,9 @@ func main() {
 	credhubConfig.Security.Authorization.ACLs.Enabled = boshConfig.Authorization.ACLs.Enabled
 
 	for _, permission := range boshConfig.Authorization.Permissions {
-		credhubPermission:= config.Permission{
-			Path: permission.Path,
-			Actors: permission.Actors,
+		credhubPermission := config.Permission{
+			Path:       permission.Path,
+			Actors:     permission.Actors,
 			Operations: permission.Operations,
 		}
 		credhubConfig.Security.Authorization.Permissions = append(credhubConfig.Security.Authorization.Permissions, credhubPermission)
