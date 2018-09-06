@@ -7,6 +7,7 @@ java_command = "\tjava \\
 \t\t-Dspring.profiles.active=prod \\
 \t\t-Dspring.config.location=/var/vcap/jobs/credhub/config/application.yml \\
 \t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+\t\t-Djava.io.tmpdir=/var/vcap/data/credhub/exec-tmp \\
 \t\t-Djava.security.egd=file:/dev/urandom \\
 \t\t-Djna.boot.library.path=/var/vcap/packages/credhub/\\
 \t\t-Djdk.tls.ephemeralDHKeySize=4096 \\

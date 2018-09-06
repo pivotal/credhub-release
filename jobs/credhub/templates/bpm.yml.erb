@@ -7,3 +7,7 @@ processes:
     TMP_DIR: /var/vcap/data/credhub
     JAVA_HOME: /var/vcap/packages/openjdk_1.8.0/jre
     MAX_HEAP_SIZE: <%= p('credhub.max_heap_size') %>
+  additional_volumes:
+  - path: /var/vcap/data/credhub/exec-tmp
+    writable: true
+    allow_executions: true
