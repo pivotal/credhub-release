@@ -19,10 +19,6 @@ MTLS_TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
 MTLS_TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/mtls_trust_store.jks
 MTLS_CA_ALIAS=mtls_ca
 
-# DB
-DATABASE_TLS_CA_FILE=/var/vcap/jobs/credhub/config/database_ca.pem
-DATABASE_VERIFY_CA_ALIAS=database_verify_ca
-
 # UAA
 AUTH_SERVER_CA_CERT_FILE=/var/vcap/jobs/credhub/config/auth_server_ca_cert.crt
 AUTH_SERVER_CA_ALIAS_BASE=auth_server_ca
@@ -57,14 +53,6 @@ if [ -s ${CERT_FILE} ]; then
             -srckeystore cert.p12 -srcstoretype PKCS12 -srcstorepass k0*l*s3cur1tyr0ck$ \
             -deststorepass ${KEY_STORE_PASSWORD} -destkeypass ${KEY_STORE_PASSWORD} -destkeystore ${KEY_STORE_PATH} \
             -alias ${CERT_ALIAS}
-fi
-
-if [ $(cat $DATABASE_TLS_CA_FILE | wc -c) -ge 2 ]; then
-  ${JAVA_HOME}/bin/keytool -import -noprompt \
-    -keystore ${TRUST_STORE_PATH} \
-    -storepass ${TRUST_STORE_PASSWORD} \
-    -alias ${DATABASE_VERIFY_CA_ALIAS} \
-    -file ${DATABASE_TLS_CA_FILE}
 fi
 
 <%

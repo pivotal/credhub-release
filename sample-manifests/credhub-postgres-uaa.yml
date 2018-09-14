@@ -217,8 +217,7 @@ instance_groups:
         address: 127.0.0.1
         port: 5432
         db_scheme: postgresql
-        # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
-        tls_enabled: false
+        tls_enabled: true
         databases:
         - tag: uaa
           name: uaa
@@ -252,3 +251,8 @@ instance_groups:
   - name: database-backup-restorer
     release: backup-and-restore-sdk
     properties: {}
+
+  - name: ca_certs
+    release: os-conf
+    properties:
+      certs: ((database-tls.certificate))
