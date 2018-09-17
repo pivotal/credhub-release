@@ -34,7 +34,6 @@ packages:
 - openjdk_1.8.0
 - lunaclient
 - credhub
-- golang-1.9-linux
 - configurator
 
 provides:
