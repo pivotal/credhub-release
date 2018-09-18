@@ -99,9 +99,9 @@ properties:
       - provider_name: hsm-provider
         key_properties:
           encryption_key_name: inactive-hsm-key-name
-      - provider_name: external-provider
+      - provider_name: kms-plugin
         key_properties:
-          encryption_key_name: external-key-name
+          encryption_key_name: kms-plugin-key-name
 
   credhub.encryption.providers:
     description: |
@@ -111,23 +111,10 @@ properties:
     example:
       - name: internal-provider
         type: internal
-      - name: external-provider
-        type: external
+      - name: kms-plugin-provider
+        type: kms-plugin
         connection_properties:
-          host: localhost
-          port: 50051
-          server_ca: |
-            -----BEGIN CERTIFICATE-----
-            ...
-            -----END CERTIFICATE-----
-          client_certificate: |
-            -----BEGIN CERTIFICATE-----
-            ...
-            -----END CERTIFICATE-----
-          client_key: |
-            -----BEGIN RSA PRIVATE KEY-----
-            ...
-            -----END RSA PRIVATE KEY-----
+          endpoint: unix:///tmp/socketfile.sock
       - name: hsm-provider
         type: hsm
         connection_properties:

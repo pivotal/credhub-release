@@ -101,8 +101,8 @@ func main() {
 					panic(errors.New("Internal providers require encryption_password."))
 				} else if provider.Type == "hsm" && (key.KeyProperties.EncryptionKeyName == "") {
 					panic(errors.New("Hsm providers require encryption_key_name."))
-				} else if provider.Type == "external" && key.KeyProperties.EncryptionKeyName == "" {
-					panic(errors.New("External providers require encryption_key_name."))
+				} else if provider.Type == "kms-plugin" && key.KeyProperties.EncryptionKeyName == "" {
+					panic(errors.New("kms-plugin providers require encryption_key_name."))
 				}
 
 				credhubKey.EncryptionPassword = key.KeyProperties.EncryptionPassword

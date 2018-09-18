@@ -29,8 +29,8 @@
 
   provider_types = encryption_providers.collect{|p| p['type']}.uniq
 
-  if provider_types.any? { |p| !['internal', 'hsm', 'external'].include?(p) }
-    raise 'The provided encryption provider type is not valid. Valid provider types are "hsm", "internal", and "external".'
+  if provider_types.any? { |p| !['internal', 'hsm', 'kms-plugin'].include?(p) }
+    raise 'The provided encryption provider type is not valid. Valid provider types are "hsm", "internal", and "kms-plugin".'
   end
 
   hsm_providers = encryption_providers.select{|p| p['type'] == 'hsm'}
@@ -39,23 +39,23 @@
     raise 'More than one hsm provider is not supported. Please update your configuration to proceed.'
   end
 
-  external_providers = encryption_providers.select{|p| p['type'] == 'external'}
+  kms_plugin_providers = encryption_providers.select{|p| p['type'] == 'kms-plugin'}
 
-    if external_providers.size > 1
-      raise 'More than one external provider is not supported. Please update your configuration to proceed.'
+    if kms_plugin_providers.size > 1
+      raise 'More than one kms-plugin provider is not supported. Please update your configuration to proceed.'
     end
 
   providers = encryption_providers.each do |p|
-    if p.key?('connection_properties') && !(p['type'] == 'hsm' || p['type'] == 'external')
-      raise 'connection_properties should only be provided for providers of type "hsm" or "external".'
+    if p.key?('connection_properties') && !(p['type'] == 'hsm' || p['type'] == 'kms-plugin')
+      raise 'connection_properties should only be provided for providers of type "hsm" or "kms-plugin".'
     end
 
-    if p['type'] == 'external'
+    if p['type'] == 'kms-plugin'
       properties = p['connection_properties']
       property_keys = properties.keys
 
-      if !property_keys.include?('host') || !property_keys.include?('port')
-        raise 'connection_properties for a provider of type "external" must provide a "host" and "port".'
+      if !property_keys.include?('endpoint')
+        raise 'connection_properties for a provider of type "kms-plugin" must provide an "endpoint".'
       end
     end
 

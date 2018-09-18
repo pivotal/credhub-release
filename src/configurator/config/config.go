@@ -161,6 +161,7 @@ type ProviderConfig struct {
 	ServerCa          string `yaml:"server_ca,omitempty" json:"server_ca"`
 	ClientCert        string `yaml:"client_certificate,omitempty" json:"client_certificate"`
 	ClientKey         string `yaml:"client_key,omitempty" json:"client_key"`
+	Endpoint          string `yaml:"endpoint,omitempty" json:"endpoint"`
 }
 
 type SSLConfig struct {

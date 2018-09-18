@@ -353,7 +353,7 @@ var _ = Describe("Configurator", func() {
 			Expect(err).To(HaveOccurred())
 		})
 
-		It("fails with a useful error message when an encryption password is provided with external", func() {
+		It("fails with a useful error message when an encryption password is provided with kms-plugin", func() {
 			keyProperties := config.KeyProperties{
 				EncryptionPassword: "bar",
 			}
@@ -361,7 +361,7 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
 				{
 					Name: "foo",
-					Type: "external",
+					Type: "kms-plugin",
 				},
 			}
 
@@ -372,7 +372,7 @@ var _ = Describe("Configurator", func() {
 				},
 			}
 
-			_, err := runCli(cli, "External providers require encryption_key_name.")
+			_, err := runCli(cli, "kms-plugin providers require encryption_key_name.")
 			Expect(err).To(HaveOccurred())
 		})
 	})
@@ -468,6 +468,7 @@ var _ = Describe("Configurator", func() {
 				Host:              "host",
 				Port:              5555,
 				ServerCa:          "server ca",
+				Endpoint:          "sample socket",
 			}
 
 			cli.BoshConfig.Encryption.Providers = []config.BoshProvider{
@@ -501,6 +502,7 @@ var _ = Describe("Configurator", func() {
 				Host:              connectionProperties.Host,
 				Port:              connectionProperties.Port,
 				ServerCa:          connectionProperties.ServerCa,
+				Endpoint:          connectionProperties.Endpoint,
 			}
 			Expect(result.Encryption.Providers[0].Config).To(Equal(expectedProperties))
 		})
