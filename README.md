@@ -39,9 +39,8 @@ Current long term support versions:
 
 | Version | End of Patch Releases |
 |---------|-----------------------|
-| 1.6.x   | 2018-09-31            |
 | 1.7.x   | 2018-12-31            |
-| 1.9.x   | 2019-03-31            |
+| 1.9.x   | 2019-06-30            |
 
 ## Reporting a Vulnerability
 
