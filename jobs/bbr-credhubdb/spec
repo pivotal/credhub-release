@@ -11,6 +11,9 @@ packages: []
 consumes:
 - name: credhub_db
   type: credhub_db
+- name: database
+  type: database
+  optional: true
 
 properties:
   release_level_backup:

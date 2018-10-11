@@ -14,6 +14,10 @@
 
   props.if_p("credhub.data_storage.host") do |host|
     config[:host] = host
+  end.else do
+    if_link('database') do |database_link|
+      config[:host] = database_link.instances[0].address
+    end
   end
 
   if props.p("credhub.data_storage.require_tls")
