@@ -231,6 +231,9 @@ properties:
     description: "Enables CBC TLS cipher suites to enable TLS communication with Java 7 clients"
     default: false
 
+  # CAs
+  database_ca.pem.erb: config/database_ca.pem
+
   # BPM
   bpm.enabled:
     description: "Enable Bosh Process Manager"
