@@ -2,4 +2,4 @@
 name: openjdk_1.8.0
 dependencies: []
 files:
-- openjdk_1.8.0/openjdk-1.8.0_181.tar.gz
+- openjdk_1.8.0/openjdk-1.8.0_192.tar.gz

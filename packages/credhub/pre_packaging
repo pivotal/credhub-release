@@ -6,7 +6,7 @@ export PATH=$PATH:/bin:/usr/bin
 # In CI...
 if [ `uname` = "Linux" ]; then
   # This var is substituted by scripts/fetch_latest_java.rb. Don't change it by hand, and don't remove this comment!
-  JDK_URL="https://java-buildpack.cloudfoundry.org/openjdk-jdk/trusty/x86_64/openjdk-1.8.0_181.tar.gz"
+  JDK_URL="https://java-buildpack.cloudfoundry.org/openjdk-jdk/trusty/x86_64/openjdk-1.8.0_192.tar.gz"
 
   mkdir -p ${BUILD_DIR}/java
   pushd ${BUILD_DIR}/java
