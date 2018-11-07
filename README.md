@@ -49,27 +49,3 @@ We strongly encourage people to report security vulnerabilities privately to our
 Please note that the e-mail address below should only be used for reporting undisclosed security vulnerabilities in Pivotal products and managing the process of fixing such vulnerabilities. We cannot accept regular bug reports or other security-related queries at this address.
 
 The e-mail address to use to contact the Pivotal Application Security Team is security@pivotal.io. Find our PGP fingerprint and more information about our security channels at [pivotal.io/security](https://pivotal.io/security/).
-
-## Development
-
-### Updating this repo's submodule before a BOSH release
-
-To manually update a local repo, use
-
-```sh
-$ ./scripts/update
-```
-
- to ensure that the latest code has been pulled into the submodule.
-
-### Run unit tests to exercise the template logic used for application properties
-
-```sh
-$ ./spec/run_tests.sh
-```
-
-### Create a packaged BOSH release
-
-```sh
-$ bosh create-release --name credhub --version test --tarball ./credhub-test.tgz
-```
