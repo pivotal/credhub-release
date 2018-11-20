@@ -11,6 +11,7 @@ java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 -Djna.boot.library.path=/var/vcap/packages/credhub/ \\
 -Djava.io.tmpdir=$TMP_DIR \\
 -Djdk.tls.ephemeralDHKeySize=4096 \\
+-Dfile.encoding=UTF-8 \\
 -Djdk.tls.namedGroups=\"secp384r1\" \\"
 
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
