@@ -13,7 +13,7 @@ cat $tmpfile
 echo "(end of commit list)"
 
 if [ -s $tmpfile ]; then
-  git ci -F - < $tmpfile
+  git commit -F - < $tmpfile
 else
   echo "staged_shortlog reports nothing needs to be committed"
 fi
