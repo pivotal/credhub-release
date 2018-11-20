@@ -29,7 +29,7 @@ MODULE_GIT_DIR=$RELEASE_DIR/.git/modules/src/credhub
 
 pushd ${BUILD_DIR}/credhub
   GIT_DIR=$MODULE_GIT_DIR ./gradlew :clean :assemble
-  cp build/libs/*.jar ${BUILD_DIR}/credhub/credhub.jar
+  cp build/libs/credhub.jar ${BUILD_DIR}/credhub/credhub.jar
   ./gradlew clean
 popd
 
