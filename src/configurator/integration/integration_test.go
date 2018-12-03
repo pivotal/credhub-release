@@ -118,7 +118,7 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.DataStorage.Type = "in-memory"
 			result, err := runCli(cli, "")
 			Expect(err).NotTo(HaveOccurred())
-			Expect(result.Flyway.Locations).To(Equal(config.H2MigrationsPath))
+			Expect(result.Spring.Flyway.Locations).To(Equal(config.H2MigrationsPath))
 		})
 	})
 
@@ -140,7 +140,7 @@ var _ = Describe("Configurator", func() {
 				Password: "pass",
 				URL:      "jdbc:mariadb://localhost:3306/prod?autoReconnect=true",
 			}))
-			Expect(result.Flyway.Locations).To(Equal(config.MysqlMigrationsPath))
+			Expect(result.Spring.Flyway.Locations).To(Equal(config.MysqlMigrationsPath))
 		})
 
 		Context("when TLS is enabled", func() {
@@ -197,7 +197,7 @@ var _ = Describe("Configurator", func() {
 				Password: "pass",
 				URL:      "jdbc:postgresql://localhost:3306/prod?autoReconnect=true",
 			}))
-			Expect(result.Flyway.Locations).To(Equal(config.PostgresMigrationsPath))
+			Expect(result.Spring.Flyway.Locations).To(Equal(config.PostgresMigrationsPath))
 		})
 
 		Context("when TLS is enabled", func() {
@@ -216,7 +216,7 @@ var _ = Describe("Configurator", func() {
 		cli.BoshConfig.Bootstrap = true
 		result, err := runCli(cli, "")
 		Expect(err).NotTo(HaveOccurred())
-		Expect(result.Flyway.Enabled).To(BeTrue())
+		Expect(result.Spring.Flyway.Enabled).To(BeTrue())
 		Expect(result.Encryption.KeyCreationEnabled).To(BeTrue())
 	})
 
@@ -587,9 +587,6 @@ func runCli(cli *ConfiguratorCLI, errorMessage string) (*config.CredhubConfig, e
 	}
 
 	var result config.CredhubConfig
-	contents := string(session.Out.Contents())
-	_ = contents
-
 	Expect(yaml.Unmarshal(session.Out.Contents(), &result)).To(Succeed())
 
 	return &result, err
