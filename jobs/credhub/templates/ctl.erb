@@ -5,7 +5,6 @@ trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
 java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 -Xmx${MAX_HEAP_SIZE}m \\
 -Dspring.profiles.active=prod \\
--Dspring.main.allow-bean-definition-overriding=true \\
 -Dspring.config.additional-location=/var/vcap/jobs/credhub/config/application.yml \\
 -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
 -Djava.security.egd=file:/dev/urandom \\
