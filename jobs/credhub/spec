@@ -10,7 +10,6 @@ templates:
   post-backup-unlock.sh: bin/bbr/post-backup-unlock
   pre-restore-lock.sh: bin/bbr/pre-restore-lock
   post-bbr-start.erb: bin/bbr/post-bbr-start
-  post-start.erb: bin/post-start
   post-restore-unlock.sh: bin/bbr/post-restore-unlock
   wait-for-stop.sh.erb: bin/bbr/wait-for-stop
   identify-postgres-server-version.erb: bin/bbr/identify-postgres-server-version
@@ -67,6 +66,9 @@ properties:
   credhub.port:
     description: "Listening port for the CredHub API"
     default: 8844
+  credhub.health_endpoint_port:
+    description: "Listening port for the CredHub Health Endpoint"
+    default: 8845
 
 # CA certificate used for credhub TLS
   credhub.ca_certificate:

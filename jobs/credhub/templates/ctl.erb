@@ -6,7 +6,7 @@ java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 -Xmx${MAX_HEAP_SIZE}m \\
 -Dspring.profiles.active=prod \\
 -Dspring.main.allow-bean-definition-overriding=true \\
--Dspring.config.location=/var/vcap/jobs/credhub/config/application.yml \\
+-Dspring.config.additional-location=/var/vcap/jobs/credhub/config/application.yml \\
 -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
 -Djava.security.egd=file:/dev/urandom \\
 -Djna.boot.library.path=/var/vcap/packages/credhub/ \\
@@ -20,7 +20,7 @@ if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enable
   -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
 end
 
-java_command += "-ea -jar *.jar"
+java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
 %>
 
 
