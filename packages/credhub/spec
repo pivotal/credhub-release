@@ -1,6 +1,6 @@
 ---
 name: credhub
 dependencies:
-- openjdk_1.8.0
+- openjdk_11
 files:
 - credhub/**/*

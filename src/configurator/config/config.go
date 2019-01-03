@@ -167,6 +167,7 @@ type ProviderConfig struct {
 type SSLConfig struct {
 	Enabled          bool
 	KeyStore         string `yaml:"key_store"`
+	KeyStorePassword string `yaml:"key_store_password"`
 	KeyPassword      string `yaml:"key_password"`
 	KeyAlias         string `yaml:"key_alias"`
 	Ciphers          string
@@ -198,6 +199,7 @@ func NewDefaultCredhubConfig() CredhubConfig {
 	config.Server.SSL = SSLConfig{
 		Enabled:          true,
 		KeyStore:         ConfigPath + "/cacerts.jks",
+		KeyStorePassword: "KEY_STORE_PASSWORD_PLACEHOLDER",
 		KeyPassword:      "KEY_STORE_PASSWORD_PLACEHOLDER",
 		KeyAlias:         "credhub_tls_cert",
 		Ciphers:          DefaultCipherSuites,

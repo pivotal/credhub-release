@@ -32,7 +32,7 @@ templates:
 
 
 packages:
-- openjdk_1.8.0
+- openjdk_11
 - lunaclient
 - credhub
 - configurator
