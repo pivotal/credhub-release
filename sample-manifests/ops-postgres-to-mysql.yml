@@ -17,6 +17,12 @@
   path: /variables/name=database-tls/options/common_name
   value: 127.0.0.1
 - type: replace
+  path: /variables/name=database-tls/options/alternative_names
+  value:
+    - ((external-ip-address))
+    - ((internal-ip-address))
+    - 127.0.0.1
+- type: replace
   path: /variables/-
   value:
     name: credhub-db
