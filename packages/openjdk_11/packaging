@@ -1,7 +1,7 @@
 set -ex
 
 cd ${BOSH_INSTALL_TARGET}
-mkdir jre && tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/openjdk-*.tar.gz -C jre
+mkdir jre && tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_11/openjdk-*.tar.gz -C jre
 if [[ $? != 0 ]] ; then
   echo "Cannot unpack JRE"
   exit 1

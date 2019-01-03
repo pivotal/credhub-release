@@ -5,7 +5,7 @@ processes:
     RUN_DIR: /var/vcap/data/run/credhub
     LOG_DIR: /var/vcap/sys/log/credhub
     TMP_DIR: /var/vcap/data/credhub
-    JAVA_HOME: /var/vcap/packages/openjdk_1.8.0/jre
+    JAVA_HOME: /var/vcap/packages/openjdk_11/jre
     MAX_HEAP_SIZE: <%= p('credhub.max_heap_size') %>
   additional_volumes:
   - path: /var/vcap/data/credhub/exec-tmp

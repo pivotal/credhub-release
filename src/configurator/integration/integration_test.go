@@ -13,7 +13,7 @@ import (
 	"github.com/onsi/gomega/gbytes"
 	. "github.com/onsi/gomega/gexec"
 	"github.com/pkg/errors"
-	"gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v2"
 )
 
 var _ = Describe("Configurator", func() {
@@ -81,6 +81,9 @@ var _ = Describe("Configurator", func() {
 			expected.TrustStorePassword = config.MtlsTrustStorePasswordPlaceholder
 			expected.TrustStoreType = "JKS"
 
+			expected.KeyStore = config.ConfigPath + "/cacerts.jks"
+			expected.KeyPassword = "KEY_STORE_PASSWORD_PLACEHOLDER"
+			expected.KeyStorePassword = "KEY_STORE_PASSWORD_PLACEHOLDER"
 			Expect(result.Server.SSL).To(Equal(expected))
 		})
 	})
@@ -90,6 +93,7 @@ var _ = Describe("Configurator", func() {
 			cli.BoshConfig.Authentication.UAA.Enabled = true
 			cli.BoshConfig.Authentication.UAA.Url = "some-uaa-url"
 			cli.BoshConfig.Authentication.UAA.InternalUrl = "some-internal-url"
+
 			result, err := runCli(cli, "")
 			Expect(err).NotTo(HaveOccurred())
 
