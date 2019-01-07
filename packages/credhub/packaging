@@ -1,16 +1,7 @@
 set -ex
 
-export JAVA_HOME=/var/vcap/packages/openjdk_11/jre
-export PATH=$JAVA_HOME/bin:$PATH
-
-MODULE_GIT_DIR=$RELEASE_DIR/.git/modules/src/credhub
-
-pushd ${BOSH_COMPILE_TARGET}/credhub
-  GIT_DIR=$MODULE_GIT_DIR ./gradlew :clean :assemble
-  cp build/libs/credhub.jar ${BOSH_INSTALL_TARGET}/credhub.jar
-  ./gradlew clean
-popd
-
-unzip -j ${BOSH_INSTALL_TARGET}/credhub.jar BOOT-INF/lib/jna-*.jar -d .
+unzip -j ${BOSH_COMPILE_TARGET}/credhub/credhub.jar BOOT-INF/lib/jna-*.jar -d .
 unzip -j jna*.jar com/sun/jna/linux-x86-64/libjnidispatch.so -d ${BOSH_INSTALL_TARGET}
 chmod +x ${BOSH_INSTALL_TARGET}/libjnidispatch.so
+
+cp ${BOSH_COMPILE_TARGET}/credhub/credhub.jar ${BOSH_INSTALL_TARGET}
