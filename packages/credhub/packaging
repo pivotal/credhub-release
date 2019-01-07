@@ -3,8 +3,10 @@ set -ex
 export JAVA_HOME=/var/vcap/packages/openjdk_11/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
+MODULE_GIT_DIR=$RELEASE_DIR/.git/modules/src/credhub
+
 pushd ${BOSH_COMPILE_TARGET}/credhub
-  ./gradlew :clean :assemble
+  GIT_DIR=$MODULE_GIT_DIR ./gradlew :clean :assemble
   cp build/libs/credhub.jar ${BOSH_INSTALL_TARGET}/credhub.jar
   ./gradlew clean
 popd
