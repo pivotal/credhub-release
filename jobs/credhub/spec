@@ -13,6 +13,7 @@ templates:
   post-restore-unlock.sh: bin/bbr/post-restore-unlock
   wait-for-stop.sh.erb: bin/bbr/wait-for-stop
   identify-postgres-server-version.erb: bin/bbr/identify-postgres-server-version
+  metadata.erb: bin/bbr/metadata
   # Other scripts
   ctl.erb: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh
