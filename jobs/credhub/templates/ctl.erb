@@ -1,6 +1,9 @@
 #!/bin/bash
 
 trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+
+<% using_hsm = p('credhub.encryption.providers').any? { |provider| provider['type'] == "hsm" } %>
+
 <%
 java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 -Xmx${MAX_HEAP_SIZE}m \\
@@ -19,9 +22,12 @@ if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enable
   -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
 end
 
+if using_hsm
+  java_command += "-cp '/var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar;/var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so' "
+end
+
 java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
 %>
-
 
 <% if p("credhub.authentication.uaa.enabled") %>
 uaa_health_check() {

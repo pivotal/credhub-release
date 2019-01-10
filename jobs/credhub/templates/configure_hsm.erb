@@ -35,9 +35,6 @@ EOL
 
 ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
 
-cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/lib/ext/
-cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/lib/ext/
-
 <%
   primary_server = hsm_servers.shift
   primary_serial_number = primary_server['partition_serial_number']
