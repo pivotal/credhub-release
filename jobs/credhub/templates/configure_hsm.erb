@@ -35,6 +35,7 @@ EOL
 
 ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
 
+# JVM 8 - WILL NOT WORK ON JVM 11
 cp /var/vcap/packages/lunaclient/jsp/lib/LunaProvider.jar $JAVA_HOME/lib/ext/
 cp /var/vcap/packages/lunaclient/jsp/lib/libLunaAPI.so $JAVA_HOME/lib/ext/
 
