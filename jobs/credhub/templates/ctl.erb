@@ -1,6 +1,7 @@
 #!/bin/bash
 
 trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+
 <%
 java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 -Xmx${MAX_HEAP_SIZE}m \\
@@ -21,8 +22,6 @@ if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enable
 end
 
 java_command += "-ea -jar *.jar"
-%>
-
 
 <% if p("credhub.authentication.uaa.enabled") %>
 uaa_health_check() {
@@ -49,7 +48,7 @@ MAX_HEAP_SIZE=<%= p('credhub.max_heap_size') %>
 
 mkdir -p /var/vcap/jobs/credhub/tmp
 
-export JAVA_HOME=/var/vcap/packages/openjdk_11/jre
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
 exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout)   | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${LOG_DIR}/credhub.stdout.log)
