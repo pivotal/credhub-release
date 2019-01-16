@@ -1,6 +1,6 @@
 set -ex
 
-export JAVA_HOME=/var/vcap/packages/openjdk_11/jre
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
 pushd ${BOSH_COMPILE_TARGET}/credhub
