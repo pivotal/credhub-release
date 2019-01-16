@@ -22,6 +22,7 @@ if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enable
 end
 
 java_command += "-ea -jar *.jar"
+%>
 
 <% if p("credhub.authentication.uaa.enabled") %>
 uaa_health_check() {
