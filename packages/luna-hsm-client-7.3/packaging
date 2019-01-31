@@ -1,0 +1,3 @@
+set -e
+
+tar -C ${BOSH_INSTALL_TARGET} -xzvf ${BOSH_COMPILE_TARGET}/luna-hsm-client-7.3/luna-hsm-client-7.3.tgz

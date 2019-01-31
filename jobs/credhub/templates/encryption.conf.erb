@@ -10,8 +10,8 @@ if hsm_providers.any?
 %>
 
 Chrystoki2 = {
-  LibUNIX = /var/vcap/packages/lunaclient/lib/libCryptoki2.so;
-  LibUNIX64 = /var/vcap/packages/lunaclient/lib/libCryptoki2_64.so;
+  LibUNIX = /var/vcap/packages/luna-hsm-client-7.3/lib/libCryptoki2.so;
+  LibUNIX64 = /var/vcap/packages/luna-hsm-client-7.3/lib/libCryptoki2_64.so;
 }
 
 Luna = {
@@ -30,17 +30,17 @@ CardReader = {
 
 Misc = {
   PE1746Enabled = 0;
-  ToolsDir = /var/vcap/packages/lunaclient/bin;
+  ToolsDir = /var/vcap/packages/luna-hsm-client-7.3/bin;
 }
 
 LunaSA Client = {
   ReceiveTimeout = 20000;
-  SSLConfigFile = /var/vcap/packages/lunaclient/bin/openssl.cnf;
+  SSLConfigFile = /var/vcap/packages/luna-hsm-client-7.3/bin/openssl.cnf;
   ClientPrivKeyFile = /var/vcap/jobs/credhub/config/client_key.pem;
   ClientCertFile = /var/vcap/jobs/credhub/config/client_cert.pem;
   ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
   NetClient = 1;
-  HtlDir = /var/vcap/packages/lunaclient/htl/;
+  HtlDir = /var/vcap/packages/luna-hsm-client-7.3/htl/;
 <% hsm_provider['servers'].each_with_index do |hsm_server, i| %>
   ServerName0<%= i %> = <%= hsm_server['host'] %>;
   ServerPort0<%= i %> = <%= hsm_server['port'] || 1792 %>;

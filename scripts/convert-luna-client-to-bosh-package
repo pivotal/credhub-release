@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -eou pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 /path/to/luna/client"
+  exit 1
+fi
+
+client_path=$1
+
+temp_dir=$(mktemp -d)
+function cleanup {
+  rm -rf "$temp_dir"
+}
+# trap cleanup EXIT
+
+if which rpm2cpio >/dev/null; then
+  rpm2cpio="rpm2cpio"
+elif which rpm2cpio.pl >/dev/null; then
+  rpm2cpio="rpm2cpio.pl"
+else
+  echo "rpm2cpio must be installed"
+  exit 1
+fi
+
+pushd "$temp_dir"
+  tar xf "$client_path"
+
+  for rpm in ./LunaClient_*_Linux/64/*.rpm; do
+    $rpm2cpio "$rpm" | cpio -idmv
+  done
+
+  tar cfz luna-hsm-client.tgz -C usr/safenet/lunaclient $(ls usr/safenet/lunaclient)
+popd >/dev/null
+
+mv "$temp_dir/luna-hsm-client.tgz" .

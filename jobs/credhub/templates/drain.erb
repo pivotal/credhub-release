@@ -8,7 +8,7 @@ set -eu
 
 <% if active_provider['type'] == 'hsm' %>
     <% ha_group_label = active_provider['partition'] %>
-    PATH=$PATH:/var/vcap/packages/lunaclient/bin
+    PATH=$PATH:/var/vcap/packages/luna-hsm-client-7.3/bin
     vtl haAdmin deleteGroup -group <%= ha_group_label %> -password <%= active_provider['partition_password'] %> > /dev/null
 <% end %>
 
