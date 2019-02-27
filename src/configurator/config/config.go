@@ -23,7 +23,7 @@ var (
 	PostgresMigrationsPath = append(FlywayMigrationsPath, "classpath:/db/migration/postgres")
 
 	PostgresConnectionString    = "jdbc:postgresql://%s:%s/%s?autoReconnect=true"
-	PostgresTlsConnectionString = PostgresConnectionString + "&ssl=true"
+	PostgresTlsConnectionString = PostgresConnectionString + "&ssl=true&sslmode=require"
 
 	MysqlConnectionString    = "jdbc:mariadb://%s:%s/%s?autoReconnect=true"
 	MysqlTlsConnectionString = MysqlConnectionString +
