@@ -210,7 +210,7 @@ var _ = Describe("Configurator", func() {
 				result, err := runCli(cli, "")
 				Expect(err).NotTo(HaveOccurred())
 				Expect(result.Spring.Datasource.URL).To(Equal(
-					"jdbc:postgresql://localhost:3306/prod?autoReconnect=true&ssl=true",
+					"jdbc:postgresql://localhost:3306/prod?autoReconnect=true&ssl=true&sslmode=require",
 				))
 			})
 		})
