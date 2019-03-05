@@ -1,0 +1,37 @@
+<%=
+  ciphers = [
+    'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
+    'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
+    'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+    'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'
+  ]
+  # CredHubDeprecatedStartingAfter(2.1.2)
+  if p('credhub.java7_tls_ciphers_enabled')
+    ciphers << 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA'
+    ciphers << 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA'
+  end
+
+  properties = {
+    'server' => {
+      'port' => p('credhub.port'),
+      'ssl' => {
+        'enabled' => true,
+        'enabled_protocols' => 'TLSv1.2',
+        'ciphers' => ciphers.join(','),
+        'key_store' => '/var/vcap/jobs/credhub/config/cacerts.jks',
+        'key_password' => 'KEY_STORE_PASSWORD_PLACEHOLDER',
+        'key_store_password' => 'KEY_STORE_PASSWORD_PLACEHOLDER',
+        'key_alias' => 'credhub_tls_cert',
+      }
+    }
+  }
+
+  if p('credhub.authentication.mutual_tls.trusted_cas').length > 0
+    properties['server']['ssl']['client_auth'] = 'want'
+    properties['server']['ssl']['trust_store'] = '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
+    properties['server']['ssl']['trust_store_password'] = 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
+    properties['server']['ssl']['trust_store_type'] = 'JKS'
+  end
+
+  properties.to_yaml
+%>

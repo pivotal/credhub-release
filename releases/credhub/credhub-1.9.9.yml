@@ -12,23 +12,12 @@ jobs:
   fingerprint: f9906e1e64818a360a184e7af1d068cbab9a40cf
   sha1: 932fab419e76df3d9db5512102e96bb6b5274ee3
 packages:
-- name: configurator
-  version: 5783a1afd9f7148447d00434d1dced3a08aa45d8
-  fingerprint: 5783a1afd9f7148447d00434d1dced3a08aa45d8
-  sha1: cef023e07758fa29190e7e0c645ec2be972a64e5
-  dependencies:
-  - golang-1.11-linux
 - name: credhub
   version: 53f49128e9ce6668f6ade7397af749c62acb7fa9
   fingerprint: 53f49128e9ce6668f6ade7397af749c62acb7fa9
   sha1: bd598ac64ab4c101dd5d5e8bd236f9bf5021ee9c
   dependencies:
   - openjdk_1.8.0
-- name: golang-1.11-linux
-  version: bb9ab510b4b82a163137540402017207b9fc7e06
-  fingerprint: bb9ab510b4b82a163137540402017207b9fc7e06
-  sha1: f76df378af8cfd97e8fd60cdbc5b00ee952d5caf
-  dependencies: []
 - name: lunaclient
   version: b922e045db5246ec742f0c4d1496844942d6167a
   fingerprint: b922e045db5246ec742f0c4d1496844942d6167a

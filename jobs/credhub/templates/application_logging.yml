@@ -1,0 +1,2 @@
+logging:
+  config: /var/vcap/jobs/credhub/config/log4j2.properties

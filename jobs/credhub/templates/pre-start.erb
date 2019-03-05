@@ -5,8 +5,6 @@ set -euo pipefail
 <% using_hsm = p('credhub.encryption.providers').any? { |provider| provider['type'] == "hsm" } %>
 <% port = p('credhub.port') %>
 
-cat /var/vcap/jobs/credhub/config/config.json | /var/vcap/packages/configurator/bin/configurator/configurator > /var/vcap/jobs/credhub/config/application.yml
-
 <%
   begin
     p('credhub.tls.certificate')
@@ -33,7 +31,7 @@ fail_unless_credhub_port_is_open
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 
 chown -R vcap /var/vcap/jobs/credhub/config
-chmod 600 /var/vcap/jobs/credhub/config/*
+chmod -R g-rwx,o-rwx /var/vcap/jobs/credhub/config/*
 
 /var/vcap/jobs/credhub/bin/init_key_stores.sh
 

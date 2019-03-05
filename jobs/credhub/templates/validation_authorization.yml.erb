@@ -1,0 +1,11 @@
+<%=
+
+  authorization = p('credhub.authorization')
+  acls_enabled = authorization['acls']['enabled']
+  permissions = authorization['permissions'].to_a
+
+  if acls_enabled == true && permissions.length == 0
+    raise 'When ACLs are enabled you must provide at least one permission so that some actor can access CredHub. Please update your manifest to proceed.'
+  end
+
+%>

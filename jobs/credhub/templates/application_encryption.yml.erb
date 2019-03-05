@@ -1,0 +1,84 @@
+<%=
+  def blank?(value)
+    value.nil? || value.empty?
+  end
+
+  properties = {
+    'encryption' => {
+      'key_creation_enabled' => spec.bootstrap,
+      'providers' => []
+    }
+  }
+
+  p('credhub.encryption.providers').each do |provider|
+    keys_for_provider = p('credhub.encryption.keys').flatten.select do |key|
+      key['provider_name'] == provider['name']
+    end
+
+    keys = keys_for_provider.map do |key|
+      new_key = {}
+
+      if key['active']
+        new_key['active'] = true
+      end
+
+      case(provider['type'])
+      when 'internal'
+        if blank?(key['key_properties']['encryption_password'])
+          raise '`internal` providers require `encryption_password`'
+        end
+
+        new_key['encryption_password'] = key['key_properties']['encryption_password']
+      when 'kms-plugin'
+        if blank?(key['key_properties']['encryption_key_name'])
+          raise '`kms-plugin` providers require `encryption_key_name`'
+        end
+
+        new_key['encryption_key_name'] = key['key_properties']['encryption_key_name']
+      when 'hsm'
+        if blank?(key['key_properties']['encryption_key_name'])
+          raise '`hsm` providers require `encryption_key_name`'
+        end
+
+        new_key['encryption_key_name'] = key['key_properties']['encryption_key_name']
+      end
+
+      new_key
+    end
+
+    case(provider['type'])
+    when 'kms-plugin'
+      if blank?(provider['connection_properties']['endpoint'])
+        raise '`kms-plugin` providers require `endpoint`'
+      end
+
+    when 'hsm'
+      if blank?(provider['connection_properties']['partition'])
+        raise '`hsm` providers require `connection_properties.partition`'
+      end
+      if blank?(provider['connection_properties']['partition_password'])
+        raise '`hsm` providers require `connection_properties.partition_password`'
+      end
+      if blank?(provider['connection_properties']['client_certificate'])
+        raise '`hsm` providers require `connection_properties.client_certificate`'
+      end
+      if blank?(provider['connection_properties']['client_key'])
+        raise '`hsm` providers require `connection_properties.client_key`'
+      end
+    end
+
+    new_provider = {
+      'provider_name' => provider['name'],
+      'provider_type' => provider['type'],
+      'keys' => keys,
+    }
+
+    if !provider['connection_properties'].nil?
+      new_provider['configuration'] = provider['connection_properties']
+    end
+
+    properties['encryption']['providers'] << new_provider
+  end
+
+  properties.to_yaml
+%>

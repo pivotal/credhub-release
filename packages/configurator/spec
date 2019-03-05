@@ -1,6 +1,0 @@
----
-name: configurator
-dependencies:
-- golang-1.11-linux
-files:
-- configurator/**/*

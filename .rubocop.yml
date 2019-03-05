@@ -1,0 +1,7 @@
+Metrics/BlockLength:
+  Exclude:
+    - ./**/*.rb
+
+Metrics/LineLength:
+  Exclude:
+    - ./**/*.rb

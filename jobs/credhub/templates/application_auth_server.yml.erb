@@ -1,0 +1,17 @@
+<%=
+  properties = {}
+
+  if p('credhub.authentication.uaa.enabled')
+    properties['auth-server'] = {
+      'url' => p('credhub.authentication.uaa.url'),
+      'trust_store' => '/var/vcap/jobs/credhub/config/trust_store.jks',
+      'trust_store_password' => 'TRUST_STORE_PASSWORD_PLACEHOLDER',
+    }
+
+    if_p('credhub.authentication.uaa.internal_url') do |internal_url|
+      properties['auth-server']['internal_url'] = p('credhub.authentication.uaa.internal_url')
+    end
+  end
+
+  properties.to_yaml
+%>
