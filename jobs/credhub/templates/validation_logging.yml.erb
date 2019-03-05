@@ -1,0 +1,9 @@
+<%=
+
+  log_level = p('credhub.log_level')
+
+  if !['none', 'error', 'warn', 'info', 'debug'].include? log_level
+    raise 'Invalid log_level. Valid types include: none, error, warn, info, or debug. Please update your manifest to proceed.'
+  end
+
+%>

@@ -1,0 +1,17 @@
+<%=
+  properties = {
+    'security' => {
+      'authorization' => {
+        'acls' => {
+          'enabled' => p('credhub.authorization.acls.enabled'),
+        },
+        'permissions' => p('credhub.authorization.permissions'),
+      },
+      'oauth2' => {
+        'enabled' => p('credhub.authentication.uaa.enabled'),
+      }
+    }
+  }
+
+  properties.to_yaml
+%>

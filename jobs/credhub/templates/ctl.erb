@@ -1,5 +1,6 @@
 #!/bin/bash
 
+<<<<<<< HEAD
 trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
 <%
 java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
@@ -21,6 +22,9 @@ end
 
 java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
 %>
+=======
+declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+>>>>>>> c71e0ef... Extract parts of configurator into separate application yml files
 
 
 <% if p("credhub.authentication.uaa.enabled") %>
@@ -39,20 +43,21 @@ uaa_health_check() {
 <% end %>
 
 
-RUN_DIR=/var/vcap/sys/run/credhub
-LOG_DIR=/var/vcap/sys/log/credhub
-TMP_DIR=/var/vcap/jobs/credhub/tmp
-PIDFILE=${RUN_DIR}/pid
-RUNAS=vcap
-MAX_HEAP_SIZE=<%= p('credhub.max_heap_size') %>
+declare -r run_dir=/var/vcap/sys/run/credhub
+declare -r log_dir=/var/vcap/sys/log/credhub
+declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
+declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
+declare -r pidfile=${run_dir}/pid
+declare -r runas=vcap
+declare -r max_heap_size=<%= p('credhub.max_heap_size') %>
 
 mkdir -p /var/vcap/jobs/credhub/tmp
 
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
-exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout)   | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${LOG_DIR}/credhub.stdout.log)
-exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${LOG_DIR}/credhub.stderr.log)
+exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout)   | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${log_dir}/credhub.stdout.log)
+exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${log_dir}/credhub.stderr.log)
 
 case $1 in
 
@@ -60,18 +65,40 @@ case $1 in
     <% if p("credhub.authentication.uaa.enabled") %>
     uaa_health_check
     <% end %>
-    mkdir -p $RUN_DIR $LOG_DIR
-    chown -R $RUNAS:$RUNAS $RUN_DIR $LOG_DIR $TMP_DIR
+    mkdir -p $run_dir $log_dir
+    chown -R $runas:$runas $run_dir $log_dir $tmp_dir
 
-    echo $$ > $PIDFILE
+    echo $$ > $pidfile
 
+    declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"
     cd /var/vcap/packages/credhub
-    <%= java_command %>
+
+    <%=
+    java_command = "\texec chpst -u $runas:$runas java \\
+    -Xmx${max_heap_size}m \\
+    -Dspring.profiles.active=prod \\
+    -Dspring.config.additional-location=$application_configs \\
+    -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+    -Djava.security.egd=file:/dev/urandom \\
+    -Djna.boot.library.path=/var/vcap/packages/credhub/ \\
+    -Djava.io.tmpdir=$tmp_dir \\
+    -Djdk.tls.ephemeralDHKeySize=4096 \\
+    -Dfile.encoding=UTF-8 \\
+    -Djdk.tls.namedGroups=\"secp384r1\" \\"
+
+    if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
+      java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
+      -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
+    end
+
+    java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
+    java_command
+    %>
     ;;
 
   stop)
-    kill -9 `cat $PIDFILE`
-    rm -f $PIDFILE
+    kill -9 `cat $pidfile`
+    rm -f $pidfile
 
     ;;
 

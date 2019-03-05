@@ -1,0 +1,68 @@
+<%=
+  properties = {
+    'spring' => {
+      'flyway' => {
+        'enabled' => spec.bootstrap,
+        'locations' => ['classpath:/db/migration/common']
+      },
+      'jpa' => {
+        'hibernate' => {
+          'ddl_auto' => 'validate'
+        }
+      }
+    }
+  }
+
+  case p('credhub.data_storage.type')
+  when 'in-memory'
+    properties['spring']['flyway']['locations'] << 'classpath:/db/migration/h2'
+  when 'mysql'
+    host = p('credhub.data_storage.host')
+    port = p('credhub.data_storage.port')
+    database = p('credhub.data_storage.database')
+    username = p('credhub.data_storage.username')
+    password = p('credhub.data_storage.password')
+
+    properties['spring']['flyway']['locations'] << 'classpath:/db/migration/mysql'
+    properties['spring']['datasource'] = {
+      'username' => username,
+      'password' => password,
+      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true",
+    }
+
+    if p('credhub.data_storage.require_tls')
+      properties['spring']['datasource']['url'] <<
+      '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' +
+        '&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER' +
+        '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
+
+      if !p('credhub.data_storage.hostname_verification.enabled')
+        properties['spring']['datasource']['url'] << '&disableSslHostnameVerification=true'
+      end
+    end
+  when 'postgres'
+    host = p('credhub.data_storage.host')
+    port = p('credhub.data_storage.port')
+    database = p('credhub.data_storage.database')
+    username = p('credhub.data_storage.username')
+    password = p('credhub.data_storage.password')
+
+    properties['spring']['flyway']['locations'] << 'classpath:/db/migration/postgres'
+    properties['spring']['datasource'] = {
+      'username' => username,
+      'password' => password,
+      'url' => "jdbc:postgresql://#{host}:#{port}/#{database}?autoReconnect=true",
+    }
+
+    if p('credhub.data_storage.require_tls')
+      properties['spring']['datasource']['url'] <<
+      '&ssl=true' +
+      '&sslmode=require'
+    end
+  else
+    raise "data_storage.type must be 'in-memory', 'mysql', or 'postgres'"
+  end
+
+
+  properties.to_yaml
+%>

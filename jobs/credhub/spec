@@ -5,6 +5,7 @@ templates:
   pre-start.erb: bin/pre-start
   post-start.erb: bin/post-start
   drain.erb: bin/drain
+
   # bbr scripts
   pre-backup-lock.sh: bin/bbr/pre-backup-lock
   post-backup-unlock.sh: bin/bbr/post-backup-unlock
@@ -13,19 +14,33 @@ templates:
   post-restore-unlock.sh: bin/bbr/post-restore-unlock
   wait-for-stop.sh.erb: bin/bbr/wait-for-stop
   identify-postgres-server-version.erb: bin/bbr/identify-postgres-server-version
+
   # Other scripts
   ctl.erb: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh
   configure_hsm.erb: bin/configure_hsm.sh
   #Consul scripts
   dns_health_check.erb: bin/dns_health_check
+
   # Config
-  validation.yml.erb: config/validation.yml
+  validation_authorization.yml.erb: config/validation_authorization.yml
+  validation_data_storage.yml.erb: config/validation_data_storage.yml
+  validation_encryption.yml.erb: config/validation_encryption.yml
+  validation_logging.yml.erb: config/validation_logging.yml
+  validation_uaa.yml.erb: config/validation_uaa.yml
   log4j2.properties.erb: config/log4j2.properties
   encryption.conf.erb: config/encryption.conf
-  config.json.erb: config/config.json
+
+  application_auth_server.yml.erb: config/application/auth-server.yml
+  application_encryption.yml.erb: config/application/encryption.yml
+  application_logging.yml: config/application/logging.yml
+  application_security.yml.erb: config/application/security.yml
+  application_server.yml.erb: config/application/server.yml
+  application_spring.yml.erb: config/application/spring.yml
+
   # CAs
   database_ca.pem.erb: config/database_ca.pem
+
   # BPM
   bpm.yml.erb: config/bpm.yml
   credhub.erb: bin/credhub
@@ -35,7 +50,6 @@ packages:
 - openjdk_1.8.0
 - lunaclient
 - credhub
-- configurator
 
 provides:
 - name: credhub
@@ -209,6 +223,7 @@ properties:
     default: true
   credhub.authorization.permissions:
     description: "Giving permission for a path to an actor"
+    default: []
     example: |
       - path: /your/credential
         actors:
@@ -231,8 +246,9 @@ properties:
     description: "Maximum memory heap size in MB for CredHub JVM"
     default: 1024
 
+  # CredHubDeprecatedStartingAfter(2.1.2)
   credhub.java7_tls_ciphers_enabled:
-    description: "Enables CBC TLS cipher suites to enable TLS communication with Java 7 clients"
+    description: "Enables CBC TLS cipher suites to enable TLS communication with Java 7 clients. Deprecated, as of CredHub 2.x.y. Java 7 was decommissioned by Oracle in 2015."
     default: false
 
   # BPM

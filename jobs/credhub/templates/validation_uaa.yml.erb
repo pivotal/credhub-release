@@ -1,0 +1,15 @@
+<%=
+
+  def key_exists(key)
+    uaa = p('credhub.authentication.uaa')
+
+    return !(uaa.key?(key) == false || uaa[key] == '' || uaa[key] == nil)
+  end
+
+  uaa = p('credhub.authentication.uaa')
+
+  if uaa['enabled'] == true && (!key_exists('url') || !key_exists('ca_certs'))
+    raise 'When UAA is enabled you must provide a URL and CA Certs. Please update your manifest to proceed.'
+  end
+
+%>

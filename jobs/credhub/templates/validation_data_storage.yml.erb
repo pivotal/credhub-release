@@ -1,0 +1,49 @@
+<%=
+  data_storage = p('credhub.data_storage')
+
+  def is_boolean(x)
+    !!x == x
+  end
+
+  def key_exists(key)
+    data_storage = p('credhub.data_storage')
+
+    return !(data_storage.key?(key) == false || data_storage[key] == '' || data_storage[key] == nil)
+  end
+
+  def check_for_key(error_array, key)
+    data_storage = p('credhub.data_storage')
+
+    if !key_exists(key)
+      error_array.push(key)
+    end
+
+    return error_array
+  end
+
+  if data_storage['type'] == 'postgres' || data_storage['type'] == 'mysql'
+    if key_exists('require_tls')
+      if !is_boolean(data_storage['require_tls'])
+        raise 'credhub.data_storage.require_tls must be set to `true` or `false`.'
+      end
+
+      if data_storage['require_tls'] == true && !key_exists('tls_ca')
+        raise 'credhub.data_storage requires the tls_ca to be set when require_tls is set to true'
+      end
+    end
+
+    errors = []
+    required_keys = ["port", "database", "host", "username", "password"]
+
+    required_keys.each do |key|
+      errors = check_for_key(errors, key)
+    end
+
+    if errors.length > 0
+      raise 'credhub.data_storage requires the following keys to be set when type is `mysql` or `postgres`: ' + errors.join(', ')
+    end
+
+  elsif data_storage['type'] != 'in-memory'
+    raise 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
+  end
+%>
