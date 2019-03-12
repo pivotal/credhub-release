@@ -10,6 +10,12 @@ function go_to_project_root_directory() {
     cd "$script_dir/.."
 }
 
+function install_gems() {
+    pushd spec >/dev/null
+        bundle
+    popd >/dev/null
+}
+
 function run_tests() {
     rspec spec
 }
@@ -18,6 +24,7 @@ function main() {
     set_bash_error_handling
     go_to_project_root_directory
 
+    install_gems
     run_tests
 }
 
