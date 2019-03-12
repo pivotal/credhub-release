@@ -14,6 +14,12 @@ function lint_scripts() {
     shellcheck scripts/*.sh
 }
 
+function install_gems() {
+    pushd spec >/dev/null
+        bundle
+    popd >/dev/null
+}
+
 function lint_ruby() {
     rubocop spec
 }
@@ -23,6 +29,7 @@ function main() {
     go_to_project_root_directory
 
     lint_scripts
+    install_gems
     lint_ruby
 }
 
