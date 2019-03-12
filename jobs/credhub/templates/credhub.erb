@@ -1,6 +1,7 @@
 #!/bin/bash
 
 declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
 declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"
 cd /var/vcap/packages/credhub
 
