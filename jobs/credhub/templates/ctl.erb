@@ -1,6 +1,5 @@
 #!/bin/bash
 
-<<<<<<< HEAD
 trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
 <%
 java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
@@ -22,10 +21,8 @@ end
 
 java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
 %>
-=======
-declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
->>>>>>> c71e0ef... Extract parts of configurator into separate application yml files
 
+declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
 
 <% if p("credhub.authentication.uaa.enabled") %>
 uaa_health_check() {
