@@ -32,21 +32,19 @@ describe 'credhub job' do
             }
           }
         ]
-        spec = { 'credhub' => { 'encryption' => {'providers' => encryption_providers } } }
+        spec = { 'credhub' => { 'encryption' => { 'providers' => encryption_providers } } }
         rendered_template = template.render(spec)
 
-        additional_volumes = YAML.load(rendered_template)['processes'][0]['additional_volumes']
+        additional_volumes = YAML.safe_load(rendered_template)['processes'][0]['additional_volumes']
         expect(additional_volumes).to include(
           {
             'path' => '/path/to/first',
             'writable' => true,
             'allow_executions' => true
           },
-          {
-            'path' => '/path/to/second',
-            'writable' => true,
-            'allow_executions' => true
-          }
+          'path' => '/path/to/second',
+          'writable' => true,
+          'allow_executions' => true
         )
       end
     end
