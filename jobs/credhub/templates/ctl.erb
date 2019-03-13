@@ -55,7 +55,6 @@ case $1 in
     -Dspring.config.additional-location=$application_configs \\
     -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
     -Djava.security.egd=file:/dev/urandom \\
-    -Djna.boot.library.path=/var/vcap/packages/credhub/ \\
     -Djava.io.tmpdir=$tmp_dir \\
     -Djdk.tls.ephemeralDHKeySize=4096 \\
     -Dfile.encoding=UTF-8 \\

@@ -1,5 +1,3 @@
 set -ex
 
-unzip -j ${BOSH_COMPILE_TARGET}/credhub/credhub.jar -d .
-
 cp ${BOSH_COMPILE_TARGET}/credhub/credhub.jar ${BOSH_INSTALL_TARGET}
