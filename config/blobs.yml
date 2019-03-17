@@ -6,3 +6,7 @@ openjdk_1.8.0/openjdk-1.8.0_192.tar.gz:
   size: 45305426
   object_id: c2c75d99-be9f-43a2-794a-2e2c1c994fba
   sha: dae286f0e11c1a401e2c84a371f5cc2c6e2637ef
+openjdk_1.8/openjdk-1.8.0_202.tar.gz:
+  size: 103343856
+  object_id: c1cb6faf-f0fb-4998-5ef7-c70cb0dd5cad
+  sha: 8ae76b80ffd1be54f43cf3490e6e1a871fc88e8e
