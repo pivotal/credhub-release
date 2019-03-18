@@ -41,8 +41,21 @@
       end
     end
   when 'postgres'
-    host = p('credhub.data_storage.host')
-    port = p('credhub.data_storage.port')
+
+    host = p('credhub.data_storage.host', '')
+    port = p('credhub.data_storage.port', 0)
+    if host.empty?
+
+      if_link('postgres') do |db|
+        host = db.instances.first.address
+        port = db.p('databases.port')
+      end
+
+      if host == ''
+        raise 'postgres `host` must be set'
+      end
+    end
+
     database = p('credhub.data_storage.database')
     username = p('credhub.data_storage.username')
     password = p('credhub.data_storage.password')
