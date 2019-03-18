@@ -7,13 +7,13 @@ describe 'credhub job' do
   let(:release) { Bosh::Template::Test::ReleaseDir.new(File.join(File.dirname(__FILE__), '..', '..')) }
   let(:job) { release.job('credhub') }
 
-  let(:postgres_link_instance) { Bosh::Template::Test::InstanceSpec.new(name:'link_postgres_instance_name', address: 'some-postgres-host' ) }
+  let(:postgres_link_instance) { Bosh::Template::Test::InstanceSpec.new(name: 'link_postgres_instance_name', address: 'some-postgres-host') }
   let(:postgres_link_properties) do
     {
-      'databases' => { 'port' => 5432, 'address' => 'some-postgres-host' },
+      'databases' => { 'port' => 5432, 'address' => 'some-postgres-host' }
     }
   end
-  let(:postgres_link) { Bosh::Template::Test::Link.new(name:'postgres', instances: [postgres_link_instance], properties: postgres_link_properties) }
+  let(:postgres_link) { Bosh::Template::Test::Link.new(name: 'postgres', instances: [postgres_link_instance], properties: postgres_link_properties) }
 
   describe 'config/application/spring.yml template' do
     let(:template) { job.template('config/application/spring.yml') }
@@ -159,8 +159,8 @@ describe 'credhub job' do
 
         it 'prefers postgres configuration properties over using properties from postgres link' do
           postgres_manifest = Marshal.load(Marshal.dump(default_postgres_manifest))
-          postgres_manifest["credhub"]["data_storage"]["host"] = "special-postgres-host"
-          postgres_manifest["credhub"]["data_storage"]["port"] = 7777
+          postgres_manifest['credhub']['data_storage']['host'] = 'special-postgres-host'
+          postgres_manifest['credhub']['data_storage']['port'] = 7777
           rendered_template = YAML.safe_load(template.render(postgres_manifest, consumes: [postgres_link]))
 
           expected_connection_url =
@@ -182,8 +182,8 @@ describe 'credhub job' do
 
         it 'use postgres configuration properties when postgres link does not exist' do
           postgres_manifest = Marshal.load(Marshal.dump(default_postgres_manifest))
-          postgres_manifest["credhub"]["data_storage"]["host"] = "special-postgres-host"
-          postgres_manifest["credhub"]["data_storage"]["port"] = 7777
+          postgres_manifest['credhub']['data_storage']['host'] = 'special-postgres-host'
+          postgres_manifest['credhub']['data_storage']['port'] = 7777
           rendered_template = YAML.safe_load(template.render(postgres_manifest))
 
           expected_connection_url =
@@ -220,14 +220,13 @@ describe 'credhub job' do
       end
       context 'when postgres is not configured correctly' do
         it 'should fail when postgres configuration properties do not include host and when postgres link does not exist' do
-
           postgres_manifest = Marshal.load(Marshal.dump(default_postgres_manifest))
-          postgres_manifest["credhub"]["data_storage"] = {
+          postgres_manifest['credhub']['data_storage'] = {
             'type' => 'postgres',
             'port' => 5432,
             'database' => 'some-database',
             'username' => 'some-username',
-            'password' => 'some-password',
+            'password' => 'some-password'
           }
           expect { template.render(postgres_manifest) }.to raise_error('postgres `host` must be set')
         end
