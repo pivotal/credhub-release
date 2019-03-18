@@ -7,6 +7,14 @@ describe 'credhub job' do
   let(:release) { Bosh::Template::Test::ReleaseDir.new(File.join(File.dirname(__FILE__), '..', '..')) }
   let(:job) { release.job('credhub') }
 
+  let(:postgres_link_instance) { Bosh::Template::Test::InstanceSpec.new(name:'link_postgres_instance_name', address: 'some-postgres-host' ) }
+  let(:postgres_link_properties) do
+    {
+      'databases' => { 'port' => 5432, 'address' => 'some-postgres-host' },
+    }
+  end
+  let(:postgres_link) { Bosh::Template::Test::Link.new(name:'postgres', instances: [postgres_link_instance], properties: postgres_link_properties) }
+
   describe 'config/application/spring.yml template' do
     let(:template) { job.template('config/application/spring.yml') }
     let(:default_in_memory_manifest) do
@@ -37,9 +45,7 @@ describe 'credhub job' do
         'credhub' => {
           'data_storage' => {
             'type' => 'postgres',
-            'port' => 5432,
             'database' => 'some-database',
-            'host' => 'some-host',
             'username' => 'some-username',
             'password' => 'some-password'
           }
@@ -132,10 +138,56 @@ describe 'credhub job' do
     context 'when the data storage type is postgres' do
       context 'default configuration' do
         it 'uses postgres properties and migrations with TLS enabled' do
-          rendered_template = YAML.safe_load(template.render(default_postgres_manifest))
+          rendered_template = YAML.safe_load(template.render(default_postgres_manifest, consumes: [postgres_link]))
 
           expected_connection_url =
-            'jdbc:postgresql://some-host:5432/some-database' \
+            'jdbc:postgresql://some-postgres-host:5432/some-database' \
+            '?autoReconnect=true' \
+            '&ssl=true' \
+            '&sslmode=require'
+
+          expect(rendered_template['spring']['datasource']).to eq(
+            'username' => 'some-username',
+            'password' => 'some-password',
+            'url' => expected_connection_url
+          )
+          expect(rendered_template['spring']['flyway']['locations']).to eq([
+                                                                             'classpath:/db/migration/common',
+                                                                             'classpath:/db/migration/postgres'
+                                                                           ])
+        end
+
+        it 'prefers postgres configuration properties over using properties from postgres link' do
+          postgres_manifest = Marshal.load(Marshal.dump(default_postgres_manifest))
+          postgres_manifest["credhub"]["data_storage"]["host"] = "special-postgres-host"
+          postgres_manifest["credhub"]["data_storage"]["port"] = 7777
+          rendered_template = YAML.safe_load(template.render(postgres_manifest, consumes: [postgres_link]))
+
+          expected_connection_url =
+            'jdbc:postgresql://special-postgres-host:7777/some-database' \
+            '?autoReconnect=true' \
+            '&ssl=true' \
+            '&sslmode=require'
+
+          expect(rendered_template['spring']['datasource']).to eq(
+            'username' => 'some-username',
+            'password' => 'some-password',
+            'url' => expected_connection_url
+          )
+          expect(rendered_template['spring']['flyway']['locations']).to eq([
+                                                                             'classpath:/db/migration/common',
+                                                                             'classpath:/db/migration/postgres'
+                                                                           ])
+        end
+
+        it 'use postgres configuration properties when postgres link does not exist' do
+          postgres_manifest = Marshal.load(Marshal.dump(default_postgres_manifest))
+          postgres_manifest["credhub"]["data_storage"]["host"] = "special-postgres-host"
+          postgres_manifest["credhub"]["data_storage"]["port"] = 7777
+          rendered_template = YAML.safe_load(template.render(postgres_manifest))
+
+          expected_connection_url =
+            'jdbc:postgresql://special-postgres-host:7777/some-database' \
             '?autoReconnect=true' \
             '&ssl=true' \
             '&sslmode=require'
@@ -157,13 +209,27 @@ describe 'credhub job' do
           manifest = default_postgres_manifest.tap do |m|
             m['credhub']['data_storage']['require_tls'] = false
           end
-          rendered_template = YAML.safe_load(template.render(manifest))
+          rendered_template = YAML.safe_load(template.render(manifest, consumes: [postgres_link]))
 
           expected_connection_url =
-            'jdbc:postgresql://some-host:5432/some-database' \
+            'jdbc:postgresql://some-postgres-host:5432/some-database' \
             '?autoReconnect=true'
 
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
+        end
+      end
+      context 'when postgres is not configured correctly' do
+        it 'should fail when postgres configuration properties do not include host and when postgres link does not exist' do
+
+          postgres_manifest = Marshal.load(Marshal.dump(default_postgres_manifest))
+          postgres_manifest["credhub"]["data_storage"] = {
+            'type' => 'postgres',
+            'port' => 5432,
+            'database' => 'some-database',
+            'username' => 'some-username',
+            'password' => 'some-password',
+          }
+          expect { template.render(postgres_manifest) }.to raise_error('postgres `host` must be set')
         end
       end
     end
