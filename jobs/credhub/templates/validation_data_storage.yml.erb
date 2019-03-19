@@ -8,7 +8,7 @@
   def key_exists(key)
     data_storage = p('credhub.data_storage')
 
-    if key == 'host'
+    if data_storage['type'] == 'postgres' && key == 'host'
       if_link('postgres') do |db|
         host = db.instances.first.address
 
@@ -16,7 +16,7 @@
       end
     end
 
-    if key == 'port'
+    if data_storage['type'] == 'postgres' && key == 'port'
       if_link('postgres') do |db|
         port = db.p('databases.port')
 
