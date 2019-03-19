@@ -7,7 +7,6 @@
   config = {
     username: props.p("credhub.data_storage.username"),
     password: props.p("credhub.data_storage.password"),
-    port: props.p("credhub.data_storage.port"),
     database: props.p("credhub.data_storage.database"),
     adapter: props.p("credhub.data_storage.type"),
   }
@@ -17,6 +16,14 @@
   end.else do
     if_link('database') do |database_link|
       config[:host] = database_link.instances[0].address
+    end
+  end
+
+  props.if_p("credhub.data_storage.port") do |port|
+    config[:port] = port
+  end.else do
+    if_link('database') do |database_link|
+      config[:port] = database_link.p('databases.port')
     end
   end
 

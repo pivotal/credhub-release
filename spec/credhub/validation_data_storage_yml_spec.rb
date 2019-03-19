@@ -73,5 +73,32 @@ describe 'credhub job' do
         'credhub.data_storage requires the tls_ca to be set when require_tls is set to true'
       )
     end
+
+    it 'does not fail when host and port are not provided and link exists' do
+      manifest = {
+        'credhub' => {
+          'data_storage' => {
+            'type' => 'postgres',
+            'database' => 'some-database',
+            'username' => 'some-username',
+            'password' => 'some-password',
+            'require_tls' => false
+          }
+        }
+      }
+
+      links = [
+        Bosh::Template::Test::Link.new(
+          name: 'postgres',
+          instances: [
+            Bosh::Template::Test::LinkInstance.new(address: 'some-address')
+          ],
+          properties: {
+            'databases' => { 'port' => 7777 }
+          }
+        )
+      ]
+      template.render(manifest, consumes: links)
+    end
   end
 end

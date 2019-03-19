@@ -34,6 +34,7 @@ describe 'bbr-credhubdb job' do
       }
     end
     let(:data_storage_without_host) { default_data_storage.tap { |d| d.delete('host') } }
+    let(:data_storage_without_port) { default_data_storage.tap { |d| d.delete('port') } }
     let(:data_storage_without_tls) do
       default_data_storage.tap do |d|
         d['require_tls'] = false
@@ -59,6 +60,48 @@ describe 'bbr-credhubdb job' do
             }
           }
         )
+      end
+
+      context 'port' do
+        context 'when the `database` link is present' do
+          it 'uses the port of the `database` link' do
+            manifest = { 'credhub' => { 'data_storage' => data_storage_without_port } }
+            links = [
+              Bosh::Template::Test::Link.new(
+                name: 'database',
+                instances: [
+                  Bosh::Template::Test::LinkInstance.new(address: 'some-address')
+                ],
+                properties: {
+                  'databases' => { 'port' => 7777 }
+                }
+              )
+            ]
+            rendered_template = template.render(manifest, consumes: links)
+
+            expect(JSON.parse(rendered_template)['port']).to eq(7777)
+          end
+        end
+
+        context 'when the `database` link and the config are present' do
+          it 'uses the config' do
+            manifest = { 'credhub' => { 'data_storage' => default_data_storage } }
+            links = [
+              Bosh::Template::Test::Link.new(
+                name: 'database',
+                instances: [
+                  Bosh::Template::Test::LinkInstance.new(address: 'some-address')
+                ],
+                properties: {
+                  'databases' => { 'port' => 7777 }
+                }
+              )
+            ]
+            rendered_template = template.render(manifest, consumes: links)
+
+            expect(JSON.parse(rendered_template)['port']).to eq('some-port')
+          end
+        end
       end
 
       context 'when a host is not provided' do
