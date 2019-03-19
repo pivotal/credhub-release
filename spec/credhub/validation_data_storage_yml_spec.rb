@@ -74,7 +74,7 @@ describe 'credhub job' do
       )
     end
 
-    it 'does not fail when host and port are not provided and link exists' do
+    it 'does not fail when host and port are not provided and link exists and database type is postgres' do
       manifest = {
         'credhub' => {
           'data_storage' => {
@@ -95,6 +95,35 @@ describe 'credhub job' do
           ],
           properties: {
             'databases' => { 'port' => 7777 }
+          }
+        )
+      ]
+      template.render(manifest, consumes: links)
+    end
+
+    it 'does not fail when host and port are not provided and link exists and database type is mysql' do
+      manifest = {
+        'credhub' => {
+          'data_storage' => {
+            'type' => 'mysql',
+            'host' => 'some-host',
+            'port' => 3306,
+            'database' => 'some-database',
+            'username' => 'some-username',
+            'password' => 'some-password',
+            'require_tls' => false
+          }
+        }
+      }
+
+      links = [
+        Bosh::Template::Test::Link.new(
+          name: 'postgres',
+          instances: [
+            #Bosh::Template::Test::LinkInstance.new(address: 'some-address')
+          ],
+          properties: {
+            'databases' => { }
           }
         )
       ]
