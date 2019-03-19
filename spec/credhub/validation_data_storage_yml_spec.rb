@@ -120,10 +120,10 @@ describe 'credhub job' do
         Bosh::Template::Test::Link.new(
           name: 'postgres',
           instances: [
-            #Bosh::Template::Test::LinkInstance.new(address: 'some-address')
+            # Bosh::Template::Test::LinkInstance.new(address: 'some-address')
           ],
           properties: {
-            'databases' => { }
+            'databases' => {}
           }
         )
       ]
