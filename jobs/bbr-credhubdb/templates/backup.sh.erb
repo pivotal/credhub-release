@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-<% if p('release_level_backup') && !link('credhub_db').instances.empty? %>
+<% if p('release_level_backup') %>
 set -ex
 
 JOB_PATH="/var/vcap/jobs/bbr-credhubdb"
