@@ -1,34 +1,5 @@
 #!/usr/bin/env bash
-<%
-  def running_in_bosh_credhub()
-    link_exists = respond_to? :link
-    return !link_exists
-  end
-
-  def running_in_runtime_credhub()
-    if_link('credhub_db') do |credhub_db|
-      if credhub_db.instances.count > 0
-        return true
-      end
-    end
-
-    return false
-  end
-
-  def credhub_db_exists()
-    if running_in_bosh_credhub()
-      return true
-    end
-
-    if running_in_runtime_credhub()
-      return true
-    end
-
-    return false
-  end
-
-  if p('release_level_backup') && credhub_db_exists()
-%>
+<% if p('release_level_backup') %>
 set -ex
 
 JOB_PATH="/var/vcap/jobs/bbr-credhubdb"
