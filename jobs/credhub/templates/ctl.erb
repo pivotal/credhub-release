@@ -37,9 +37,7 @@ exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | grep -E
 case $1 in
 
   start)
-    <% if p("credhub.authentication.uaa.enabled") %>
-    uaa_health_check
-    <% end %>
+    /var/vcap/jobs/credhub/bin/wait_for_uaa
     mkdir -p $run_dir $log_dir
     chown -R $runas:$runas $run_dir $log_dir $tmp_dir
 

@@ -21,6 +21,7 @@ templates:
   configure_hsm.erb: bin/configure_hsm.sh
   #Consul scripts
   dns_health_check.erb: bin/dns_health_check
+  wait_for_uaa.erb: bin/wait_for_uaa
 
   # Config
   validation_authorization.yml.erb: config/validation_authorization.yml
