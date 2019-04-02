@@ -1,0 +1,17 @@
+#!/usr/bin/env bash 
+<%
+  def running_in_bosh_credhub()
+    link_exists = respond_to? :link
+    return !link_exists
+  end
+
+  if p("credhub.authentication.uaa.enabled") && !running_in_bosh_credhub()
+%>
+  echo "---
+  backup_should_be_locked_before:
+  - job_name: uaa
+    release: uaa
+  restore_should_be_locked_before:
+  - job_name: uaa
+    release: uaa"
+<% end %>
