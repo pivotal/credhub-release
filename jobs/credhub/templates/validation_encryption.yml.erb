@@ -59,10 +59,6 @@
       raise '`provider_name` provided for key is not in list of providers'
     end
 
-    if k.key?('key_properties') && k['key_properties'].key?('encryption_password') && k['key_properties'].key?('encryption_key_name')
-      raise 'credhub.encryption.keys[].key_properties must include `encryption_password` or `encryption_key_name`.'
-    end
-
     if k['key_properties'].key?('encryption_password')
       if k['key_properties']['encryption_password'].nil? || k['key_properties']['encryption_password'].empty?
         raise 'credhub.encryption.keys[].key_properties.encryption_password is not valid (must not be empty if provided).'
