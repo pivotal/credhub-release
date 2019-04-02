@@ -225,7 +225,7 @@ describe 'credhub job' do
       expect { template.render(manifest) }.to raise_error('`provider_name` provided for key is not in list of providers')
     end
 
-    it 'checks that either encryption_key_name or encryption_password is set' do
+    it 'allows both encryption_key_name and encryption_password to be set' do
       manifest = {
         'credhub' => {
           'encryption' => {
@@ -239,8 +239,8 @@ describe 'credhub job' do
               {
                 'provider_name' => 'some-provider',
                 'key_properties' => {
-                  'encryption_key_name' => '',
-                  'encryption_password' => ''
+                  'encryption_key_name' => 'some-key-name',
+                  'encryption_password' => 'some-password-longer-than-20-chars'
                 },
                 'active' => true
               }
@@ -249,7 +249,7 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('credhub.encryption.keys[].key_properties must include `encryption_password` or `encryption_key_name`.')
+      expect { template.render(manifest) }.not_to raise_error
     end
 
     it 'checks that encryption_password is valid' do
