@@ -38,6 +38,7 @@ templates:
   application_logging.yml: config/application/logging.yml
   application_security.yml.erb: config/application/security.yml
   application_server.yml.erb: config/application/server.yml
+  application_conjur.yml.erb: config/application/conjur.yml
   application_spring.yml.erb: config/application/spring.yml
 
   # CAs
@@ -200,6 +201,21 @@ properties:
     default: true
   credhub.data_storage.tls_ca:
     description: "CA trusted for making TLS connections to targeted database server"
+
+  # Alternative backends
+  credhub.backends.conjur.enabled:
+    description: "Enable storing and retrieving credentials in a conjur server"
+    default: false
+  credhub.backends.conjur.base-url:
+    description: "Address of the conjur server"
+  credhub.backends.conjur.base-policy:
+    description: "Conjur policy name"
+  credhub.backends.conjur.account-name:
+    description: "Conjur account name"
+  credhub.backends.conjur.user-name:
+    description: "Conjur username"
+  credhub.backends.conjur.api-key:
+    description: "Conjur api key"
 
   # UAA Authentication
   credhub.authentication.uaa.enabled:

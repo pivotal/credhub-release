@@ -1,0 +1,15 @@
+<%=
+  if p('credhub.backends.conjur.enabled')
+    properties = {
+      'conjur' => {
+        'base-url' => p('credhub.backends.conjur.base-url'),
+        'base-policy' => p('credhub.backends.conjur.base-policy'),
+        'account-name' => p('credhub.backends.conjur.account-name'),
+        'user-name' => p('credhub.backends.conjur.user-name'),
+        'api-key' => p('credhub.backends.conjur.api-key')
+      }
+    }
+
+    properties.to_yaml
+  end
+%>
