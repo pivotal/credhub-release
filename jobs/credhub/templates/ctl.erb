@@ -47,24 +47,28 @@ case $1 in
     cd /var/vcap/packages/credhub
 
     <%=
-    java_command = "\texec chpst -u $runas:$runas java \\
-    -Xmx${max_heap_size}m \\
-    -Dspring.profiles.active=prod \\
-    -Dspring.config.additional-location=$application_configs \\
-    -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
-    -Djava.security.egd=file:/dev/urandom \\
-    -Djava.io.tmpdir=$tmp_dir \\
-    -Djdk.tls.ephemeralDHKeySize=4096 \\
-    -Dfile.encoding=UTF-8 \\
-    -Djdk.tls.namedGroups=\"secp384r1\" \\"
+      profiles = 'prod'
+      if p('credhub.backends.conjur.enabled')
+        profiles += ',conjur'
+      end
+      java_command = "\texec chpst -u $runas:$runas java \\
+      -Xmx${max_heap_size}m \\
+      -Dspring.profiles.active=#{profiles} \\
+      -Dspring.config.additional-location=$application_configs \\
+      -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+      -Djava.security.egd=file:/dev/urandom \\
+      -Djava.io.tmpdir=$tmp_dir \\
+      -Djdk.tls.ephemeralDHKeySize=4096 \\
+      -Dfile.encoding=UTF-8 \\
+      -Djdk.tls.namedGroups=\"secp384r1\" \\"
 
-    if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
-      java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
-      -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
-    end
+      if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
+        java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
+        -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
+      end
 
-    java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
-    java_command
+      java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
+      java_command
     %>
     ;;
 

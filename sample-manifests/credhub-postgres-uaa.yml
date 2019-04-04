@@ -14,7 +14,7 @@ releases:
 - name: postgres
   version: latest
 - name: uaa
-  version: latest
+  version: '69.0'
 - name: backup-and-restore-sdk
   version: latest
 - name: os-conf
