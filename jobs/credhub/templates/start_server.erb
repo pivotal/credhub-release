@@ -1,0 +1,27 @@
+declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
+declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"
+declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+
+<%=
+  profiles = 'prod'
+  if p('credhub.backends.conjur.enabled')
+    profiles += ',conjur'
+  end
+  java_command = "\tjava \\
+  \t\t-Xmx${MAX_HEAP_SIZE}m \\
+  \t\t-Dspring.profiles.active=#{profiles} \\
+  \t\t-Dspring.config.additional-location=$application_configs \\
+  \t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+  \t\t-Djava.security.egd=file:/dev/urandom \\
+  \t\t-Djava.io.tmpdir=${TMP_DIR} \\
+  \t\t-Djdk.tls.ephemeralDHKeySize=4096 \\
+  \t\t-Djdk.tls.namedGroups=\"secp384r1\" \\\n"
+
+  if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
+    java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
+  \t\t-Djavax.net.ssl.trustStorePassword=${trust_store_password} \\\n"
+  end
+
+  java_command += "\t\t-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
+  java_command
+%>

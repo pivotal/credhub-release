@@ -7,8 +7,8 @@ describe 'credhub job' do
   let(:release) { Bosh::Template::Test::ReleaseDir.new(File.join(File.dirname(__FILE__), '..', '..')) }
   let(:job) { release.job('credhub') }
 
-  describe 'bin/ctl template' do
-    let(:template) { job.template('bin/ctl') }
+  describe 'bin/start_server template' do
+    let(:template) { job.template('bin/start_server') }
 
     context 'when conjur backend is enabled' do
       it 'adds conjur to active profiles' do
