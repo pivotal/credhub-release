@@ -85,7 +85,7 @@ describe 'credhub job' do
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
             '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
-            '&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER' \
+            '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
             '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
 
           expect(rendered_template['spring']['datasource']).to eq(
@@ -126,7 +126,7 @@ describe 'credhub job' do
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
             '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
-            '&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER' \
+            '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
             '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks' \
             '&disableSslHostnameVerification=true'
 

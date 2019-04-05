@@ -5,6 +5,7 @@ set -eu
 ## BEGIN CERTIFICATE INSTALLATION
 
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
 
 # TLS
 CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
@@ -12,12 +13,14 @@ PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
 CERT_ALIAS=credhub_tls_cert
 KEY_STORE_PATH=/var/vcap/jobs/credhub/config/cacerts.jks
 KEY_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
+echo "export KEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}" > "${tmp_dir}/var-store"
 
 # MTLS
 MTLS_CA_CERT_FILE=/var/vcap/jobs/credhub/config/mtls_ca_cert.crt
 MTLS_TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
 MTLS_TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/mtls_trust_store.jks
 MTLS_CA_ALIAS=mtls_ca
+echo "export MTLS_TRUST_STORE_PASSWORD=${MTLS_TRUST_STORE_PASSWORD}" >> "${tmp_dir}/var-store"
 
 # DB
 DATABASE_TLS_CA_FILE=/var/vcap/jobs/credhub/config/database_ca.pem
@@ -30,16 +33,9 @@ AUTH_SERVER_CA_ALIAS_BASE=auth_server_ca
 #Trust store for DB and UAA connections
 TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/trust_store.jks
 TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
+echo "export TRUST_STORE_PASSWORD=${TRUST_STORE_PASSWORD}" >> "${tmp_dir}/var-store"
 
 rm -f /var/vcap/jobs/credhub/config/*.jks
-
-for file in /var/vcap/jobs/credhub/config/application/*.yml; do
-  sed -i "s/KEY_STORE_PASSWORD_PLACEHOLDER/${KEY_STORE_PASSWORD}/g" "$file"
-  sed -i "s/MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER/${MTLS_TRUST_STORE_PASSWORD}/g" "$file"
-  sed -i "s/TRUST_STORE_PASSWORD_PLACEHOLDER/${TRUST_STORE_PASSWORD}/g" "$file"
-done
-sed -i "s/^\(declare -r trust_store_password=\).*/\1${TRUST_STORE_PASSWORD}/" /var/vcap/jobs/credhub/bin/ctl
-sed -i "s/^\(declare -r trust_store_password=\).*/\1${TRUST_STORE_PASSWORD}/" /var/vcap/jobs/credhub/bin/credhub
 
 rm -f ${CERT_FILE} ${PRIVATE_KEY_FILE}
 

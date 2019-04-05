@@ -33,7 +33,7 @@
     if p('credhub.data_storage.require_tls')
       properties['spring']['datasource']['url'] <<
       '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' +
-        '&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER' +
+        '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' +
         '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
 
       if !p('credhub.data_storage.hostname_verification.enabled')

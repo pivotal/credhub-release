@@ -28,7 +28,7 @@ describe 'credhub job' do
         expect(rendered_template['auth-server']).to eq(
           'url' => 'some-uaa-url',
           'trust_store' => '/var/vcap/jobs/credhub/config/trust_store.jks',
-          'trust_store_password' => 'TRUST_STORE_PASSWORD_PLACEHOLDER'
+          'trust_store_password' => '${TRUST_STORE_PASSWORD}'
         )
 
         expect(rendered_template['auth-server']['internal_url']).to be_nil

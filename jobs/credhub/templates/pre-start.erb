@@ -33,6 +33,8 @@ export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 chown -R vcap /var/vcap/jobs/credhub/config
 chmod -R g-rwx,o-rwx /var/vcap/jobs/credhub/config/*
 
+mkdir -p /var/vcap/jobs/credhub/tmp
+
 /var/vcap/jobs/credhub/bin/init_key_stores.sh
 
 <% if using_hsm %>

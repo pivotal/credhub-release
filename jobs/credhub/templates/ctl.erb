@@ -1,7 +1,5 @@
 #!/bin/bash
 
-declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
-
 declare -r run_dir=/var/vcap/sys/run/credhub
 declare -r log_dir=/var/vcap/sys/log/credhub
 declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
@@ -10,7 +8,7 @@ declare -r pidfile=${run_dir}/pid
 declare -r runas=vcap
 declare -r max_heap_size=<%= p('credhub.max_heap_size') %>
 
-mkdir -p /var/vcap/jobs/credhub/tmp
+source $tmp_dir/var-store
 
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
@@ -44,7 +42,7 @@ case $1 in
 
     if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
       java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
-      -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
+      -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} \\"
     end
 
     java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s

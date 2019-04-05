@@ -25,8 +25,8 @@ describe 'credhub job' do
         expect(rendered_template['server']['ssl']['enabled']).to eq(true)
         expect(rendered_template['server']['ssl']['enabled_protocols']).to eq('TLSv1.2')
         expect(rendered_template['server']['ssl']['key_store']).to eq('/var/vcap/jobs/credhub/config/cacerts.jks')
-        expect(rendered_template['server']['ssl']['key_password']).to eq('KEY_STORE_PASSWORD_PLACEHOLDER')
-        expect(rendered_template['server']['ssl']['key_store_password']).to eq('KEY_STORE_PASSWORD_PLACEHOLDER')
+        expect(rendered_template['server']['ssl']['key_password']).to eq('${KEY_STORE_PASSWORD}')
+        expect(rendered_template['server']['ssl']['key_store_password']).to eq('${KEY_STORE_PASSWORD}')
         expect(rendered_template['server']['ssl']['key_alias']).to eq('credhub_tls_cert')
       end
 
@@ -105,7 +105,7 @@ describe 'credhub job' do
 
         expect(rendered_template['server']['ssl']['client_auth']).to eq('want')
         expect(rendered_template['server']['ssl']['trust_store']).to eq('/var/vcap/jobs/credhub/config/mtls_trust_store.jks')
-        expect(rendered_template['server']['ssl']['trust_store_password']).to eq('MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER')
+        expect(rendered_template['server']['ssl']['trust_store_password']).to eq('${MTLS_TRUST_STORE_PASSWORD}')
         expect(rendered_template['server']['ssl']['trust_store_type']).to eq('JKS')
       end
     end

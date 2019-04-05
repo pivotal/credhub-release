@@ -1,9 +1,11 @@
 #!/bin/bash
 
-declare -r trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
 declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
 declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"
 cd /var/vcap/packages/credhub
+
+source $tmp_dir/var-store
 
 /var/vcap/jobs/credhub/bin/wait_for_uaa
 
@@ -20,7 +22,7 @@ java_command = "\tjava \\
 
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
   java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
-\t\t-Djavax.net.ssl.trustStorePassword=${trust_store_password} \\\n"
+\t\t-Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} \\\n"
 end
 
 java_command += "\t\t-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
