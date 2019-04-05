@@ -19,8 +19,8 @@
         'enabled_protocols' => 'TLSv1.2',
         'ciphers' => ciphers.join(','),
         'key_store' => '/var/vcap/jobs/credhub/config/cacerts.jks',
-        'key_password' => 'KEY_STORE_PASSWORD_PLACEHOLDER',
-        'key_store_password' => 'KEY_STORE_PASSWORD_PLACEHOLDER',
+        'key_password' => '${KEY_STORE_PASSWORD}',
+        'key_store_password' => '${KEY_STORE_PASSWORD}',
         'key_alias' => 'credhub_tls_cert',
       }
     }
@@ -29,7 +29,7 @@
   if p('credhub.authentication.mutual_tls.trusted_cas').length > 0
     properties['server']['ssl']['client_auth'] = 'want'
     properties['server']['ssl']['trust_store'] = '/var/vcap/jobs/credhub/config/mtls_trust_store.jks'
-    properties['server']['ssl']['trust_store_password'] = 'MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER'
+    properties['server']['ssl']['trust_store_password'] = '${MTLS_TRUST_STORE_PASSWORD}'
     properties['server']['ssl']['trust_store_type'] = 'JKS'
   end
 
