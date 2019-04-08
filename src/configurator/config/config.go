@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"os"
 )
 
 const (
@@ -11,12 +12,13 @@ const (
 	ConfigPath            = "/var/vcap/jobs/credhub/config"
 	MtlsTrustStorePath    = ConfigPath + "/mtls_trust_store.jks"
 	DefaultTrustStorePath = ConfigPath + "/trust_store.jks"
-
-	TrustStorePasswordPlaceholder     = "TRUST_STORE_PASSWORD_PLACEHOLDER"
-	MtlsTrustStorePasswordPlaceholder = "MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER"
 )
 
 var (
+	TrustStorePassword     = os.Getenv("TRUST_STORE_PASSWORD")
+	MtlsTrustStorePassword = os.Getenv("MTLS_TRUST_STORE_PASSWORD")
+	KeyStorePassword       = os.Getenv("KEY_STORE_PASSWORD")
+
 	FlywayMigrationsPath   = []string{"classpath:/db/migration/common"}
 	H2MigrationsPath       = append(FlywayMigrationsPath, "classpath:/db/migration/h2")
 	MysqlMigrationsPath    = append(FlywayMigrationsPath, "classpath:/db/migration/mysql")
@@ -29,7 +31,7 @@ var (
 	MysqlTlsConnectionString = MysqlConnectionString +
 		"&useSSL=true&requireSSL=true&verifyServerCertificate=true" +
 		"&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2" +
-		"&trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER" +
+		"&trustCertificateKeyStorePassword=" + TrustStorePassword +
 		"&trustCertificateKeyStoreUrl=" + DefaultTrustStorePath
 	MysqlTlsDisableHostnameVerification = "&disableSslHostnameVerification=true"
 )
@@ -115,7 +117,7 @@ type CredhubConfig struct {
 			}
 		}
 		Datasource SpringDatasource
-		Flyway struct {
+		Flyway     struct {
 			Locations []string
 			Enabled   bool
 		}
@@ -188,8 +190,8 @@ func NewDefaultCredhubConfig() CredhubConfig {
 	config.Server.SSL = SSLConfig{
 		Enabled:          true,
 		KeyStore:         ConfigPath + "/cacerts.jks",
-		KeyStorePassword: "KEY_STORE_PASSWORD_PLACEHOLDER",
-		KeyPassword:      "KEY_STORE_PASSWORD_PLACEHOLDER",
+		KeyStorePassword: KeyStorePassword,
+		KeyPassword:      KeyStorePassword,
 		KeyAlias:         "credhub_tls_cert",
 		Ciphers:          DefaultCipherSuites,
 		EnabledProtocols: "TLSv1.2",

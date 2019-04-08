@@ -51,7 +51,7 @@ func main() {
 	if len(boshConfig.Authentication.MutualTLS.TrustedCAs) > 0 {
 		credhubConfig.Server.SSL.ClientAuth = "want"
 		credhubConfig.Server.SSL.TrustStore = config.ConfigPath + "/mtls_trust_store.jks"
-		credhubConfig.Server.SSL.TrustStorePassword = "MTLS_TRUST_STORE_PASSWORD_PLACEHOLDER"
+		credhubConfig.Server.SSL.TrustStorePassword = config.MtlsTrustStorePassword
 		credhubConfig.Server.SSL.TrustStoreType = "JKS"
 	}
 
@@ -59,7 +59,7 @@ func main() {
 		credhubConfig.Security.OAuth2.Enabled = true
 		credhubConfig.AuthServer.URL = boshConfig.Authentication.UAA.Url
 		credhubConfig.AuthServer.TrustStore = config.DefaultTrustStorePath
-		credhubConfig.AuthServer.TrustStorePassword = config.TrustStorePasswordPlaceholder
+		credhubConfig.AuthServer.TrustStorePassword = config.TrustStorePassword
 		credhubConfig.AuthServer.InternalURL = boshConfig.Authentication.UAA.InternalUrl
 	}
 

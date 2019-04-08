@@ -2,6 +2,7 @@ package integration_test
 
 import (
 	"configurator/config"
+	"os"
 	"os/exec"
 
 	"encoding/json"
@@ -29,10 +30,20 @@ var _ = Describe("Configurator", func() {
 	})
 
 	BeforeEach(func() {
+		os.Setenv("TRUST_STORE_PASSWORD", "some-trust-store-password")
+		os.Setenv("MTLS_TRUST_STORE_PASSWORD", "some-mtls-trust-store-password")
+		os.Setenv("KEY_STORE_PASSWORD", "some-key-store-password")
+
 		cli = &ConfiguratorCLI{
 			Path: pathToCLI,
 		}
 		cli.BoshConfig.DataStorage.Type = "mysql"
+	})
+
+	AfterEach(func() {
+		os.Unsetenv("TRUST_STORE_PASSWORD")
+		os.Unsetenv("MTLS_TRUST_STORE_PASSWORD")
+		os.Unsetenv("KEY_STORE_PASSWORD")
 	})
 
 	AfterSuite(func() {
@@ -78,12 +89,12 @@ var _ = Describe("Configurator", func() {
 			expected := config.NewDefaultCredhubConfig().Server.SSL
 			expected.ClientAuth = "want"
 			expected.TrustStore = config.MtlsTrustStorePath
-			expected.TrustStorePassword = config.MtlsTrustStorePasswordPlaceholder
+			expected.TrustStorePassword = "some-mtls-trust-store-password"
 			expected.TrustStoreType = "JKS"
 
 			expected.KeyStore = config.ConfigPath + "/cacerts.jks"
-			expected.KeyPassword = "KEY_STORE_PASSWORD_PLACEHOLDER"
-			expected.KeyStorePassword = "KEY_STORE_PASSWORD_PLACEHOLDER"
+			expected.KeyPassword = "some-key-store-password"
+			expected.KeyStorePassword = "some-key-store-password"
 			Expect(result.Server.SSL).To(Equal(expected))
 		})
 	})
@@ -101,7 +112,7 @@ var _ = Describe("Configurator", func() {
 				URL:                "some-uaa-url",
 				InternalURL:        "some-internal-url",
 				TrustStore:         config.DefaultTrustStorePath,
-				TrustStorePassword: config.TrustStorePasswordPlaceholder,
+				TrustStorePassword: "some-trust-store-password",
 			}
 			Expect(result.AuthServer).To(Equal(authServerConfig))
 		})
@@ -158,7 +169,7 @@ var _ = Describe("Configurator", func() {
 					"jdbc:mariadb://localhost:3306/prod?" +
 						"autoReconnect=true&useSSL=true&requireSSL=true&" +
 						"verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2&" +
-						"trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER&" +
+						"trustCertificateKeyStorePassword=some-trust-store-password&" +
 						"trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks",
 				))
 			})
@@ -174,7 +185,7 @@ var _ = Describe("Configurator", func() {
 						"jdbc:mariadb://localhost:3306/prod?" +
 							"autoReconnect=true&useSSL=true&requireSSL=true&" +
 							"verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2&" +
-							"trustCertificateKeyStorePassword=TRUST_STORE_PASSWORD_PLACEHOLDER&" +
+							"trustCertificateKeyStorePassword=some-trust-store-password&" +
 							"trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks&" +
 							"disableSslHostnameVerification=true",
 					))

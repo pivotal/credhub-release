@@ -1,6 +1,7 @@
 #!/bin/bash
 
-trust_store_password=TRUST_STORE_PASSWORD_PLACEHOLDER
+declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
+source $tmp_dir/var-store
 
 <%
 java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
@@ -18,7 +19,7 @@ java_command = "\texec chpst -u $RUNAS:$RUNAS java \\
 
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
   java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
-  -Djavax.net.ssl.trustStorePassword=${trust_store_password} \\"
+  -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} \\"
 end
 
 java_command += "-ea -jar *.jar"

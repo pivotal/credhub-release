@@ -4,7 +4,6 @@
 <% port = p('credhub.port') %>
 
 
-cat /var/vcap/jobs/credhub/config/config.json | /var/vcap/packages/configurator/bin/configurator/configurator > /var/vcap/jobs/credhub/config/application.yml
 
 <%
   begin
@@ -36,7 +35,15 @@ export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 chown -R vcap /var/vcap/jobs/credhub/config
 chmod 600 /var/vcap/jobs/credhub/config/*
 
+mkdir -p /var/vcap/jobs/credhub/tmp
+
+declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
+mkdir -p $tmp_dir
+
 /var/vcap/jobs/credhub/bin/init_key_stores.sh
+
+source $tmp_dir/var-store
+cat /var/vcap/jobs/credhub/config/config.json | /var/vcap/packages/configurator/bin/configurator/configurator > /var/vcap/jobs/credhub/config/application.yml
 
 <% if using_hsm %>
 /var/vcap/jobs/credhub/bin/configure_hsm.sh
