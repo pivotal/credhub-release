@@ -4,7 +4,7 @@
     !!x == x
   end
 
-  encryption_keys = p('credhub.encryption.keys').to_a
+  encryption_keys = p('credhub.encryption.keys').to_a.flatten
   encryption_providers = p('credhub.encryption.providers').to_a
   active_keys = encryption_keys.select {|key| key['active']}
 
