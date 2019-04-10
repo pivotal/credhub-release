@@ -127,7 +127,7 @@ describe 'credhub job' do
                                                                          'encryption_password' => 'some-encryption-password'
                                                                        }
                                                                      ]
-                                                                   },
+                                                                   }
 
                                                                  ])
     end
