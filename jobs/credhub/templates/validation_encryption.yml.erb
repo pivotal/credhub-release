@@ -5,7 +5,7 @@
   end
 
   encryption_keys = p('credhub.encryption.keys').to_a.flatten
-  encryption_providers = p('credhub.encryption.providers').to_a
+  encryption_providers = p('credhub.encryption.providers').to_a.flatten
   active_keys = encryption_keys.select {|key| key['active']}
 
   if active_keys.empty? || active_keys.size > 1

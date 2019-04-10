@@ -72,6 +72,66 @@ describe 'credhub job' do
                                                                  ])
     end
 
+    it 'flattens providers arrays into one providers array' do
+      manifest = {
+        'credhub' => {
+          'encryption' => {
+            'keys' => [
+              {
+                'provider_name' => 'some-internal-provider',
+                'key_properties' => {
+                  'encryption_password' => 'some-encryption-password'
+                }
+              },
+              {
+                'provider_name' => 'some-other-internal-provider',
+                'key_properties' => {
+                  'encryption_password' => 'some-encryption-password'
+                }
+              }
+            ],
+            'providers' => [
+              [
+                {
+                  'name' => 'some-internal-provider',
+                  'type' => 'internal'
+                }
+              ],
+              [
+                {
+                  'name' => 'some-other-internal-provider',
+                  'type' => 'internal'
+                }
+              ]
+            ]
+          }
+        }
+      }
+      rendered_template = YAML.safe_load(template.render(manifest))
+
+      expect(rendered_template['encryption']['providers']).to eq([
+                                                                   {
+                                                                     'provider_name' => 'some-internal-provider',
+                                                                     'provider_type' => 'internal',
+                                                                     'keys' => [
+                                                                       {
+                                                                         'encryption_password' => 'some-encryption-password'
+                                                                       }
+                                                                     ]
+                                                                   },
+                                                                   {
+                                                                     'provider_name' => 'some-other-internal-provider',
+                                                                     'provider_type' => 'internal',
+                                                                     'keys' => [
+                                                                       {
+                                                                         'encryption_password' => 'some-encryption-password'
+                                                                       }
+                                                                     ]
+                                                                   },
+
+                                                                 ])
+    end
+
     it 'maps keys to providers' do
       manifest = {
         'credhub' => {

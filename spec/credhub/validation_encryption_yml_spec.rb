@@ -336,5 +336,42 @@ describe 'credhub job' do
 
       template.render(manifest)
     end
+
+    it 'flattens the providers array' do
+      manifest = {
+        'credhub' => {
+          'encryption' => {
+            'providers' => [
+              [{
+                'type' => 'internal',
+                'name' => 'some-provider'
+              }],
+              [{
+                'type' => 'internal',
+                'name' => 'some-other-provider'
+              }]
+            ],
+            'keys' => [
+              {
+                'provider_name' => 'some-provider',
+                'key_properties' => {
+                  'encryption_password' => 'some-strong-password'
+                },
+                'active' => true
+              },
+              {
+                'provider_name' => 'some-other-provider',
+                'key_properties' => {
+                  'encryption_password' => 'some-other-strong-password'
+                },
+                'active' => false
+              }
+            ]
+          }
+        }
+      }
+
+      template.render(manifest)
+    end
   end
 end

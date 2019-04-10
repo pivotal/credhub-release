@@ -10,7 +10,7 @@
     }
   }
 
-  p('credhub.encryption.providers').each do |provider|
+  p('credhub.encryption.providers').flatten.each do |provider|
     keys_for_provider = p('credhub.encryption.keys').flatten.select do |key|
       key['provider_name'] == provider['name']
     end
