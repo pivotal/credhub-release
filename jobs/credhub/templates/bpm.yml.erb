@@ -14,10 +14,8 @@
       'writable' => true,
       'allow_executions' => true
     }]
-
     additional_volumes.concat(sample_backend_volume)
   end
-
   {
     'processes' => [
       'name' => 'credhub',
