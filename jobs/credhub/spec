@@ -50,7 +50,7 @@ templates:
 
 packages:
 - openjdk_1.8.0
-- lunaclient
+- luna-hsm-client-7.4
 - credhub
 
 provides:
