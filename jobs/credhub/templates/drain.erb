@@ -7,9 +7,9 @@ set -eu
 <% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
 
 <% if active_provider['type'] == 'hsm' %>
-    <% ha_group_label = active_provider['connection_properties']['partition'] %>
-    PATH=$PATH:/var/vcap/packages/luna-hsm-client-7.3/bin
-    lunacm -q haGroup deleteGroup -label <%= ha_group_label %> >/dev/null
+    <% ha_group_label = active_provider['partition'] %>
+    PATH=$PATH:/var/vcap/packages/lunaclient/bin
+    vtl haAdmin deleteGroup -group <%= ha_group_label %> -password <%= active_provider['partition_password'] %> > /dev/null
 <% end %>
 
 # Drain scripts must print a number to stdout:
