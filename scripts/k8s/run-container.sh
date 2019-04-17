@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -exuo pipefail
 
 docker run \
        --rm \
@@ -8,4 +8,4 @@ docker run \
        --tty \
        --name credhub \
        --publish 9000:9000 \
-       credhub
+       pcfseceng/k8s-credhub

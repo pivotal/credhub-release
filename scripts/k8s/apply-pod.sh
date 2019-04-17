@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -ex
+set -exuo pipefail
 
 cat << EOF > /tmp/credhub-k8s-pod.yml
 apiVersion: v1
@@ -10,7 +10,7 @@ metadata:
 spec:
   containers:
   - name: credhub
-    image: ankeesler/credhub
+    image: pcfseceng/k8s-credhub
 EOF
 
 kubectl apply -f /tmp/credhub-k8s-pod.yml
