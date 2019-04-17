@@ -3,6 +3,7 @@
 set -ex
 
 docker run \
+       --rm \
        --interactive \
        --tty \
        --name credhub \
