@@ -109,5 +109,21 @@ describe 'credhub job' do
         expect(rendered_template['server']['ssl']['trust_store_type']).to eq('JKS')
       end
     end
+
+    context 'when concatenate_cas is true' do
+      it 'sets server property to true' do
+        manifest = {
+          'credhub' => {
+            'certificates' => {
+              'concatenate_cas' => true
+            }
+          }
+        }
+
+        rendered_template = YAML.safe_load(template.render(manifest))
+
+        expect(rendered_template['certificates']['concatenate_cas']).to eq(true)
+      end
+    end
   end
 end

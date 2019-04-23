@@ -23,6 +23,9 @@
         'key_store_password' => '${KEY_STORE_PASSWORD}',
         'key_alias' => 'credhub_tls_cert',
       }
+    },
+    'certificates' => {
+      'concatenate_cas' => p('credhub.certificates.concatenate_cas')
     }
   }
 

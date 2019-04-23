@@ -253,6 +253,11 @@ properties:
     description: "Enables CBC TLS cipher suites to enable TLS communication with Java 7 clients. Deprecated, as of CredHub 2.x.y. Java 7 was decommissioned by Oracle in 2015."
     default: false
 
+  #Certificates
+  credhub.certificates.concatenate_cas:
+    description: "Enables the concatenation of CAs when there is a transitional CA for a certificate."
+    default: false
+
   # BPM
   bpm.enabled:
     description: "Enable Bosh Process Manager"
