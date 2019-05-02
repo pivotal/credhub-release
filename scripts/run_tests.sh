@@ -17,7 +17,9 @@ function install_gems() {
 }
 
 function run_tests() {
-    rspec spec
+    pushd spec >/dev/null
+        bundle exec rspec .
+    popd >/dev/null
 }
 
 function main() {

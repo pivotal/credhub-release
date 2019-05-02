@@ -21,7 +21,9 @@ function install_gems() {
 }
 
 function lint_ruby() {
-    rubocop spec
+    pushd spec >/dev/null
+        bundle exec rubocop
+    popd >/dev/null
 }
 
 function main() {
