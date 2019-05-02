@@ -260,5 +260,5 @@ properties:
 
   # BPM
   bpm.enabled:
-    description: "Enable Bosh Process Manager"
+    description: "Enable Bosh Process Manager. Deprecated; CredHub 3.x.x and later with require BPM to be enabled."
     default: false
