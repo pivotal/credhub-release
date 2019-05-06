@@ -9,6 +9,9 @@ name: sample-credhub
 releases:
 - name: credhub
   version: latest
+- name: bpm
+  version: latest
+
 
 stemcells: 
 - alias: default 
@@ -84,3 +87,6 @@ instance_groups:
           providers: 
           - name: int
             type: internal
+
+  - name: bpm
+    release: bpm

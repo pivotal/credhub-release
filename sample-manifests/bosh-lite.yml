@@ -14,6 +14,9 @@ releases:
 - name: backup-and-restore-sdk
   # url: https://bosh.io/d/github.com/cloudfoundry-incubator/backup-and-restore-sdk-release
   version: latest
+- name: bpm
+  version: latest
+
 
 stemcells:
 - alias: default
@@ -119,6 +122,9 @@ instance_groups:
           providers:
           - name: int
             type: internal
+
+  - name: bpm
+    release: bpm
 
   - name: postgres
     release: postgres

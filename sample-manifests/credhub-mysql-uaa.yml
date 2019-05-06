@@ -9,6 +9,9 @@ releases:
   version: latest
 - name: uaa
   version: latest
+- name: bpm
+  version: latest
+
 
 stemcells:
 - alias: default
@@ -128,6 +131,9 @@ instance_groups:
           providers:
           - name: int
             type: internal
+
+  - name: bpm
+    release: bpm
 
   - name: mysql
     release: cf-mysql
