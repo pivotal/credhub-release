@@ -16,7 +16,7 @@ openjdk_1.8/openjdk-jdk-1.8.0_202-trusty.tar.gz:
   sha: 4d10c9e2605d0bd63dfe0155122379b66ad9f21d
 openjdk_1.8/openjdk-jdk-1.8.0_212-trusty.tar.gz:
   size: 103369989
-  object_id: 90fe99d3-7d7c-4229-77fd-5e1d8e96e7d2
+  object_id: d5059a23-286e-4f5b-7830-d5fd3f7715b8
   sha: cc2ded18b5bf61cae5796e3367c498ffcc5d6a3b
 openjdk_11/openjdk-11.0.2_07.tar.gz:
   size: 193740656
