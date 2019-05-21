@@ -11,8 +11,9 @@ function go_to_project_root_directory() {
 }
 
 function checkout_credhub() {
-    declare -r version=$1
-    declare -r release__sha="$(bosh interpolate --path /commit_hash \
+    local -r version=$1
+    local release__sha
+    release__sha="$(bosh interpolate --path /commit_hash \
     <(git show "origin/master:releases/credhub/credhub-$version.yml"))"
 
     git co "$release__sha"
