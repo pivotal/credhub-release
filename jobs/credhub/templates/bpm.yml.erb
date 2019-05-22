@@ -1,6 +1,6 @@
 <%=
   kms_plugin_providers = p('credhub.encryption.providers').to_a.select {|p| p['type'] == 'kms-plugin' }
-  kms_volumes = kms_plugin_providers.map do |provider|
+  additional_volumes = kms_plugin_providers.map do |provider|
     {
       'path' => File.dirname(provider['connection_properties']['endpoint']),
       'writable' => true,
@@ -8,13 +8,14 @@
     }
   end
 
-  sample_backend_volume = [{}]
   if p('credhub.backend.enable_swappable_backend')
     sample_backend_volume = [{
       'path' => File.dirname(p('credhub.backend.socket_file')),
       'writable' => true,
       'allow_executions' => true
     }]
+
+    additional_volumes.concat(sample_backend_volume)
   end
 
   {
@@ -34,7 +35,7 @@
           'writable' => true,
           'allow_executions' => true
         }
-      ].concat(kms_volumes).concat(sample_backend_volume)
+      ].concat(additional_volumes)
     ]
   }.to_yaml
 %>
