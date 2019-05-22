@@ -52,6 +52,13 @@ describe 'credhub job' do
         expect(rendered_template['server']['ssl']['trust_store_password']).to be_nil
         expect(rendered_template['server']['ssl']['trust_store_type']).to be_nil
       end
+
+      it 'sets the active profile to prod' do
+        manifest = { 'credhub' => {} }
+        rendered_template = YAML.safe_load(template.render(manifest))
+
+        expect(rendered_template['spring']['profiles']['active']).to eq('prod')
+      end
     end
 
     context 'when a port is provided' do
@@ -123,6 +130,35 @@ describe 'credhub job' do
         rendered_template = YAML.safe_load(template.render(manifest))
 
         expect(rendered_template['certificates']['concatenate_cas']).to eq(true)
+      end
+    end
+
+    context 'when enable_swappable_backend is true' do
+      it 'sets server property to true and sets socket file' do
+        manifest = {
+          'credhub' => {
+            'backend' => {
+              'enable_swappable_backend' => true,
+              'socket_file' => '/tmp/socket/test.shoe'
+            }
+          }
+        }
+
+        rendered_template = YAML.safe_load(template.render(manifest))
+        expect(rendered_template['spring']['profiles']['active']).to eq('prod, remote')
+        expect(rendered_template['backend']['socket_file']).to eq('/tmp/socket/test.shoe')
+      end
+
+      it 'errors if the socket file parameter is empty' do
+        manifest = {
+          'credhub' => {
+            'backend' => {
+              'enable_swappable_backend' => true
+            }
+          }
+        }
+
+        expect { template.render(manifest) }.to raise_error('socket_file must be set when enable_swappable_backend is true')
       end
     end
   end

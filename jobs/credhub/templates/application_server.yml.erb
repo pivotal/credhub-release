@@ -36,5 +36,28 @@
     properties['server']['ssl']['trust_store_type'] = 'JKS'
   end
 
+  if p('credhub.backend.enable_swappable_backend')
+    properties['spring'] = {
+      'profiles' => {
+        'active' => 'prod, remote',
+      }
+    }
+
+    if p('credhub.backend.socket_file') != ""
+      properties['backend'] = {
+        'socket_file' => p('credhub.backend.socket_file')
+      }
+    else
+      raise "socket_file must be set when enable_swappable_backend is true"
+    end
+
+  else
+    properties['spring'] = {
+      'profiles' => {
+        'active' => 'prod',
+      }
+    }
+  end
+
   properties.to_yaml
 %>

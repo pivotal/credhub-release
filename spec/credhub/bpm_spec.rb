@@ -48,5 +48,41 @@ describe 'credhub job' do
         )
       end
     end
+
+    context 'when credhub.enable_swappable_backend is true' do
+      it 'mounts the socket directory as additional volumes' do
+        manifest = {
+          'credhub' => {
+            'encryption' => {
+              'providers' => [
+                {
+                  'name' => 'internal',
+                  'type' => 'internal-provider'
+                }
+              ],
+              'keys' => [
+                {
+                  'provider_name' => 'internal',
+                  'key_properties' => 'some-properties',
+                  'active' => true
+                }
+              ]
+            },
+            'backend' => {
+              'enable_swappable_backend' => true,
+              'socket_file' => '/test/socket/path/socket_file.sock'
+            }
+          }
+        }
+        rendered_template = template.render(manifest)
+
+        additional_volumes = YAML.safe_load(rendered_template)['processes'][0]['additional_volumes']
+        expect(additional_volumes).to include(
+          'path' => '/test/socket/path',
+          'writable' => true,
+          'allow_executions' => true
+        )
+      end
+    end
   end
 end

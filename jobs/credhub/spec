@@ -255,3 +255,12 @@ properties:
   credhub.certificates.concatenate_cas:
     description: "Enables the concatenation of CAs when there is a transitional CA for a certificate."
     default: false
+
+  #Swappable Backend
+  credhub.backend.enable_swappable_backend:
+    description: "Enable the use of swappable backends for CredHub to use in place of the default CredHub backend"
+    default: false
+  credhub.backend.socket_file:
+    description: "Path of socket file for swappable backend to use"
+    default: ""
+    example: "/tmp/socket/test.sock"

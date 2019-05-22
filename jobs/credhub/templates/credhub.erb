@@ -12,7 +12,6 @@ source $tmp_dir/var-store
 <%
 java_command = "\tjava \\
 \t\t-Xmx${MAX_HEAP_SIZE}m \\
-\t\t-Dspring.profiles.active=prod \\
 \t\t-Dspring.config.additional-location=$application_configs \\
 \t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
 \t\t-Djava.security.egd=file:/dev/urandom \\
