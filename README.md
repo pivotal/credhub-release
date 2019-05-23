@@ -34,6 +34,22 @@ $ git checkout -b 2.4.x
 $ git push -u lts 2.4.x
 ```
 
+Update the `.gitmodule` file in the lts-credhub-release repo to point to the lts-credhub submodule
+```bash
+$ cd ~/workspace/lts-credhub-release
+$ git fetch --all
+$ cat > .gitmodules <<EOF
+[submodule "src/credhub"]
+	path = src/credhub
+	url = https://github.com/pivotal/lts-credhub.git
+EOF
+
+$ git add .gitmodules
+$ git ci -m "update gitmodules"
+$ git push
+```
+
+
 
 ### Run the script to create an lts pipeline
 
