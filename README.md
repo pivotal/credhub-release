@@ -41,7 +41,7 @@ $ git fetch --all
 $ cat > .gitmodules <<EOF
 [submodule "src/credhub"]
 	path = src/credhub
-	url = https://github.com/pivotal/lts-credhub.git
+	url = git@github.com:pivotal/lts-credhub.git
 EOF
 
 $ git add .gitmodules
