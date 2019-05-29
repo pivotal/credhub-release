@@ -1,0 +1,64 @@
+#!/bin/bash
+
+declare -r run_dir=/var/vcap/sys/run/credhub
+declare -r log_dir=/var/vcap/sys/log/credhub
+declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
+declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
+declare -r pidfile=${run_dir}/pid
+declare -r runas=vcap
+declare -r max_heap_size=<%= p('credhub.max_heap_size') %>
+
+source $tmp_dir/var-store
+
+export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+export PATH=$JAVA_HOME/bin:$PATH
+
+exec > >(tee -a >(logger -p user.info -t vcap.$(basename $0).stdout)   | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${log_dir}/credhub.stdout.log)
+exec 2> >(tee -a >(logger -p user.error -t vcap.$(basename $0).stderr) | grep -Ev '^$' | awk -W interactive '{ system("echo -n [$(date +\"%Y-%m-%d %H:%M:%S%z\")]"); print " " $0 }' >> ${log_dir}/credhub.stderr.log)
+
+case $1 in
+
+  start)
+    /var/vcap/jobs/credhub/bin/wait_for_uaa
+    mkdir -p $run_dir $log_dir
+    chown -R $runas:$runas $run_dir $log_dir $tmp_dir
+
+    echo $$ > $pidfile
+
+    declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"
+    cd /var/vcap/packages/credhub
+
+    <%=
+    java_command = "\texec chpst -u $runas:$runas java \\
+    -Xmx${max_heap_size}m \\
+    -Dspring.profiles.active=prod \\
+    -Dspring.config.additional-location=$application_configs \\
+    -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+    -Djava.security.egd=file:/dev/urandom \\
+    -Djava.io.tmpdir=$tmp_dir \\
+    -Djdk.tls.ephemeralDHKeySize=4096 \\
+    -Dfile.encoding=UTF-8 \\
+    -Djdk.tls.namedGroups=\"secp384r1\" \\"
+
+    if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
+      java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
+      -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} \\"
+    end
+
+    java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
+    java_command
+    %>
+    ;;
+
+  stop)
+    kill -9 `cat $pidfile`
+    rm -f $pidfile
+
+    ;;
+
+  *)
+    echo "Usage: ctl {start|stop}"
+
+    ;;
+
+esac
