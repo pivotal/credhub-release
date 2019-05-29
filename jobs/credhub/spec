@@ -17,6 +17,7 @@ templates:
   metadata.sh.erb: bin/bbr/metadata
 
   # Other scripts
+  ctl.erb: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh
   configure_hsm.erb: bin/configure_hsm.sh
   #Consul scripts
@@ -45,6 +46,7 @@ templates:
   # BPM
   bpm.yml.erb: config/bpm.yml
   credhub.erb: bin/credhub
+
 
 packages:
 - openjdk_1.8.0
@@ -251,12 +253,12 @@ properties:
     description: "Enables CBC TLS cipher suites to enable TLS communication with Java 7 clients. Deprecated, as of CredHub 2.x.y. Java 7 was decommissioned by Oracle in 2015."
     default: false
 
-  #Certificates
+  # Certificates
   credhub.certificates.concatenate_cas:
     description: "Enables the concatenation of CAs when there is a transitional CA for a certificate."
     default: false
 
-  #Swappable Backend
+  # Swappable Backend
   credhub.backend.enable_swappable_backend:
     description: "Enable the use of swappable backends for CredHub to use in place of the default CredHub backend"
     default: false
@@ -264,3 +266,8 @@ properties:
     description: "Path of socket file for swappable backend to use"
     default: ""
     example: "/tmp/socket/test.sock"
+
+  # BPM
+  bpm.enabled:
+    description: "Enable Bosh Process Manager. Deprecated; CredHub 3.x.x and later with require BPM to be enabled."
+    default: false

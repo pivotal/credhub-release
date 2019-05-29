@@ -19,8 +19,6 @@ releases:
   version: latest
 - name: os-conf
   version: latest
-- name: bpm
-  version: latest
 
 stemcells:
 - alias: default
@@ -258,6 +256,3 @@ instance_groups:
     release: os-conf
     properties:
       certs: ((database-tls.certificate))
-
-  - name: bpm
-    release: bpm
