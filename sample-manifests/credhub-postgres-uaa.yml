@@ -19,6 +19,8 @@ releases:
   version: latest
 - name: os-conf
   version: latest
+- name: bpm
+  version: latest
 
 stemcells:
 - alias: default
@@ -144,6 +146,8 @@ instance_groups:
           providers:
           - name: int
             type: internal
+      bpm:
+        enabled: true
 
   - name: postgres
     release: postgres
@@ -256,3 +260,7 @@ instance_groups:
     release: os-conf
     properties:
       certs: ((database-tls.certificate))
+
+  - name: bpm
+    release: bpm
+    properties: {}
