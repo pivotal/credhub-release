@@ -1,6 +1,7 @@
 #!/bin/bash
 
 <% if p("credhub.authentication.uaa.enabled") %>
+  <% if p("credhub.authentication.uaa.wait_for_start") %>
 status=`curl --max-time 5 --connect-timeout 2 -k --silent <%= p(["credhub.authentication.uaa.internal_url", "credhub.authentication.uaa.url"]) %>/healthz`
 if [ $? -ne 0 ]; then
   echo "Could not reach the UAA server"
@@ -11,6 +12,9 @@ if [ $status != "ok" ]; then
   exit 1
 fi
 echo "Successfully connected to UAA, continuing startup"
+  <% else %>
+echo "Not waiting for UAA to start"
+  <% end %>
 <% else %>
 echo "UAA is not enabled"
 <% end %>

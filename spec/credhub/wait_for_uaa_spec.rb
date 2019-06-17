@@ -38,6 +38,24 @@ describe 'credhub job' do
           expect(template.render(manifest)).to include('some-url')
         end
       end
+
+      context 'when wait_for_start is not specified' do
+        it 'waits for uaa to be available' do
+          manifest['credhub']['authentication']['uaa']['internal_url'] = 'some-internal-url'
+
+          expect(template.render(manifest)).to include('Successfully connected to UAA, continuing startup')
+        end
+      end
+
+      context 'when wait_for_start is specified to be false' do
+        it 'does not wait for uaa to be available' do
+          manifest['credhub']['authentication']['uaa']['internal_url'] = 'some-internal-url'
+          manifest['credhub']['authentication']['uaa']['wait_for_start'] = false
+
+          expect(template.render(manifest)).to include('Not waiting for UAA to start')
+          expect(template.render(manifest)).to_not include('curl')
+        end
+      end
     end
 
     context 'when uaa is disabled' do
@@ -55,6 +73,7 @@ describe 'credhub job' do
 
       it 'does nothing' do
         expect(template.render(manifest)).to include('UAA is not enabled')
+        expect(template.render(manifest)).to_not include('curl')
       end
     end
   end
