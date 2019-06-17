@@ -213,6 +213,9 @@ properties:
     example: "https://uaa.example.internal:8443"
   credhub.authentication.uaa.ca_certs:
     description: "List of CAs trusted when making TLS connections to UAA server"
+  credhub.authentication.uaa.wait_for_start:
+    description: "Waits for UAA to be available before starting CredHub"
+    default: true
 
   # Mutual TLS Authentication
   credhub.authentication.mutual_tls.trusted_cas:
