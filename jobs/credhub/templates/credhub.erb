@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
 declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
 declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"

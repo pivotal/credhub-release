@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 declare -r run_dir=/var/vcap/sys/run/credhub
 declare -r log_dir=/var/vcap/sys/log/credhub
 declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
