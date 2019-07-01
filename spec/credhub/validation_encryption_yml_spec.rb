@@ -320,13 +320,15 @@ describe 'credhub job' do
                 'key_properties' => {
                   'encryption_password' => 'weak-password'
                 },
-                'active' => false              },
-                {
-                  'provider_name' => 'some-provider',
-                  'key_properties' => {
-                    'encryption_password' => 'not-weak-password-not-weak-password-not-weak-password'
-                  },
-                  'active' => true              }
+                'active' => false
+              },
+              {
+                'provider_name' => 'some-provider',
+                'key_properties' => {
+                  'encryption_password' => 'not-weak-password-not-weak-password-not-weak-password'
+                },
+                'active' => true
+              }
             ]
           }
         }
