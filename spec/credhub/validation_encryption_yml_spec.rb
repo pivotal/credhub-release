@@ -278,7 +278,7 @@ describe 'credhub job' do
       expect { template.render(manifest) }.to raise_error('credhub.encryption.keys[].key_properties.encryption_password is not valid (must not be empty if provided).')
     end
 
-    it 'checks that encryption_password length is greater than 20 characters' do
+    it 'checks that active encryption_password length is greater than 20 characters' do
       manifest = {
         'credhub' => {
           'encryption' => {
@@ -302,6 +302,37 @@ describe 'credhub job' do
       }
 
       expect { template.render(manifest) }.to raise_error('The encryption_password value must be at least 20 characters in length. Please update and redeploy.')
+    end
+
+    it 'does not check that inactive encryption_password length is greater than 20 characters' do
+      manifest = {
+        'credhub' => {
+          'encryption' => {
+            'providers' => [
+              {
+                'type' => 'internal',
+                'name' => 'some-provider'
+              }
+            ],
+            'keys' => [
+              {
+                'provider_name' => 'some-provider',
+                'key_properties' => {
+                  'encryption_password' => 'weak-password'
+                },
+                'active' => false              },
+                {
+                  'provider_name' => 'some-provider',
+                  'key_properties' => {
+                    'encryption_password' => 'not-weak-password-not-weak-password-not-weak-password'
+                  },
+                  'active' => true              }
+            ]
+          }
+        }
+      }
+
+      template.render(manifest)
     end
 
     it 'flattens the keys array' do

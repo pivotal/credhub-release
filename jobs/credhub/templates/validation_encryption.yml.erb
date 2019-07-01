@@ -64,7 +64,7 @@
         raise 'credhub.encryption.keys[].key_properties.encryption_password is not valid (must not be empty if provided).'
       end
 
-      if k['key_properties']['encryption_password'].length < 20
+      if k['active'] && k['key_properties']['encryption_password'].length < 20
         raise 'The encryption_password value must be at least 20 characters in length. Please update and redeploy.'
       end
     end
