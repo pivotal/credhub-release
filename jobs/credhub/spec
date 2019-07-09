@@ -135,6 +135,11 @@ properties:
         type: kms-plugin
         connection_properties:
           endpoint: unix:///tmp/socketfile.sock
+          host: example.com
+          ca: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
       - name: hsm-provider
         type: hsm
         connection_properties:

@@ -178,7 +178,9 @@ describe 'credhub job' do
                 'name' => 'some-kms-plugin-provider',
                 'type' => 'kms-plugin',
                 'connection_properties' => {
-                  'endpoint' => 'some-endpoint'
+                  'endpoint' => 'some-endpoint',
+                  'host' => 'some-host',
+                  'ca' => 'some-ca'
                 }
               },
               {
@@ -223,7 +225,9 @@ describe 'credhub job' do
                                                                        }
                                                                      ],
                                                                      'configuration' => {
-                                                                       'endpoint' => 'some-endpoint'
+                                                                       'endpoint' => 'some-endpoint',
+                                                                       'host' => 'some-host',
+                                                                       'ca' => 'some-ca'
                                                                      }
                                                                    },
                                                                    {
@@ -297,7 +301,7 @@ describe 'credhub job' do
         end
       end
 
-      context 'when a kms-plugin provider is configured without required connection_properties' do
+      context 'when a kms-plugin provider is configured without endpoint' do
         it 'raises an exception' do
           manifest = {
             'credhub' => {
@@ -314,7 +318,10 @@ describe 'credhub job' do
                   {
                     'name' => 'some-kms-plugin-provider',
                     'type' => 'kms-plugin',
-                    'connection_properties' => {}
+                    'connection_properties' => {
+                      'host' => 'some-host',
+                      'ca' => 'some-ca'
+                    }
                   }
                 ]
               }
@@ -322,6 +329,68 @@ describe 'credhub job' do
           }
 
           expect { template.render(manifest) }.to raise_error('`kms-plugin` providers require `endpoint`')
+        end
+      end
+
+      context 'when a kms-plugin provider is configured without host' do
+        it 'raises an exception' do
+          manifest = {
+            'credhub' => {
+              'encryption' => {
+                'keys' => [
+                  {
+                    'provider_name' => 'some-kms-plugin-provider',
+                    'key_properties' => {
+                      'encryption_key_name' => 'some-encryption-key-name'
+                    }
+                  }
+                ],
+                'providers' => [
+                  {
+                    'name' => 'some-kms-plugin-provider',
+                    'type' => 'kms-plugin',
+                    'connection_properties' => {
+                      'endpoint' => 'some-endpoint',
+                      'ca' => 'some-ca'
+                    }
+                  }
+                ]
+              }
+            }
+          }
+
+          expect { template.render(manifest) }.to raise_error('`kms-plugin` providers require `host`')
+        end
+      end
+
+      context 'when a kms-plugin provider is configured without ca' do
+        it 'raises an exception' do
+          manifest = {
+            'credhub' => {
+              'encryption' => {
+                'keys' => [
+                  {
+                    'provider_name' => 'some-kms-plugin-provider',
+                    'key_properties' => {
+                      'encryption_key_name' => 'some-encryption-key-name'
+                    }
+                  }
+                ],
+                'providers' => [
+                  {
+                    'name' => 'some-kms-plugin-provider',
+                    'type' => 'kms-plugin',
+                    'connection_properties' => {
+                      'host' => 'some-host',
+                      'endpoint' => 'some-endpoint'
+                    }
+                  }
+                ]
+              }
+            }
+          }
+
+          expect { template.render(manifest) }.to raise_error('`kms-plugin` providers require `ca`')
         end
       end
     end

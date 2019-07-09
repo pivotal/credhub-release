@@ -51,7 +51,12 @@
       if blank?(provider['connection_properties']['endpoint'])
         raise '`kms-plugin` providers require `endpoint`'
       end
-
+      if blank?(provider['connection_properties']['host'])
+        raise '`kms-plugin` providers require `host`'
+      end
+      if blank?(provider['connection_properties']['ca'])
+        raise '`kms-plugin` providers require `ca`'
+      end
     when 'hsm'
       if blank?(provider['connection_properties']['partition'])
         raise '`hsm` providers require `connection_properties.partition`'
