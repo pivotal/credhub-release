@@ -134,12 +134,14 @@ describe 'credhub job' do
     end
 
     context 'when enable_swappable_backend is true' do
-      it 'sets server property to true and sets socket file' do
+      it 'sets server property to true, sets socket file, and tls connection properties' do
         manifest = {
           'credhub' => {
             'backend' => {
               'enable_swappable_backend' => true,
-              'socket_file' => '/tmp/socket/test.shoe'
+              'socket_file' => '/tmp/socket/test.shoe',
+              'host' => 'any_host',
+              'ca_cert' => '----BEGIN etc whatever---'
             }
           }
         }
@@ -147,6 +149,8 @@ describe 'credhub job' do
         rendered_template = YAML.safe_load(template.render(manifest))
         expect(rendered_template['spring']['profiles']['active']).to eq('prod, remote')
         expect(rendered_template['backend']['socket_file']).to eq('/tmp/socket/test.shoe')
+        expect(rendered_template['backend']['host']).to eq('any_host')
+        expect(rendered_template['backend']['ca_cert']).to eq('----BEGIN etc whatever---')
       end
 
       it 'errors if the socket file parameter is empty' do
@@ -159,6 +163,34 @@ describe 'credhub job' do
         }
 
         expect { template.render(manifest) }.to raise_error('socket_file must be set when enable_swappable_backend is true')
+      end
+
+      it 'errors if the ca_cert parameter is empty' do
+        manifest = {
+          'credhub' => {
+            'backend' => {
+              'enable_swappable_backend' => true,
+              'socket_file' => '/tmp/socket/test.shoe',
+              'host' => 'example.com'
+            }
+          }
+        }
+
+        expect { template.render(manifest) }.to raise_error('ca_cert must be set when enable_swappable_backend is true')
+      end
+
+      it 'errors if the host parameter is empty' do
+        manifest = {
+          'credhub' => {
+            'backend' => {
+              'enable_swappable_backend' => true,
+              'socket_file' => '/tmp/socket/test.shoe',
+              'ca_cert' => '----BEGIN etc whatever---'
+            }
+          }
+        }
+
+        expect { template.render(manifest) }.to raise_error('host must be set when enable_swappable_backend is true')
       end
     end
   end

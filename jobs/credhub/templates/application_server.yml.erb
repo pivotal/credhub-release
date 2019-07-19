@@ -45,10 +45,22 @@
 
     if p('credhub.backend.socket_file') != ""
       properties['backend'] = {
-        'socket_file' => p('credhub.backend.socket_file')
+        'socket_file' => p('credhub.backend.socket_file'),
       }
     else
       raise "socket_file must be set when enable_swappable_backend is true"
+    end
+
+    if p('credhub.backend.host') != ""
+      properties['backend']['host'] = p('credhub.backend.host')
+    else
+      raise "host must be set when enable_swappable_backend is true"
+    end
+
+    if p('credhub.backend.ca_cert') != ""
+      properties['backend']['ca_cert'] = p('credhub.backend.ca_cert')
+    else
+      raise "ca_cert must be set when enable_swappable_backend is true"
     end
 
   else

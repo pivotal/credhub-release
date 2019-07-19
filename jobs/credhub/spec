@@ -274,6 +274,17 @@ properties:
     description: "Path of socket file for swappable backend to use"
     default: ""
     example: "/tmp/socket/test.sock"
+  credhub.backend.host:
+    description: "Common name of the backend's certificate"
+    default: ""
+    example: "example.com"
+  credhub.backend.ca_cert:
+    description: "CA cert used to sign the backend's certificate"
+    default: ""
+    example: |
+      -----BEGIN CERTIFICATE-----
+      ...
+      -----END CERTIFICATE-----
 
   # BPM
   bpm.enabled:
