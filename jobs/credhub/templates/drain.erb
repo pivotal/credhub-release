@@ -2,9 +2,9 @@
 
 set -eu
 
-<% active_key = p('credhub.encryption.keys').find { |key| key.key?('active') } %>
+<% active_key = p('credhub.encryption.keys').flatten.find { |key| key.key?('active') } %>
 <% active_provider_name = active_key['provider_name'] %>
-<% active_provider = p('credhub.encryption.providers').find { |provider| provider['name'] == active_provider_name } %>
+<% active_provider = p('credhub.encryption.providers').flatten.find { |provider| provider['name'] == active_provider_name } %>
 
 <% if active_provider['type'] == 'hsm' %>
     <% ha_group_label = active_provider['partition'] %>

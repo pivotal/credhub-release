@@ -132,6 +132,46 @@ describe 'credhub job' do
                                                                  ])
     end
 
+    it 'flattens both an empty keys array and providers array' do
+      manifest = {
+        'credhub' => {
+          'encryption' => {
+            'providers' => [
+              [{
+                'type' => 'internal',
+                'name' => 'some-provider'
+              }],
+              []
+            ],
+            'keys' => [
+              [{
+                'provider_name' => 'some-provider',
+                'key_properties' => {
+                  'encryption_password' => 'some-strong-password'
+                },
+                'active' => true
+              }],
+              []
+            ]
+          }
+        }
+      }
+      rendered_template = YAML.safe_load(template.render(manifest))
+
+      expect(rendered_template['encryption']['providers']).to eq([
+                                                                   {
+                                                                     'provider_name' => 'some-provider',
+                                                                     'provider_type' => 'internal',
+                                                                     'keys' => [
+                                                                       {
+                                                                         'encryption_password' => 'some-strong-password',
+                                                                         'active' => true
+                                                                       }
+                                                                     ]
+                                                                   }
+                                                                 ])
+    end
+
     it 'maps keys to providers' do
       manifest = {
         'credhub' => {

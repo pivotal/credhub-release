@@ -84,5 +84,41 @@ describe 'credhub job' do
         )
       end
     end
+
+    context 'when providers is a nested array' do
+      it 'flattens providers arrays into one providers array' do
+        manifest = {
+          'credhub' => {
+            'encryption' => {
+              'providers' => [
+                [
+                  {
+                    'name' => 'some-internal-provider',
+                    'type' => 'internal'
+                  }
+                ],
+                [
+                  {
+                    'name' => 'kms-provider-1',
+                    'type' => 'kms-plugin',
+                    'connection_properties' => {
+                      'endpoint' => '/path/to/first/socket'
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        }
+        rendered_template = template.render(manifest)
+
+        additional_volumes = YAML.safe_load(rendered_template)['processes'][0]['additional_volumes']
+        expect(additional_volumes).to include(
+          'path' => '/path/to/first',
+          'writable' => true,
+          'allow_executions' => true
+        )
+      end
+    end
   end
 end

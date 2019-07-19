@@ -1,4 +1,4 @@
-<% encryption_providers = p('credhub.encryption.providers').to_a
+<% encryption_providers = p('credhub.encryption.providers').flatten.to_a
 hsm_providers = encryption_providers.select{|p| p['type'] == 'hsm'}
 
 if hsm_providers.any?

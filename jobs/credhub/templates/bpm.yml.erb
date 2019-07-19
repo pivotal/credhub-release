@@ -1,5 +1,5 @@
 <%=
-  kms_plugin_providers = p('credhub.encryption.providers').to_a.select {|p| p['type'] == 'kms-plugin' }
+  kms_plugin_providers = p('credhub.encryption.providers').flatten.to_a.select {|p| p['type'] == 'kms-plugin' }
   additional_volumes = kms_plugin_providers.map do |provider|
     {
       'path' => File.dirname(provider['connection_properties']['endpoint']),

@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-<% using_hsm = p('credhub.encryption.providers').any? { |provider| provider['type'] == "hsm" } %>
+<% using_hsm = p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == "hsm" } %>
 <% port = p('credhub.port') %>
 
 <%
