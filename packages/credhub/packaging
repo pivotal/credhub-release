@@ -1,7 +1,3 @@
 set -ex
 
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
-
-cd credhub
-./gradlew clean assemble
-cp applications/credhub-api/build/libs/credhub.jar ${BOSH_INSTALL_TARGET}
+cp ${BOSH_COMPILE_TARGET}/credhub/credhub.jar ${BOSH_INSTALL_TARGET}

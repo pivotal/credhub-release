@@ -1,0 +1,12 @@
+set -e -x
+
+# Make sure we can see uname
+export PATH=$PATH:/bin:/usr/bin
+
+MODULE_GIT_DIR=$RELEASE_DIR/.git/modules/src/credhub
+
+pushd ${BUILD_DIR}/credhub
+  GIT_DIR=$MODULE_GIT_DIR ./gradlew clean assemble
+  cp applications/credhub-api/build/libs/credhub.jar ${BUILD_DIR}/credhub/credhub.jar
+  ./gradlew clean
+popd
