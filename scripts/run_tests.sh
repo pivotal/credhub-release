@@ -22,12 +22,18 @@ function run_tests() {
     popd >/dev/null
 }
 
+function display_ascii_success_message() {
+    local -r GREEN_COLOR_CODE='\033[1;32m'
+    echo -e "${GREEN_COLOR_CODE}\\n$(cat scripts/success_ascii_art.txt)"
+}
+
 function main() {
     set_bash_error_handling
     go_to_project_root_directory
 
     install_gems
     run_tests
+    display_ascii_success_message
 }
 
 main
