@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
+  repository: pcfseceng/k8s-credhub
+  tag: latest
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
