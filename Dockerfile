@@ -1,8 +1,8 @@
 FROM openjdk:8
 WORKDIR /app
 COPY . /app
-RUN ./gradlew clean downloadBouncyCastleFips bootJar
 RUN ./scripts/setup_dev_mtls.sh
+RUN ./gradlew clean bootJar
 # TODO: we shouldn't need the :downloadBouncyCastleFips above :(
 
 FROM openjdk:8-jre-alpine

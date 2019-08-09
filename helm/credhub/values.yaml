@@ -15,7 +15,7 @@ fullnameOverride: ""
 
 service:
   type: ClusterIP
-  port: 80
+  port: 9000 # TODO: what should this actually be?
 
 ingress:
   enabled: false
