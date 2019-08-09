@@ -2,7 +2,7 @@ FROM openjdk:8
 WORKDIR /app
 COPY . /app
 RUN ./scripts/setup_dev_mtls.sh
-RUN ./gradlew clean assemble bootJar -Dspring.profiles.active=dev,dev-mysql
+RUN ./gradlew clean bootJar
 
 FROM openjdk:8-jre-alpine
 WORKDIR /app
