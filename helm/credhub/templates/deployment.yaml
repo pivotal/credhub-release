@@ -32,6 +32,26 @@ spec:
           # TODO: readinessProbe
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "credhub.fullname" . }}
+            items:
+              - key: spring.yml
+                path: spring.yml
+              - key: server.yml
+                path: server.yml
+              - key: security.yml
+                path: security.yml
+              - key: logging.yml
+                path: logging.yml
+              - key: encryption.yml
+                path: encryption.yml
+              - key: auth-server.yml
+                path: auth-server.yml
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

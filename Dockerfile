@@ -2,8 +2,7 @@ FROM openjdk:8
 WORKDIR /app
 COPY . /app
 RUN ./scripts/setup_dev_mtls.sh
-RUN ./gradlew clean bootJar
-# TODO: we shouldn't need the :downloadBouncyCastleFips above :(
+RUN ./gradlew clean assemble bootJar -Dspring.profiles.active=dev,dev-mysql
 
 FROM openjdk:8-jre-alpine
 WORKDIR /app
@@ -30,11 +29,7 @@ COPY \
 EXPOSE 9000
 CMD [ \
   "java", \
-  "-Dspring.profiles.active=dev,dev-h2", \
-  "-Dlogging.config=log4j2.properties", \
-  "-Dauth-server.trust_store=auth_server_trust_store.jks", \
-  "-Dserver.ssl.key_store=key_store.jks", \
-  "-Dserver.ssl.trust_store=trust_store.jks", \
+  "-Dspring.config.additional-location=/etc/config/spring.yml,/etc/config/server.yml,/etc/config/security.yml,/etc/config/logging.yml,/etc/config/encryption.yml,/etc/config/auth-server.yml", \
   "-jar", \
   "credhub.jar" \
 ]

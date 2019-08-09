@@ -7,7 +7,7 @@ replicaCount: 1
 image:
   repository: pcfseceng/k8s-credhub
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
@@ -48,3 +48,15 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+credhub:
+  database:
+  spring:
+    datasource:
+      username:
+      password:
+      url:
+  server:
+    port: 9000 # TODO: what should this be?
+  authServer:
+    url:

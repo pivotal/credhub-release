@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "credhub.fullname" . }}
+  labels:
+{{ include "credhub.labels" . | indent 4 }}
+data:
+  spring.yml: |
+    ---
+    spring:
+      flyway:
+        enabled: true
+        locations:
+          - classpath:/db/migration/common
+          - classpath:/db/migration/{{ .Values.credhub.database | required "credhub.database is required" }}
+      jpa:
+        hibernate:
+          ddl_auto: validate
+      datasource:
+        username: {{.Values.credhub.spring.datasource.username | required "credhub.spring.datasource.username is required" }}
+        password: {{.Values.credhub.spring.datasource.password | required "credhub.spring.datasource.password is required" }}
+        url: {{ .Values.credhub.spring.datasource.url | required "credhub.spring.datasource.url is required" }}
+      profiles:
+        active: prod
+  server.yml: |
+    ---
+    server:
+      port: {{ .Values.credhub.server.port | required "credhub.server.port is required" }}
+      ssl:
+        enabled: true
+        key_store: key_store.jks
+        key_store_password: changeit
+        key_password: changeit
+        key_alias: cert
+        ciphers: TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        client_auth: want
+        trust_store: trust_store.jks
+        trust_store_password: changeit
+        trust_store_type: JKS
+        enabled-protocols: TLSv1.2
+  security.yml: |
+    ---
+    security:
+      authorization:
+        acls:
+          enabled: true
+        permissions:
+          - actors:
+              - uaa-client:credhub_admin_client
+            operations:
+              - read
+              - write
+              - delete
+              - read_acl
+              - write_acl
+            path: "/*"
+        oauth2:
+          enabled: true
+  logging.yml: |
+    ---
+    logging:
+      config: log4j2.properties
+  encryption.yml: |
+    ---
+    encryption:
+      key_creation_enabled: true
+      providers:
+        - provider_name: int
+          provider_type: internal
+          keys:
+            - active: true
+              encryption_password: changeme
+  auth-server.yml: |
+    ---
+    auth-server:
+      url: {{ .Values.credhub.authServer.url | required "credhub.authServer.url is required" }}
+      trust_store: auth_server_trust_store.jks
+      internal_url: {{ .Values.credhub.authServer.url | required "credhub.authServer.url is required" }}
