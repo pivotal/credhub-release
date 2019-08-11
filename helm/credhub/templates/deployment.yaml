@@ -48,6 +48,8 @@ spec:
                 path: security.yml
               - key: logging.yml
                 path: logging.yml
+              - key: log4j2.properties
+                path: log4j2.properties
               - key: encryption.yml
                 path: encryption.yml
               - key: auth-server.yml

@@ -50,6 +50,7 @@ tolerations: []
 affinity: {}
 
 credhub:
+  logLevel: info
   database:
   spring:
     datasource:

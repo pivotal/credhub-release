@@ -12,10 +12,6 @@ COPY \
   .
 COPY \
   --from=0 \
-  /app/applications/credhub-api/src/main/resources/log4j2.properties \
-  .
-COPY \
-  --from=0 \
   /app/applications/credhub-api/src/test/resources/auth_server_trust_store.jks \
   .
 COPY \
@@ -30,6 +26,11 @@ EXPOSE 9000
 CMD [ \
   "java", \
   "-Dspring.config.additional-location=/etc/config/spring.yml,/etc/config/server.yml,/etc/config/security.yml,/etc/config/logging.yml,/etc/config/encryption.yml,/etc/config/auth-server.yml", \
+  "-Djava.security.egd=file:/dev/urandom", \
+  "-Djdk.tls.ephemeralDHKeySize=4096", \
+  "-Djdk.tls.namedGroups=\"secp384r1\"", \
+  "-Djavax.net.ssl.trustStore=auth_server_trust_store.jks", \
+  "-Djavax.net.ssl.trustStorePassword=changeit", \
   "-jar", \
   "credhub.jar" \
 ]

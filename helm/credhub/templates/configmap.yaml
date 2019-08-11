@@ -15,7 +15,7 @@ data:
           - classpath:/db/migration/{{ .Values.credhub.database | required "credhub.database is required" }}
       jpa:
         hibernate:
-          ddl_auto: validate
+          ddl-auto: validate
       datasource:
         username: {{.Values.credhub.spring.datasource.username | required "credhub.spring.datasource.username is required" }}
         password: {{.Values.credhub.spring.datasource.password | required "credhub.spring.datasource.password is required" }}
@@ -47,6 +47,7 @@ data:
         permissions:
           - actors:
               - uaa-client:credhub_admin_client
+              - uaa-user:66e087aa-b6e2-4e98-b699-a0c17f175b27
             operations:
               - read
               - write
@@ -54,12 +55,24 @@ data:
               - read_acl
               - write_acl
             path: "/*"
-        oauth2:
-          enabled: true
+      oauth2:
+        resource:
+          id: credhub
+        enabled: true
   logging.yml: |
     ---
     logging:
-      config: log4j2.properties
+      config: /etc/config/log4j2.properties
+  log4j2.properties: |
+    rootLogger.level={{ .Values.credhub.logLevel }}
+
+    appender.console.name=STDOUT
+    appender.console.type=Console
+    appender.console.target=SYSTEM_OUT
+    appender.console.layout.type = PatternLayout
+    appender.console.layout.pattern=%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+
+    rootLogger.appenderRef.stdout.ref = STDOUT
   encryption.yml: |
     ---
     encryption:
@@ -75,4 +88,4 @@ data:
     auth-server:
       url: {{ .Values.credhub.authServer.url | required "credhub.authServer.url is required" }}
       trust_store: auth_server_trust_store.jks
-      internal_url: {{ .Values.credhub.authServer.url | required "credhub.authServer.url is required" }}
+      trust_store_password: changeit
