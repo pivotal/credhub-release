@@ -20,6 +20,26 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      initContainers:
+        - name: generate-auth-key-store
+          image: openjdk:8
+          command:
+            - "keytool"
+            - "-import"
+            - "-noprompt"
+            - "-alias"
+            - "auth_server_ca"
+            - "-file"
+            - "/etc/config/auth-server-ca.pem"
+            - "-keystore"
+            - "/etc/credhub/auth_server_trust_store.jks"
+            - "-storepass"
+            - "{{ .Values.credhub.authServer.trustStorePassword }}"
+          volumeMounts:
+            - name: credhub-volume
+              mountPath: /etc/credhub/
+            - name: config-volume
+              mountPath: /etc/config
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -33,9 +53,12 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: credhub-volume
+              mountPath: /etc/credhub/
             - name: config-volume
               mountPath: /etc/config
       volumes:
+        - name: credhub-volume
         - name: config-volume
           configMap:
             name: {{ include "credhub.fullname" . }}
@@ -54,6 +77,8 @@ spec:
                 path: encryption.yml
               - key: auth-server.yml
                 path: auth-server.yml
+              - key: auth-server-ca.pem
+                path: auth-server-ca.pem
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

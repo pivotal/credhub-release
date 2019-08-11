@@ -12,10 +12,6 @@ COPY \
   .
 COPY \
   --from=0 \
-  /app/applications/credhub-api/src/test/resources/auth_server_trust_store.jks \
-  .
-COPY \
-  --from=0 \
   /app/applications/credhub-api/src/test/resources/key_store.jks \
   .
 COPY \
@@ -29,7 +25,7 @@ CMD [ \
   "-Djava.security.egd=file:/dev/urandom", \
   "-Djdk.tls.ephemeralDHKeySize=4096", \
   "-Djdk.tls.namedGroups=\"secp384r1\"", \
-  "-Djavax.net.ssl.trustStore=auth_server_trust_store.jks", \
+  "-Djavax.net.ssl.trustStore=/etc/credhub/auth_server_trust_store.jks", \
   "-Djavax.net.ssl.trustStorePassword=changeit", \
   "-jar", \
   "credhub.jar" \

@@ -87,5 +87,6 @@ data:
     ---
     auth-server:
       url: {{ .Values.credhub.authServer.url | required "credhub.authServer.url is required" }}
-      trust_store: auth_server_trust_store.jks
-      trust_store_password: changeit
+      trust_store: /etc/credhub/auth_server_trust_store.jks
+      trust_store_password: {{ .Values.credhub.authServer.trustStorePassword }}
+  auth-server-ca.pem: {{ .Values.credhub.authServerCa | quote }}

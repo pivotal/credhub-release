@@ -61,3 +61,5 @@ credhub:
     port: 9000 # TODO: what should this be?
   authServer:
     url:
+    trustStorePassword: changeit
+  authServerCa:
