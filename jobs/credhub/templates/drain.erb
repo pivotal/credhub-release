@@ -9,7 +9,7 @@ set -eu
 <% if active_provider['type'] == 'hsm' %>
     <% ha_group_label = active_provider['connection_properties']['partition'] %>
     PATH=$PATH:/var/vcap/packages/luna-hsm-client-7.4/bin/64
-    lunacm -q haGroup deleteGroup -label <%= ha_group_label %> > /dev/null
+    lunacm -q haGroup deleteGroup -label <%= ha_group_label %> >/dev/null
 <% end %>
 
 # Drain scripts must print a number to stdout:

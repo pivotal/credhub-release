@@ -1,16 +1,13 @@
-#!/bin/sh
-
-echo "Preparing to ship .........."
-
+#!/usr/bin/env bash
 
 function set_bash_error_handling() {
     set -euo pipefail
 }
 
 function go_to_project_root_directory() {
-    local -r hook_dir=$( dirname "${BASH_SOURCE[0]}")
+    local -r script_dir=$( dirname "${BASH_SOURCE[0]}")
 
-    cd "$hook_dir/.."
+    cd "$script_dir/.."
 }
 
 function check_ssh_key() {
@@ -28,6 +25,15 @@ function run_tests() {
     ./scripts/run_tests.sh
 }
 
+function push_code() {
+    git push
+}
+
+function display_ascii_success_message() {
+    local -r GREEN_COLOR_CODE='\033[1;32m'
+    echo -e "${GREEN_COLOR_CODE}\\n$(cat scripts/success_ascii_art.txt)"
+}
+
 function main() {
     set_bash_error_handling
     go_to_project_root_directory
@@ -35,6 +41,9 @@ function main() {
 
     run_linters
     run_tests
+
+    push_code
+    display_ascii_success_message
 }
 
 main

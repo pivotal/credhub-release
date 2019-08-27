@@ -1,1 +1,201 @@
-deprecated/bosh-lite.yml
+---
+name: credhub
+
+releases:
+- name: credhub
+  version: latest
+  # url: https://bosh.io/d/github.com/pivotal-cf/credhub-release
+- name: postgres
+  version: latest
+  # url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=25
+- name: uaa
+  version: latest
+  # url: https://bosh.io/d/github.com/cloudfoundry/uaa-release?v=55
+- name: backup-and-restore-sdk
+  # url: https://bosh.io/d/github.com/cloudfoundry-incubator/backup-and-restore-sdk-release
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 10
+  update_watch_time: 10000-200000
+  canary_watch_time: 10000-200000
+
+variables:
+- name: credhub-encryption-password
+  type: password
+  options:
+    length: 40
+- name: credhub-ca
+  type: certificate
+  options:
+    is_ca: true
+    common_name: CredHub CA
+- name: credhub-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: 127.0.0.1
+    alternative_names:
+    - credhub.bosh-lite.com
+- name: database-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: 127.0.0.1
+    alternative_names:
+    - 127.0.0.1
+- name: database-admin
+  type: password
+- name: uaa-tls
+  type: certificate
+  options:
+    ca: credhub-ca
+    common_name: 127.0.0.1
+    alternative_names:
+    - uaa.bosh-lite.com
+- name: uaa-jwt
+  type: rsa
+  options:
+    key_length: 4096
+- name: uaa-users-admin
+  type: password
+- name: uaa-admin
+  type: password
+- name: uaa-login
+  type: password
+- name: uaa-encryption-password
+  type: password
+
+instance_groups:
+- name: credhub
+  instances: 1
+  vm_type: default
+  azs: [z1]
+  stemcell: default
+  networks:
+  - name: default
+    static_ips: [10.244.0.34]
+    default: [dns, gateway]
+
+  jobs:
+  - name: database-backup-restorer
+    release: backup-and-restore-sdk
+  - name: bbr-credhubdb
+    release: credhub
+    properties:
+      release_level_backup: true
+  - name: credhub
+    release: credhub
+    properties:
+      credhub:
+        tls: ((credhub-tls))
+        authentication:
+          uaa:
+            url: *uaa-url
+            verification_key: ((uaa-jwt.public_key))
+            ca_certs:
+            - ((uaa-tls.ca))
+        data_storage:
+          type: postgres
+          username: admin
+          password: ((database-admin))
+          host: 127.0.0.1
+          port: 5432
+          database: credhub
+          require_tls: true
+          tls_ca: ((database-tls.ca))
+        encryption:
+          keys:
+          - provider_name: int
+            key_properties:
+              encryption_password: credhub-encryption-password
+            active: true
+          providers:
+          - name: int
+            type: internal
+
+  - name: postgres
+    release: postgres
+    properties:
+      databases:
+        address: 127.0.0.1
+        port: 5432
+        databases:
+        - name: credhub
+        - name: uaa
+        roles:
+        - name: admin
+          password: ((database-admin))
+        tls:
+          ca: ((database-tls.ca))
+          certificate: ((database-tls.certificate))
+          private_key: ((database-tls.private_key))
+
+  - name: uaa
+    release: uaa
+    properties:
+      bpm:
+        enabled: false
+      uaa:
+        url: &uaa-url https://uaa.bosh-lite.com:8443
+        catalina_opts: -Djava.security.egd=file:/dev/./urandom -Xmx768m -XX:MaxMetaspaceSize=256m
+        scim:
+          users:
+          - name: admin
+            password: ((uaa-users-admin))
+            groups:
+              - scim.write
+              - scim.read
+              - bosh.admin
+              - credhub.read
+              - credhub.write
+        clients:
+          credhub_cli:
+            override: true
+            authorized-grant-types: password,refresh_token
+            scope: credhub.read,credhub.write
+            authorities: uaa.resource
+            access-token-validity: 30
+            refresh-token-validity: 3600
+            secret: ""
+        admin: {client_secret: ((uaa-admin))}
+        login: {client_secret: ((uaa-login))}
+        zones: {internal: {hostnames: []}}
+        sslCertificate: ((uaa-tls.certificate))
+        sslPrivateKey: ((uaa-tls.private_key))
+        jwt:
+          revocable: true
+          policy:
+            active_key_id: key-1
+            keys:
+              key-1:
+                signingKey: ((uaa-jwt.private_key))
+      uaadb:
+        address: 127.0.0.1
+        port: 5432
+        db_scheme: postgresql
+        # This must currently be false unless the CA of the DB is added to the BOSH CA trust store
+        tls_enabled: false
+        databases:
+        - tag: uaa
+          name: uaa
+        roles:
+        - tag: admin
+          name: admin
+          password: ((database-admin))
+      login:
+        saml:
+          serviceProviderCertificate: ((uaa-tls.certificate))
+          serviceProviderKey: ((uaa-tls.private_key))
+          serviceProviderKeyPassword: ""
+      encryption:
+        active_key_label: key1
+        encryption_keys:
+        - label: key1
+          passphrase: ((uaa-encryption-password))
