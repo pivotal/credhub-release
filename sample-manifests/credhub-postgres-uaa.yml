@@ -217,7 +217,6 @@ instance_groups:
         address: 127.0.0.1
         port: 5432
         db_scheme: postgresql
-        tls_enabled: true
         databases:
         - tag: uaa
           name: uaa
