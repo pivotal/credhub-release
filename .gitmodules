@@ -1,3 +1,3 @@
 [submodule "src/credhub"]
 	path = src/credhub
-	url = git@github.com:pivotal/lts-credhub.git
+	url = https://github.com/cloudfoundry-incubator/credhub.git
