@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+echo '________________________________________________________________________________'
+echo '________________________________________________________________________________' >&2
+printf "Starting at: $(date)\n\n"
+printf "Logging at: $(date)\n\n" >&2
+
 <% using_hsm = p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == "hsm" } %>
 <% port = p('credhub.port') %>
 
@@ -41,4 +46,4 @@ mkdir -p /var/vcap/jobs/credhub/tmp
 /var/vcap/jobs/credhub/bin/configure_hsm.sh
 <% end %>
 
-echo 'pre-start finished!'
+printf 'pre-start finished!\n\n\n'
