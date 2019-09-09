@@ -2,11 +2,6 @@
 
 set -u
 
-echo '________________________________________________________________________________'
-echo '________________________________________________________________________________' >&2
-printf "Starting at: $(date)\n\n"
-printf "Logging at: $(date)\n\n" >&2
-
 SECONDS=0
 EXPIRATION=600
 
@@ -25,10 +20,10 @@ while [ $SECONDS -lt $EXPIRATION ]; do
     health_check
     if [ $? == 0 ]
     then
-        printf "credhub post start health check successful\n\n\n"
+        echo "credhub post start health check successful"
         exit 0
     fi
     sleep 1
 done
-printf "credhub post start health check failed\n\n\n"
+echo "credhub post start health check failed"
 exit 1
