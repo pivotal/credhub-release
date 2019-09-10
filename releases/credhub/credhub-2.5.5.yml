@@ -1,0 +1,34 @@
+name: credhub
+version: 2.5.5
+commit_hash: ba8b29d
+uncommitted_changes: false
+jobs:
+- name: bbr-credhubdb
+  version: 32f8192423daa414880d6979a0af8d50dd061926
+  fingerprint: 32f8192423daa414880d6979a0af8d50dd061926
+  sha1: 02930de85392a9b8c3c3f3a49ca52962f2000aab
+- name: credhub
+  version: 6fefdd307aebced9af62143bf30fa1c725e6cde3
+  fingerprint: 6fefdd307aebced9af62143bf30fa1c725e6cde3
+  sha1: 23e60d01170a0977f227150e00dea399d91a3f61
+packages:
+- name: credhub
+  version: 719f5c834e4288e7d7e90e07f2af00d27df40db0
+  fingerprint: 719f5c834e4288e7d7e90e07f2af00d27df40db0
+  sha1: 8c13fd876c896a84d6070ee1412feaf97439921d
+  dependencies:
+  - openjdk_1.8.0
+- name: luna-hsm-client-7.4
+  version: 746f3c30aadc0af7afc2d5cddcc16d8836a8f845
+  fingerprint: 746f3c30aadc0af7afc2d5cddcc16d8836a8f845
+  sha1: 2b6f5b1a93500ad02b6599a39865cb9a638691a1
+  dependencies: []
+- name: openjdk_1.8.0
+  version: d2d85d44c6f0ee050ef1fb0149ce3da575234ad6
+  fingerprint: d2d85d44c6f0ee050ef1fb0149ce3da575234ad6
+  sha1: 51bc2ab0e047c64cd04a805246f6b83d3ce07b2b
+  dependencies: []
+license:
+  version: 08f2aa9f376c717e823b012885bc61cecf8c816e
+  fingerprint: 08f2aa9f376c717e823b012885bc61cecf8c816e
+  sha1: a712018cf0d024dae909cdd472b49bf6bd95135b
