@@ -152,8 +152,6 @@ instance_groups:
   - name: uaa
     release: uaa
     properties:
-      bpm:
-        enabled: false
       uaa:
         url: &uaa-url https://((external-ip-address)):8443
         catalina_opts: -Djava.security.egd=file:/dev/./urandom -Xmx768m -XX:MaxMetaspaceSize=256m
