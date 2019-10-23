@@ -11,7 +11,7 @@ The workflow at a high-level for transitioning to a new certificate is:
 1. Remove the transitional flag from the old CA certificate. Optionally, again propagate changes to your software to remove old CA (e.g. BOSH redeploy).
 
 ## Step 1: Regenerate
-_For the purpose of this example, we'll be using the credential path `/example-ca` to refer to a CA stored on the CredHub server and `/example-cert` to refer to a certificate signed by that CA. Replace this value with the path of the CA you wish to rotate._
+_For the purpose of this example, we'll be using the credential path `/example-ca` to refer to a CA stored on the CredHub server and `/example-leaf` to refer to a certificate signed by that CA. Replace this value with the path of the CA you wish to rotate._
 
 First we'll need to get the ID of the CA certificate. Ensure you're targeting and logged-in to the proper CredHub server.
 
@@ -56,12 +56,12 @@ $ credhub curl -p "/api/v1/data?name=/example-ca&current=true"
 }
 ```
 
-Also, if you request `/example-cert`, you should see both versions of the CA certificate in the `ca` field:
+Also, if you request `/example-leaf`, you should see both versions of the CA certificate in the `ca` field:
 
 ```
-$ credhub get -n /example-cert
+$ credhub get -n /example-leaf
 
-name: /example-cert
+name: /example-leaf
 value:
   ca: |
     -----BEGIN CERTIFICATE-----
@@ -127,12 +127,12 @@ $ credhub curl -p "/api/v1/data?name=/example-ca&current=true"
 }
 ```
 
-The order has also been swapped in the `ca` field of `/example-cert`:
+The order has also been swapped in the `ca` field of `/example-leaf`:
 
 ```
-$ credhub get -n /example-cert
+$ credhub get -n /example-leaf
 
-name: /example-cert
+name: /example-leaf
 value:
   ca: |
     -----BEGIN CERTIFICATE-----
@@ -173,12 +173,12 @@ $ credhub curl -p "/api/v1/data?name=/example-ca&current=true"
 }
 ```
 
-And only the new CA certificate version is returned in the `ca` field of `/example-cert`:
+And only the new CA certificate version is returned in the `ca` field of `/example-leaf`:
 
 ```
-$ credhub get -n /example-cert
+$ credhub get -n /example-leaf
 
-name: /example-cert
+name: /example-leaf
 value:
   ca: |
     -----BEGIN CERTIFICATE-----
