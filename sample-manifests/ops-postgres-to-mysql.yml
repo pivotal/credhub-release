@@ -7,7 +7,7 @@
 - type: replace
   path: /releases/-
   value:
-    name: cf-mysql
+    name: pxc
     version: latest
 
 - type: replace
@@ -69,29 +69,37 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
-    name: mysql
-    release: cf-mysql
+    name: pxc-mysql
+    release: pxc
     properties:
-      cf_mysql:
-        mysql:
-          admin_username: admin
-          admin_password: ((database-admin))
-          tls:
-            ca_certificate: ((database-tls.ca))
-            server_certificate: ((database-tls.certificate))
-            server_key: ((database-tls.private_key))
-          seeded_databases:
-            - name: credhub
-              username: credhub
-              password: ((credhub-db))
-            - name: uaa
-              username: uaa
-              password: ((uaa-db))
-          galera_healthcheck:
-            db_password: ((galera-healthcheck-db))
-            endpoint_password: ((galera-healthcheck-endpoint))
-          cluster_health:
-            password: ((cluster-health))
+      admin_username: admin
+      admin_password: ((database-admin))
+      tls:
+        server: ((database-tls))
+      seeded_databases:
+        - name: credhub
+          username: credhub
+          password: ((credhub-db))
+        - name: uaa
+          username: uaa
+          password: ((uaa-db))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/-
+  value:
+    name: galera-agent
+    release: pxc
+    properties:
+      db_password: ((galera-healthcheck-db))
+      endpoint_password: ((galera-healthcheck-endpoint))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/-
+  value:
+    name: cluster-health-logger
+    release: pxc
+    properties:
+      db_password: ((cluster-health))
 
 - type: replace
   path: /instance_groups/name=credhub/jobs/name=uaa/properties/uaadb/port
