@@ -82,11 +82,12 @@ describe 'credhub job' do
           rendered_template = YAML.safe_load(template.render(default_mysql_manifest))
 
           expected_connection_url =
-            'jdbc:mariadb://some-host:3306/some-database' \
+            'jdbc:mysql://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
+            '&serverTimezone=UTC&useSSL=true&requireSSL=true&verifyServerCertificate=true' \
+            '&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
             '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
-            '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
+            '&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/trust_store.jks'
 
           expect(rendered_template['spring']['datasource']).to eq(
             'username' => 'some-username',
@@ -108,8 +109,8 @@ describe 'credhub job' do
           rendered_template = YAML.safe_load(template.render(manifest))
 
           expected_connection_url =
-            'jdbc:mariadb://some-host:3306/some-database' \
-            '?autoReconnect=true'
+            'jdbc:mysql://some-host:3306/some-database' \
+            '?autoReconnect=true&serverTimezone=UTC'
 
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
         end
@@ -123,11 +124,12 @@ describe 'credhub job' do
           rendered_template = YAML.safe_load(template.render(manifest))
 
           expected_connection_url =
-            'jdbc:mariadb://some-host:3306/some-database' \
+            'jdbc:mysql://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
+            '&serverTimezone=UTC&useSSL=true&requireSSL=true&verifyServerCertificate=true' \
+            '&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
             '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
-            '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks' \
+            '&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/trust_store.jks' \
             '&disableSslHostnameVerification=true'
 
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
