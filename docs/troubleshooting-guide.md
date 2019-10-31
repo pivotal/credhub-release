@@ -246,6 +246,8 @@ This error is caused by CredHub trying to establish an TLS 1.2 connection to a v
 To configure this release to work with MySQL Community Server, at this time you must disable database TLS by setting the property
 `credhub.data_storage.require_tls` to `false`.
 
+More information is available [here](https://mariadb.com/kb/en/library/using-tlsssl-with-mariadb-connectorj/).
+
 ## Usability Failures
 
 Usability failures occur after a successful deployment of CredHub. These errors are primarily related to the server's ability to reach dependent components. 

@@ -27,14 +27,14 @@
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
-      'url' => "jdbc:mysql://#{host}:#{port}/#{database}?autoReconnect=true&serverTimezone=UTC",
+      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true",
     }
 
     if p('credhub.data_storage.require_tls')
       properties['spring']['datasource']['url'] <<
-        '&useSSL=true&requireSSL=true&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' +
+      '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' +
         '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' +
-        '&trustCertificateKeyStoreUrl=file:///var/vcap/jobs/credhub/config/trust_store.jks'
+        '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
 
       if !p('credhub.data_storage.hostname_verification.enabled')
         properties['spring']['datasource']['url'] << '&disableSslHostnameVerification=true'
