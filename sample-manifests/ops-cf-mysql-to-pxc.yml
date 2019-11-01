@@ -1,0 +1,51 @@
+- type: replace
+  path: /releases/-
+  value:
+    name: pxc
+    version: latest
+
+
+- type: replace
+  path: /instance_groups/name=credhub/persistent_disk?
+  value: 20480
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/-
+  value:
+    name: pxc-mysql
+    release: pxc
+    properties:
+      pxc_enabled: true
+      admin_username: admin
+      admin_password: ((database-admin))
+      tls:
+        server: ((database-tls))
+      seeded_databases:
+        - name: credhub
+          username: credhub
+          password: ((credhub-db))
+        - name: uaa
+          username: uaa
+          password: ((uaa-db))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/-
+  value:
+    name: galera-agent
+    release: pxc
+    properties:
+      db_password: ((galera-healthcheck-db))
+      endpoint_password: ((galera-healthcheck-endpoint))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/-
+  value:
+    name: cluster-health-logger
+    release: pxc
+    properties:
+      db_password: ((cluster-health))
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=mysql/properties/cf_mysql_enabled?
+  value: false
+
