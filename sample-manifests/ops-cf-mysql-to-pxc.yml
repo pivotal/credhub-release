@@ -11,6 +11,12 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
+    consumes:
+      mysql:
+        from: pxc-mysql
+    provides:
+      mysql:
+        as: pxc-mysql
     name: pxc-mysql
     release: pxc
     properties:
@@ -30,6 +36,9 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
+    consumes:
+      mysql:
+        from: pxc-mysql
     name: galera-agent
     release: pxc
     properties:
@@ -39,6 +48,9 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
+    consumes:
+      mysql:
+        from: pxc-mysql
     name: cluster-health-logger
     release: pxc
     properties:
