@@ -4,7 +4,6 @@
     name: pxc
     version: latest
 
-
 - type: replace
   path: /instance_groups/name=credhub/persistent_disk?
   value: 20480
@@ -49,3 +48,12 @@
   path: /instance_groups/name=credhub/jobs/name=mysql/properties/cf_mysql_enabled?
   value: false
 
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=mysql/consumes?/mysql
+  value:
+    from: mysql-legacy
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=mysql/provides?/mysql
+  value:
+    as: mysql-legacy
