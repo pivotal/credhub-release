@@ -4,7 +4,6 @@
     name: pxc
     version: latest
 
-
 - type: replace
   path: /instance_groups/name=credhub/persistent_disk?
   value: 20480
@@ -12,6 +11,12 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
+    consumes:
+      mysql:
+        from: pxc-mysql
+    provides:
+      mysql:
+        as: pxc-mysql
     name: pxc-mysql
     release: pxc
     properties:
@@ -31,6 +36,9 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
+    consumes:
+      mysql:
+        from: pxc-mysql
     name: galera-agent
     release: pxc
     properties:
@@ -40,6 +48,9 @@
 - type: replace
   path: /instance_groups/name=credhub/jobs/-
   value:
+    consumes:
+      mysql:
+        from: pxc-mysql
     name: cluster-health-logger
     release: pxc
     properties:
@@ -49,3 +60,12 @@
   path: /instance_groups/name=credhub/jobs/name=mysql/properties/cf_mysql_enabled?
   value: false
 
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=mysql/consumes?/mysql
+  value:
+    from: mysql-legacy
+
+- type: replace
+  path: /instance_groups/name=credhub/jobs/name=mysql/provides?/mysql
+  value:
+    as: mysql-legacy
