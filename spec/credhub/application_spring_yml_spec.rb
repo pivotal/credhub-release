@@ -84,8 +84,6 @@ describe 'credhub job' do
           expected_connection_url =
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&useSSL=true' \
-            '&requireSSL=true' \
             '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
             '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
             '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
@@ -127,8 +125,6 @@ describe 'credhub job' do
           expected_connection_url =
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&useSSL=true' \
-            '&requireSSL=true' \
             '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
             '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
             '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks' \
