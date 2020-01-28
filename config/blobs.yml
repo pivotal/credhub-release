@@ -4,4 +4,5 @@ luna-hsm-client-7.4/luna-hsm-client-7.4.tar:
   sha: sha256:7df1df90738778437a545ca2b0fb1427ab302503791d329946ab36edd5f07ec4
 openjdk_1.8.0/openjdk-jdk-1.8.0_242-bionic.tar.gz:
   size: 104222555
+  object_id: 905ca7e5-1512-49eb-7ac5-e7245b6d91e7
   sha: sha256:dcb9fea2fc3a9b003031874ed17aa5d5a7ebbe397b276ecc8c814633003928fe
