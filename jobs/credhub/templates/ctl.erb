@@ -40,7 +40,8 @@ case $1 in
     -Djava.io.tmpdir=$tmp_dir \\
     -Djdk.tls.ephemeralDHKeySize=4096 \\
     -Dfile.encoding=UTF-8 \\
-    -Djdk.tls.namedGroups=\"secp384r1\" \\"
+    -Djdk.tls.namedGroups=\"secp384r1\" \\
+    -XX:+CheckEndorsedAndExtDirs \\"
 
     if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
       java_command += "-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
