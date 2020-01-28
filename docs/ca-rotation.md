@@ -149,7 +149,11 @@ value:
 
 Regenerate all certificates that are signed by the new CA certificate.
 
-## Step 4: Removing the transitional flag
+## Step 4 (Optional):
+
+If the certificates are deployed as part of a BOSH deployment, ensure that you redeploy to pick up the new CA certificate with the old CA certificate still in place so the new leaf certificates are trusted by the existing configurations while the deployment is running.
+
+## Step 5: Removing the transitional flag
 
 After you have regenerated all your certificates, you can safely remove the transitional flag from the old one:
 
@@ -186,3 +190,7 @@ value:
     -----END CERTIFICATE-----
   ...
 ```
+
+## Step 6 (Optional): Cleaning up the deployment
+
+If the certificates are deployed as part of a BOSH deployment, ensure that you redeploy one last time to clean out the references to the old CA certificate from the deployment.
