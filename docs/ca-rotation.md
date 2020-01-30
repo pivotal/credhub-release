@@ -4,11 +4,14 @@ CredHub offers support for zero-downtime rotation of certificate credentials by 
 
 The workflow at a high-level for transitioning to a new certificate is:
 
-0. If not already configured, redeploy your CredHub server with the `credhub.certificates.concatenate_cas: true` option. This will combine all active versions of a CA in a certificate's `.ca` field.
-1. Regenerate your CA certificate with the `transitional` flag. This creates a new version that will _not_ be used for signing yet, but can be added to your servers trusted certificate lists. Then, propagate the concatenated CAs to your software (e.g. BOSH redeploy).
+1. If not already configured, redeploy your CredHub server with the `credhub.certificates.concatenate_cas: true` option. This will combine all active versions of a CA in a certificate's `.ca` field.
+1. Regenerate your CA certificate with the `transitional` flag. This creates a new version that will _not_ be used for signing yet, but can be added to your servers trusted certificate lists.
+1. Propagate the concatenated CAs to your software (e.g. BOSH redeploy).
 1. Remove the transitional flag from the new CA certificate, and add it to the old CA certificate. This means that the new certificate will start to be used for signing, but the old one will remain as trusted.
-1. Regenerate certificates that are signed by the CA, and then propagate new certificates to your software (e.g. BOSH redeploy).
-1. Remove the transitional flag from the old CA certificate. Optionally, again propagate changes to your software to remove old CA (e.g. BOSH redeploy).
+1. Regenerate certificates that are signed by the CA.
+1. Propagate new certificates to your software (e.g. BOSH redeploy).
+1. Remove the transitional flag from the old CA certificate.
+1. Optionally, again propagate changes to your software to remove old CA (e.g. BOSH redeploy).
 
 ## Step 1: Regenerate
 _For the purpose of this example, we'll be using the credential path `/example-ca` to refer to a CA stored on the CredHub server and `/example-leaf` to refer to a certificate signed by that CA. Replace this value with the path of the CA you wish to rotate._
@@ -73,7 +76,11 @@ value:
   ...
 ```
 
-## Step 2: Moving the transitional flag
+## Step 2: Initial Propogation
+
+Propogate the changes from Credhub to your software. If using BOSH, redeploy.
+
+## Step 3: Moving the transitional flag
 To move the transitional flag off of the new CA certificate and onto the older version, we'll need to grab the older version's ID:
 
 ```
@@ -144,16 +151,19 @@ value:
   ...
 ```
 
+## Step 4: Propogate certificate order
 
-## Step 3: Regenerate certificates
+Propogate the changes from Credhub to your software. If using BOSH, redeploy.
+
+## Step 5: Regenerate certificates
 
 Regenerate all certificates that are signed by the new CA certificate.
 
-## Step 4 (Optional):
+## Step 6: Propogate new certificates from new CA
 
-If the certificates are deployed as part of a BOSH deployment, ensure that you redeploy to pick up the new CA certificate with the old CA certificate still in place so the new leaf certificates are trusted by the existing configurations while the deployment is running.
+Propogate the changes from Credhub to your software. If using BOSH, redeploy.
 
-## Step 5: Removing the transitional flag
+## Step 7: Removing the transitional flag
 
 After you have regenerated all your certificates, you can safely remove the transitional flag from the old one:
 
@@ -191,6 +201,6 @@ value:
   ...
 ```
 
-## Step 6 (Optional): Cleaning up the deployment
+## Step 8: Remove old CA
 
-If the certificates are deployed as part of a BOSH deployment, ensure that you redeploy one last time to clean out the references to the old CA certificate from the deployment.
+Propogate the changes from Credhub to your software. If using BOSH, redeploy.
