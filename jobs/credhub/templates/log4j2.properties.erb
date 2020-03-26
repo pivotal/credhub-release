@@ -4,7 +4,7 @@ appender.FILE.name=CREDHUB
 appender.FILE.type=File
 appender.FILE.fileName=/var/vcap/sys/log/credhub/credhub.log
 appender.FILE.layout.type=PatternLayout
-appender.FILE.layout.pattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} [%t] .... %5p --- %c{1}: %m%n
+appender.FILE.layout.pattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSS}{GMT+0}Z [%t] .... %5p --- %c{1}: %m%n
 
 appender.SECURITY_EVENTS_FILE.name=CREDHUB_SECURITY_EVENTS
 appender.SECURITY_EVENTS_FILE.type=File

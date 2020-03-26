@@ -2,10 +2,13 @@
 
 set -euo pipefail
 
+LOG_DIR=/var/vcap/sys/log/credhub
+source /var/vcap/packages/credhub/utils.sh
+
+tee_output_to_sys_log "${LOG_DIR}" "pre-start"
+
 echo '________________________________________________________________________________'
 echo '________________________________________________________________________________' >&2
-printf "Starting at: $(date)\n\n"
-printf "Logging at: $(date)\n\n" >&2
 
 <% using_hsm = p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == "hsm" } %>
 <% port = p('credhub.port') %>

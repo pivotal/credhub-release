@@ -2,6 +2,11 @@
 
 set -eu
 
+LOG_DIR=/var/vcap/sys/log/credhub
+source /var/vcap/packages/credhub/utils.sh
+
+tee_output_to_sys_log "${LOG_DIR}" "configure_hsm"
+
 <%
   hsm_provider = p('credhub.encryption.providers').flatten.find  { |provider| provider['type'] == "hsm" }
   if hsm_provider
