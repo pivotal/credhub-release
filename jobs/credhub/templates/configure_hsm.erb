@@ -3,7 +3,7 @@
 set -eu
 
 LOG_DIR=/var/vcap/sys/log/credhub
-source /var/vcap/packages/credhub/utils.sh
+source /var/vcap/jobs/credhub/bin/utils.sh
 
 tee_output_to_sys_log "${LOG_DIR}" "configure_hsm"
 

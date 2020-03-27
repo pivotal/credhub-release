@@ -1,14 +1,12 @@
 #!bin/bash
 
-# tee_output_to_sys_log
-#
-# When syslog_utils.sh is loaded, this sends stdout and stderr to /var/vcap/sys/log.
+# This sends stdout and stderr to /var/vcap/sys/log.
 function tee_output_to_sys_log() {
   declare log_dir="$1"
   declare log_name="$2"
 
-  exec > >(tee -a >(logger -p user.info -t "vcap.${log_name}.stdout") | prepend_rfc3339_datetime >>"${log_dir}/${log_name}.log")
-  exec 2> >(tee -a >(logger -p user.error -t "vcap.${log_name}.stderr") | prepend_rfc3339_datetime >>"${log_dir}/${log_name}.err.log")
+  exec > >(tee -a >(logger -p user.info -t "vcap.${log_name}.stdout") | prepend_rfc3339_datetime >>"${log_dir}/${log_name}.stdout.log")
+  exec 2> >(tee -a >(logger -p user.error -t "vcap.${log_name}.stderr") | prepend_rfc3339_datetime >>"${log_dir}/${log_name}.stderr.log")
 }
 
 function prepend_rfc3339_datetime() {

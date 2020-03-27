@@ -47,6 +47,9 @@ templates:
   bpm.yml.erb: config/bpm.yml
   credhub.erb: bin/credhub
 
+  # Utils
+  utils.sh: bin/utils.sh
+
 
 packages:
 - openjdk_1.8.0

@@ -10,7 +10,7 @@ appender.SECURITY_EVENTS_FILE.name=CREDHUB_SECURITY_EVENTS
 appender.SECURITY_EVENTS_FILE.type=File
 appender.SECURITY_EVENTS_FILE.fileName=/var/vcap/sys/log/credhub/credhub_security_events.log
 appender.SECURITY_EVENTS_FILE.layout.type=PatternLayout
-appender.SECURITY_EVENTS_FILE.layout.pattern=%m%n
+appender.SECURITY_EVENTS_FILE.layout.pattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSS}{GMT+0}Z: %m%n
 
 rootLogger.appenderRef.FILE.ref=CREDHUB
 
