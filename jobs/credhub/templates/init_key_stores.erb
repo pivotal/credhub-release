@@ -58,11 +58,20 @@ if [ -s ${CERT_FILE} ]; then
 fi
 
 if [ $(cat $DATABASE_TLS_CA_FILE | wc -c) -ge 2 ]; then
-  ${JAVA_HOME}/bin/keytool -import -noprompt \
-    -keystore ${TRUST_STORE_PATH} \
-    -storepass ${TRUST_STORE_PASSWORD} \
-    -alias ${DATABASE_VERIFY_CA_ALIAS} \
-    -file ${DATABASE_TLS_CA_FILE}
+  cat $DATABASE_TLS_CA_FILE | awk 'split_after==1{n++;split_after=0} /-----END CERTIFICATE-----/ {split_after=1} { print > "/var/vcap/jobs/credhub/config/db-tls-ca" n ".pem" }'
+
+  COUNTER=1
+  for f in /var/vcap/jobs/credhub/config/db-tls-ca*.pem; do
+    if [ $(cat $f | wc -c) -g 2 ]; then
+      ALIAS="$DATABASE_VERIFY_CA_ALIAS$COUNTER"
+      ${JAVA_HOME}/bin/keytool -import -noprompt \
+      -keystore ${TRUST_STORE_PATH} \
+      -storepass ${TRUST_STORE_PASSWORD} \
+      -alias ${ALIAS} \
+      -file $f
+      let COUNTER=COUNTER+1
+    fi
+  done
 fi
 
 <%
@@ -122,6 +131,7 @@ end %>
 
 # remove intermediate files
 rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}
+rm -f /var/vcap/jobs/credhub/config/db-tls-ca.*
 
 # restrict file permissions
 chown vcap /var/vcap/jobs/credhub/config/*.jks
