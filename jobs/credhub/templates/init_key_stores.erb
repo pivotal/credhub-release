@@ -62,7 +62,7 @@ if [ $(cat $DATABASE_TLS_CA_FILE | wc -c) -ge 2 ]; then
 
   COUNTER=1
   for f in /var/vcap/jobs/credhub/config/db-tls-ca*.pem; do
-    if [ $(cat $f | wc -c) -g 2 ]; then
+    if [ $(cat $f | wc -c) -gt 2 ]; then
       ALIAS="$DATABASE_VERIFY_CA_ALIAS$COUNTER"
       ${JAVA_HOME}/bin/keytool -import -noprompt \
       -keystore ${TRUST_STORE_PATH} \
@@ -131,7 +131,7 @@ end %>
 
 # remove intermediate files
 rm -f cert.p12 ${CERT_FILE} ${PRIVATE_KEY_FILE} ${MTLS_CA_CERT_FILE} ${AUTH_SERVER_CA_CERT_FILE}
-rm -f /var/vcap/jobs/credhub/config/db-tls-ca.*
+rm -f /var/vcap/jobs/credhub/config/db-tls-ca*.pem
 
 # restrict file permissions
 chown vcap /var/vcap/jobs/credhub/config/*.jks
