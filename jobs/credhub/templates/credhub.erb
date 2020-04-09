@@ -9,6 +9,11 @@ cd /var/vcap/packages/credhub
 
 source $tmp_dir/var-store
 
+LOG_DIR=/var/vcap/sys/log/credhub
+source /var/vcap/packages/credhub/utils.sh
+
+tee_output_to_sys_log "${LOG_DIR}" "credhub"
+
 /var/vcap/jobs/credhub/bin/wait_for_uaa
 
 <%

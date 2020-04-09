@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+LOG_DIR=/var/vcap/sys/log/credhub
+source /var/vcap/packages/credhub/utils.sh
+
+tee_output_to_sys_log "${LOG_DIR}" "credhub"
+
 <% if p("credhub.authentication.uaa.enabled") %>
   <% if p("credhub.authentication.uaa.wait_for_start") %>
 status=`curl --max-time 5 --connect-timeout 2 -k --silent <%= p(["credhub.authentication.uaa.internal_url", "credhub.authentication.uaa.url"]) %>/healthz`
