@@ -224,6 +224,12 @@ properties:
   credhub.authentication.uaa.wait_for_start:
     description: "Waits for UAA to be available before starting CredHub"
     default: true
+  credhub.authentication.uaa.wait_for_start_max_timeout:
+    description: "Max timeout in seconds for curl to UAA during wait-for-start script"
+    default: 300
+  credhub.authentication.uaa.wait_for_start_connect_timeout:
+    description: "Connect timeout in seconds for curl to UAA during wait-for-start script"
+    default: 120
 
   # Mutual TLS Authentication
   credhub.authentication.mutual_tls.trusted_cas:
