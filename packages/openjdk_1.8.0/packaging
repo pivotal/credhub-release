@@ -1,11 +1,14 @@
 set -ex
 
 cd ${BOSH_INSTALL_TARGET}
-mkdir jre && tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/openjdk-*.tar.gz -C jre
+tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_1.8.0/bellsoft-jre*.tar.gz
 if [[ $? != 0 ]] ; then
   echo "Cannot unpack JRE"
   exit 1
 fi
 
+#rename directory
+mv jre8* jre
+
 # latest JRE release didn't have correct permissions
-chmod -R a+r jre
+chmod -R a+rx jre
