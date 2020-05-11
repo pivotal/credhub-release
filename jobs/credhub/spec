@@ -273,7 +273,7 @@ properties:
   # Certificates
   credhub.certificates.concatenate_cas:
     description: "Enables the concatenation of CAs when there is a transitional CA for a certificate."
-    default: false
+    default: true
 
   # Swappable Backend
   credhub.backend.enable_swappable_backend:
