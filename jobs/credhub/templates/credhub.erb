@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
-declare -r application_config_dir=/var/vcap/jobs/credhub/config/application
+declare -r tmp_dir='/var/vcap/jobs/credhub/tmp'
+declare -r application_config_dir='/var/vcap/jobs/credhub/config/application'
 declare -r application_configs="$(ls -d $application_config_dir/* | paste -sd ',' -)"
 cd /var/vcap/packages/credhub
 
@@ -16,7 +16,7 @@ tee_output_to_sys_log "${LOG_DIR}" "credhub"
 
 /var/vcap/jobs/credhub/bin/wait_for_uaa
 
-export MANAGEMENT_SERVER_PORT=<%= p('credhub.health_endpoint_port').to_s %>
+export MANAGEMENT_SERVER_PORT="<%= p('credhub.health_endpoint_port').to_s %>"
 
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Xmx${MAX_HEAP_SIZE}m"
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dspring.config.additional-location=$application_configs"
@@ -32,9 +32,9 @@ if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enable
 end
 %>
 
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
-export PATH=$JAVA_HOME/bin:$PATH
+export JAVA_HOME='/var/vcap/packages/openjdk_1.8.0/jre'
+export PATH="$JAVA_HOME/bin:$PATH"
 
 java \
-	-jar *.jar \
+	-jar "*.jar" \
 	--management.server.port="${MANAGEMENT_SERVER_PORT}"
