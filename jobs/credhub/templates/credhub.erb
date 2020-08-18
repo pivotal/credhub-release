@@ -16,23 +16,25 @@ tee_output_to_sys_log "${LOG_DIR}" "credhub"
 
 /var/vcap/jobs/credhub/bin/wait_for_uaa
 
-export MANAGEMENT_SERVER_PORT=<%= p('credhub.health_endpoint_port').to_s %>
+<%
+java_command = "\tjava \\
+\t\t-Xmx${MAX_HEAP_SIZE}m \\
+\t\t-Dspring.config.additional-location=$application_configs \\
+\t\t-Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \\
+\t\t-Djava.security.egd=file:/dev/urandom \\
+\t\t-Djava.io.tmpdir=/var/vcap/data/credhub/exec-tmp \\
+\t\t-Djdk.tls.ephemeralDHKeySize=4096 \\
+\t\t-Djdk.tls.namedGroups=\"secp384r1\" \\\n"
 
-<%=
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
-  'export JAVA_OPTS="-Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks"'
+  java_command += "\t\t-Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks \\
+\t\t-Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} \\\n"
 end
+
+java_command += "\t\t-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
 %>
 
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
-java \
-    -Xmx${MAX_HEAP_SIZE}m \
-    -Dspring.config.additional-location=$application_configs \
-    -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties \
-    -Djava.security.egd=file:/dev/urandom \
-    -Djava.io.tmpdir=/var/vcap/data/credhub/exec-tmp \
-    -Djdk.tls.ephemeralDHKeySize=4096 \
-    -Djdk.tls.namedGroups="secp384r1" \
-    -ea -jar *.jar --management.server.port="${MANAGEMENT_SERVER_PORT}"
+<%= java_command %>
