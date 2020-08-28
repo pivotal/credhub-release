@@ -1,0 +1,7 @@
+---
+name: luna-hsm-client-10.2
+
+dependencies: []
+
+files:
+- luna-hsm-client-10.2/luna-hsm-client-10.2.tar
