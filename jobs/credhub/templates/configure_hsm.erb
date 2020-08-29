@@ -30,11 +30,13 @@ cat > /var/vcap/jobs/credhub/config/hsm_cert.pem <<EOL
 <% end %>
 EOL
 
-ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
+# the universal Luna client:
+ln -f -s /var/vcap/jobs/credhub/config/encryption-new.conf /etc/Chrystoki.conf
 
 # JVM 8 - WILL NOT WORK ON JVM 11
-cp /var/vcap/packages/luna-hsm-client-7.4/jsp/LunaProvider.jar $JAVA_HOME/lib/ext/
-cp /var/vcap/packages/luna-hsm-client-7.4/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ext/
+# the universal Luna client:
+cp /var/vcap/packages/luna-hsm-client-10.2/jsp/LunaProvider.jar $JAVA_HOME/lib/ext/
+cp /var/vcap/packages/luna-hsm-client-10.2/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ext/
 
 <%
   primary_server = hsm_servers.shift
@@ -42,7 +44,19 @@ cp /var/vcap/packages/luna-hsm-client-7.4/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ex
   ha_group_label = hsm_provider['partition']
 %>
 
-PATH=$PATH:/var/vcap/packages/luna-hsm-client-7.4/bin/64
+PATH=$PATH:/var/vcap/packages/luna-hsm-client-10.2/bin/64
+
+# TODO here validate that the universal client is compatible with the configured HSM (aka the HSM
+# is Luna 7+, or other HSMs). But how? perhaps there is a lunacm command to use
+
+# if the universal client does not work then:
+# switch back to using the old luna client
+# JVM 8 - WILL NOT WORK ON JVM 11
+# cp /var/vcap/packages/luna-hsm-client-7.4/jsp/LunaProvider.jar $JAVA_HOME/lib/ext/
+# cp /var/vcap/packages/luna-hsm-client-7.4/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ext/
+# PATH=$PATH:/var/vcap/packages/luna-hsm-client-7.4/bin/64
+# ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
+
 
 if ! lunacm -q haGroup listGroups -group "<%= ha_group_label %>" -password ""; then
   echo "HSM HA appears to be uninitialized. Performing HA HSM setup."

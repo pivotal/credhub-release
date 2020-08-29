@@ -1,0 +1,62 @@
+<% encryption_providers = p('credhub.encryption.providers').flatten.to_a
+hsm_providers = encryption_providers.select{|p| p['type'] == 'hsm'}
+
+if hsm_providers.any?
+  hsm_provider = hsm_providers.first
+
+  if hsm_provider.has_key?("connection_properties")
+    hsm_provider = hsm_provider["connection_properties"]
+  end
+%>
+
+# the 32 bit option is not in universal client anymore, what to do?
+Chrystoki2 = {
+  LibUNIX = /var/vcap/packages/luna-hsm-client-10.2/libs/64/libCryptoki2.so;
+  LibUNIX64 = /var/vcap/packages/luna-hsm-client-10.2/libs/64/libCryptoki2.so;
+}
+
+Luna = {
+  DefaultTimeOut = 500000;
+  PEDTimeout1 = 100000;
+  PEDTimeout2 = 200000;
+  PEDTimeout3 = 20000;
+  KeypairGenTimeOut = 2700000;
+  CloningCommandTimeOut = 300000;
+  CommandTimeOutPedSet = 720000;
+}
+
+CardReader = {
+  RemoteCommand = 1;
+}
+
+Misc = {
+  PE1746Enabled = 0;
+  ToolsDir = /var/vcap/packages/luna-hsm-client-10.2/bin/64;
+  ProtectedAuthenticationPathFlagStatus = 0;
+
+}
+
+LunaSA Client = {
+  ReceiveTimeout = 20000;
+  SSLConfigFile = /var/vcap/packages/luna-hsm-client-10.2/openssl.cnf;
+  ClientPrivKeyFile = /var/vcap/jobs/credhub/config/client_key.pem;
+  ClientCertFile = /var/vcap/jobs/credhub/config/client_cert.pem;
+  ServerCAFile = /var/vcap/jobs/credhub/config/hsm_cert.pem;
+  NetClient = 1;
+  TCPKeepAlive = 1;
+<% hsm_provider['servers'].each_with_index do |hsm_server, i| %>
+  ServerName0<%= i %> = <%= hsm_server['host'] %>;
+  ServerPort0<%= i %> = <%= hsm_server['port'] || 1792 %>;
+<% end %>
+}
+
+HAConfiguration = {
+   reconnAtt = -1;
+   AutoReconnectInterval = 60;
+   haLogPath = /var/vcap/sys/log/credhub;
+   logLen = 262144;
+   haLogStatus = enabled;
+   HAOnly = 1;
+}
+
+<% end %>

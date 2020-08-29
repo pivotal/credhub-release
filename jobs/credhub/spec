@@ -32,6 +32,7 @@ templates:
   validation_uaa.yml.erb: config/validation_uaa.yml
   log4j2.properties.erb: config/log4j2.properties
   encryption.conf.erb: config/encryption.conf
+  encryption-new.conf.erb: config/encryption-new.conf
 
   application_auth_server.yml.erb: config/application/auth-server.yml
   application_encryption.yml.erb: config/application/encryption.yml
@@ -54,6 +55,7 @@ templates:
 packages:
 - openjdk_1.8.0
 - luna-hsm-client-7.4
+- luna-hsm-client-10.2
 - credhub
 
 provides:
