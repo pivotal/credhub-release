@@ -33,8 +33,8 @@ EOL
 ln -f -s /var/vcap/jobs/credhub/config/encryption.conf /etc/Chrystoki.conf
 
 # JVM 8 - WILL NOT WORK ON JVM 11
-cp /var/vcap/packages/luna-hsm-client-7.4/jsp/LunaProvider.jar $JAVA_HOME/lib/ext/
-cp /var/vcap/packages/luna-hsm-client-7.4/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ext/
+cp /var/vcap/packages/luna-hsm-client-10.2/jsp/LunaProvider.jar $JAVA_HOME/lib/ext/
+cp /var/vcap/packages/luna-hsm-client-10.2/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ext/
 
 <%
   primary_server = hsm_servers.shift
@@ -42,7 +42,7 @@ cp /var/vcap/packages/luna-hsm-client-7.4/jsp/64/libLunaAPI.so $JAVA_HOME/lib/ex
   ha_group_label = hsm_provider['partition']
 %>
 
-PATH=$PATH:/var/vcap/packages/luna-hsm-client-7.4/bin/64
+PATH=$PATH:/var/vcap/packages/luna-hsm-client-10.2/bin/64
 
 if ! lunacm -q haGroup listGroups -group "<%= ha_group_label %>" -password ""; then
   echo "HSM HA appears to be uninitialized. Performing HA HSM setup."

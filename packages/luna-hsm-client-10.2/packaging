@@ -1,0 +1,3 @@
+set -e
+
+tar -C ${BOSH_INSTALL_TARGET} --strip-components=1 -xvf ${BOSH_COMPILE_TARGET}/luna-hsm-client-10.2/luna-hsm-client-10.2.tar
