@@ -16,6 +16,7 @@
   case p('credhub.data_storage.type')
   when 'in-memory'
     properties['spring']['flyway']['locations'] << 'classpath:/db/migration/h2'
+
   when 'mysql'
     host = p('credhub.data_storage.host')
     port = p('credhub.data_storage.port')
@@ -42,12 +43,12 @@
         properties['spring']['datasource']['url'] << '&disableSslHostnameVerification=true'
       end
     end
-  when 'postgres'
 
+  when 'postgres'
     host = p('credhub.data_storage.host', '')
     port = p('credhub.data_storage.port', 0)
-    if host.empty?
 
+    if host.empty?
       if_link('postgres') do |db|
         host = db.instances.first.address
         port = db.p('databases.port')
