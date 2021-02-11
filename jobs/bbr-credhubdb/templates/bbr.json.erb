@@ -2,6 +2,7 @@
   require 'json'
 
   props = self
+  # if consuming the credhub_db link provided by the credhub job, use it to overwrite the bbr-credhub spec config
   if_link("credhub_db") { |db| props = db }
 
   config = {
@@ -14,6 +15,8 @@
   props.if_p("credhub.data_storage.host") do |host|
     config[:host] = host
   end.else do
+  # if credhub job uses the postgres link (which is the case when credhub_db link's host is empty),
+  # then bbr-credhub job should do the same: also use the postgres link
     if_link('database') do |database_link|
       config[:host] = database_link.instances[0].address
     end
