@@ -272,7 +272,7 @@ This error occurs when the request includes a parameter that is not recognized b
 
 If you encounter this error when using the CLI, this occurs because the feature you are attempting to exercise is not yet or no longer supported by the server. You are recommended to update to the latest versions of both or review the release notes to validate when a feature was added or removed. 
 
-[1]:https://credhub-api.cfapps.io
+[1]:https://docs.cloudfoundry.org/api/credhub
 
 ***
 #### Response "exception":"java.lang.IllegalArgumentException","message":"json string can not be null or empty"
