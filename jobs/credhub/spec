@@ -82,6 +82,9 @@ consumes:
   optional: true
 
 properties:
+  credhub.connection-timeout:
+    description: "The maximum amount of time the server will wait for the client to make their request after connecting before the connection is closed"
+    default: 5s
   credhub.port:
     description: "Listening port for the CredHub API"
     default: 8844
