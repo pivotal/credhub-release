@@ -1,13 +1,13 @@
 <% if p('bpm.enabled') %>
 check process credhub
   with pidfile /var/vcap/sys/run/bpm/credhub/credhub.pid
-  start program "/var/vcap/jobs/bpm/bin/bpm start credhub"
+  start program "/var/vcap/jobs/bpm/bin/bpm start credhub" with timeout <%= p("credhub.authentication.uaa.wait_for_start_max_timeout") %> seconds
   stop program "/var/vcap/jobs/bpm/bin/bpm stop credhub"
   group vcap
 <% else %>
 check process credhub
   with pidfile /var/vcap/sys/run/credhub/pid
-  start program "/var/vcap/jobs/credhub/bin/ctl start"
+  start program "/var/vcap/jobs/credhub/bin/ctl start" with timeout <%= p("credhub.authentication.uaa.wait_for_start_max_timeout") %> seconds
   stop program "/var/vcap/jobs/credhub/bin/ctl stop"
   group vcap
 <% end %>
