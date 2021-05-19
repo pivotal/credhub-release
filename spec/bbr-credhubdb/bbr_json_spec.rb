@@ -61,7 +61,7 @@ describe 'bbr-credhubdb job' do
           'adapter' => 'some-type',
           'host' => 'some-host',
           'tls' => {
-            'skip_ssl_validation' => false,
+            'skip_host_verify' => false,
             'cert' => {
               'ca' => 'some-ca'
             }
@@ -173,7 +173,7 @@ describe 'bbr-credhubdb job' do
           'adapter' => 'some-type',
           'host' => 'some-host',
           'tls' => {
-            'skip_ssl_validation' => false,
+            'skip_host_verify' => false,
             'cert' => {
               'ca' => 'some-ca'
             }
@@ -272,7 +272,7 @@ describe 'bbr-credhubdb job' do
           'adapter' => 'some-type',
           'host' => 'some-host',
           'tls' => {
-            'skip_ssl_validation' => false,
+            'skip_host_verify' => false,
             'cert' => {
               'ca' => 'some-ca'
             }
