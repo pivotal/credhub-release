@@ -18,7 +18,10 @@ describe 'bbr-credhubdb job' do
         'port' => 'some-port',
         'database' => 'some-database',
         'require_tls' => true,
-        'tls_ca' => 'some-ca'
+        'tls_ca' => 'some-ca',
+        'hostname_verification' => {
+            'enabled' => false
+        }
       }
     end
     let(:other_data_storage) do
@@ -30,7 +33,10 @@ describe 'bbr-credhubdb job' do
         'port' => 'other-port',
         'database' => 'other-database',
         'require_tls' => true,
-        'tls_ca' => 'other-ca'
+        'tls_ca' => 'other-ca',
+        'hostname_verification' => {
+            'enabled' => false
+        }
       }
     end
     let(:data_storage_without_host) { default_data_storage.tap { |d| d.delete('host') } }
@@ -55,6 +61,7 @@ describe 'bbr-credhubdb job' do
           'adapter' => 'some-type',
           'host' => 'some-host',
           'tls' => {
+            'skip_ssl_validation' => false,
             'cert' => {
               'ca' => 'some-ca'
             }
@@ -166,6 +173,7 @@ describe 'bbr-credhubdb job' do
           'adapter' => 'some-type',
           'host' => 'some-host',
           'tls' => {
+            'skip_ssl_validation' => false,
             'cert' => {
               'ca' => 'some-ca'
             }
@@ -264,6 +272,7 @@ describe 'bbr-credhubdb job' do
           'adapter' => 'some-type',
           'host' => 'some-host',
           'tls' => {
+            'skip_ssl_validation' => false,
             'cert' => {
               'ca' => 'some-ca'
             }
