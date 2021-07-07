@@ -20,7 +20,7 @@ describe 'bbr-credhubdb job' do
         'require_tls' => true,
         'tls_ca' => 'some-ca',
         'hostname_verification' => {
-            'enabled' => false
+            'enabled' => true
         }
       }
     end
@@ -35,7 +35,7 @@ describe 'bbr-credhubdb job' do
         'require_tls' => true,
         'tls_ca' => 'other-ca',
         'hostname_verification' => {
-            'enabled' => false
+            'enabled' => true
         }
       }
     end
