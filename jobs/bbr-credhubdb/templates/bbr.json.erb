@@ -32,7 +32,7 @@
 
   if props.p("credhub.data_storage.require_tls")
     config[:tls] = {
-      skip_host_verify: props.p("credhub.data_storage.hostname_verification.enabled"),
+      skip_host_verify: !props.p("credhub.data_storage.hostname_verification.enabled"),
       cert: {
         ca: props.p("credhub.data_storage.tls_ca"),
       }
