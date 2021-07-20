@@ -40,5 +40,5 @@ properties:
   credhub.data_storage.tls_ca:
     description: "CA trusted for making TLS connections to targeted database server"
   credhub.data_storage.hostname_verification.enabled:
-    description: "Toggle certificate hostname verification. WARNING: If your database server certificate contains the correct hostname, the value true is strongly recommended, as disabling hostname verification results in lesser security!"
+    description: "Toggle certificate hostname verification. WARNING: If your database server certificate contains the correct hostname, the value 'true' is strongly recommended, as disabling hostname verification results in lesser security!"
     default: true
