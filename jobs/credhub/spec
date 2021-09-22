@@ -278,10 +278,15 @@ properties:
     description: "Enables the concatenation of CAs when there is a transitional CA for a certificate."
     default: true
   credhub.certificates.ca_minimum_duration_in_days:
-    description: "CA certificates will be generated/regenerated with this value when the user provided duration is lower. Unit in days."
-    default: 0 
+    description: "CA certificates will be generated/regenerated with this value when
+                 the user provided duration is shorter, ensuring that every certificate
+                 is created with at least this value."
+    default: 0
   credhub.certificates.leaf_minimum_duration_in_days:
-    description: "Leaf certificates will be generated/regenerated with this value when the user provided duration is lower. Unit in days."
+    description: "Leaf certificates will be generated/regenerated with this value when
+                 the user provided duration is shorter, ensuring that
+                 every certificate is created with at least this
+                 value."
     default: 0
 
   # Swappable Backend
