@@ -79,17 +79,28 @@ mtls_ca_certs = p('credhub.authentication.mutual_tls.trusted_cas') || []
 mtls_ca_certs.each_with_index do |cert, index|
 %>
 
-cat > ${MTLS_CA_CERT_FILE} <<EOL
-<%= cert %>
-EOL
+readonly CERT_DIR="$(mktemp --directory)"
+trap "rm -fr ${CERT_DIR}" EXIT
+
+echo '<%= cert %>' | sed '$d' | awk -v dir=${CERT_DIR} 'BEGIN {n=1} split_after==1{n++;split_after=0} /-----END CERTIFICATE-----/ {split_after=1} { print > dir "/cert" n ".pem" }'
+
+COUNTER=0
+
+for cert in ${CERT_DIR}/cert*.pem; do
+
+let "COUNTER=COUNTER+1"
+cat "$cert" > "${MTLS_CA_CERT_FILE}"
+
 
 <%=
 "${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts \
   -keystore ${MTLS_TRUST_STORE_PATH} \
   -storepass ${MTLS_TRUST_STORE_PASSWORD} \
-  -alias ${MTLS_CA_ALIAS}#{index} \
+  -alias ${MTLS_CA_ALIAS}-#{index}-${COUNTER} \
   -file ${MTLS_CA_CERT_FILE}"
 %>
+
+done
 
 <% end %>
 
