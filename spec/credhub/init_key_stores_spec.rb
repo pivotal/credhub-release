@@ -25,7 +25,7 @@ describe 'credhub job' do
                 ]
               },
               'mutual_tls' => {
-                  'trusted_cas' => []
+                'trusted_cas' => []
               }
             }
           }
