@@ -23,6 +23,9 @@ describe 'credhub job' do
                 'ca_certs' => [
                   'my_first_uaa_cert'
                 ]
+              },
+              'mutual_tls' => {
+                  'trusted_cas' => []
               }
             }
           }
@@ -32,6 +35,15 @@ describe 'credhub job' do
       it 'loads the TLS certificate' do
         script = template.render(manifest)
         expect(script).to include('openssl pkcs12 -export -in')
+      end
+
+      context 'when trusted CAs are provided' do
+        it 'should import the CAs to the trust store' do
+          manifest['credhub']['authentication']['mutual_tls']['trusted_cas'] = ['ca1']
+
+          script = template.render(manifest)
+          expect(script).to include('keytool -import -noprompt -trustcacerts')
+        end
       end
     end
   end
