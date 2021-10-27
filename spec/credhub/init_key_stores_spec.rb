@@ -39,37 +39,34 @@ describe 'credhub job' do
 
       context 'when trusted CAs are provided' do
         it 'should import all provided CAs to the trust store' do
-          concatenatedCas =
-'-----BEGIN CERTIFICATE-----
+          concatenated_cas = '-----BEGIN CERTIFICATE-----
 someCertBody1
 -----END CERTIFICATE-----
 -----BEGIN CERTIFICATE-----
 someCertBody2
 -----END CERTIFICATE-----
 '
-          anotherCA =
-'-----BEGIN CERTIFICATE-----
+          another_ca = '-----BEGIN CERTIFICATE-----
 someCertBody3
 -----END CERTIFICATE-----
 '
-          manifest['credhub']['authentication']['mutual_tls']['trusted_cas'] = [concatenatedCas, anotherCA]
+          manifest['credhub']['authentication']['mutual_tls']['trusted_cas'] = [concatenated_cas, another_ca]
 
           script = template.render(manifest)
 
-          expect(script).to include(
-'cat > ${MTLS_CA_CERT_FILE} <<EOL
+          expect(script).to include('cat > ${MTLS_CA_CERT_FILE} <<EOL
 -----BEGIN CERTIFICATE-----
 someCertBody1
 -----END CERTIFICATE-----
 EOL')
-          expect(script).to include(
-'cat > ${MTLS_CA_CERT_FILE} <<EOL
+
+          expect(script).to include('cat > ${MTLS_CA_CERT_FILE} <<EOL
 -----BEGIN CERTIFICATE-----
 someCertBody2
 -----END CERTIFICATE-----
 EOL')
-          expect(script).to include(
-'cat > ${MTLS_CA_CERT_FILE} <<EOL
+
+          expect(script).to include('cat > ${MTLS_CA_CERT_FILE} <<EOL
 -----BEGIN CERTIFICATE-----
 someCertBody3
 -----END CERTIFICATE-----
