@@ -38,11 +38,46 @@ describe 'credhub job' do
       end
 
       context 'when trusted CAs are provided' do
-        it 'should import the CAs to the trust store' do
-          manifest['credhub']['authentication']['mutual_tls']['trusted_cas'] = ['ca1']
+        it 'should import all provided CAs to the trust store' do
+          concatenatedCas =
+'-----BEGIN CERTIFICATE-----
+someCertBody1
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+someCertBody2
+-----END CERTIFICATE-----
+'
+          anotherCA =
+'-----BEGIN CERTIFICATE-----
+someCertBody3
+-----END CERTIFICATE-----
+'
+          manifest['credhub']['authentication']['mutual_tls']['trusted_cas'] = [concatenatedCas, anotherCA]
 
           script = template.render(manifest)
-          expect(script).to include('keytool -import -noprompt -trustcacerts')
+
+          expect(script).to include(
+'cat > ${MTLS_CA_CERT_FILE} <<EOL
+-----BEGIN CERTIFICATE-----
+someCertBody1
+-----END CERTIFICATE-----
+EOL')
+          expect(script).to include(
+'cat > ${MTLS_CA_CERT_FILE} <<EOL
+-----BEGIN CERTIFICATE-----
+someCertBody2
+-----END CERTIFICATE-----
+EOL')
+          expect(script).to include(
+'cat > ${MTLS_CA_CERT_FILE} <<EOL
+-----BEGIN CERTIFICATE-----
+someCertBody3
+-----END CERTIFICATE-----
+EOL')
+
+          expect(script).to include('${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts   -keystore ${MTLS_TRUST_STORE_PATH}   -storepass ${MTLS_TRUST_STORE_PASSWORD}   -alias ${MTLS_CA_ALIAS}-0-0   -file ${MTLS_CA_CERT_FILE}')
+          expect(script).to include('${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts   -keystore ${MTLS_TRUST_STORE_PATH}   -storepass ${MTLS_TRUST_STORE_PASSWORD}   -alias ${MTLS_CA_ALIAS}-0-1   -file ${MTLS_CA_CERT_FILE}')
+          expect(script).to include('${JAVA_HOME}/bin/keytool -import -noprompt -trustcacerts   -keystore ${MTLS_TRUST_STORE_PATH}   -storepass ${MTLS_TRUST_STORE_PASSWORD}   -alias ${MTLS_CA_ALIAS}-1-0   -file ${MTLS_CA_CERT_FILE}')
         end
       end
     end
