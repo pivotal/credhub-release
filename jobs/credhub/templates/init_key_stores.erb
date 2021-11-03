@@ -7,17 +7,21 @@ set -euo pipefail
 export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
 declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
 
+function generate_password() {
+  head --bytes=10000 /dev/urandom | tr -dc A-Za-z0-9 | head --bytes=32
+}
+
 # TLS
 CERT_FILE=/var/vcap/jobs/credhub/config/cert.crt
 PRIVATE_KEY_FILE=/var/vcap/jobs/credhub/config/priv.key
 CERT_ALIAS=credhub_tls_cert
 KEY_STORE_PATH=/var/vcap/jobs/credhub/config/cacerts.jks
-KEY_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
+KEY_STORE_PASSWORD="$(generate_password)"
 echo "export KEY_STORE_PASSWORD=${KEY_STORE_PASSWORD}" > "${tmp_dir}/var-store"
 
 # MTLS
 MTLS_CA_CERT_FILE=/var/vcap/jobs/credhub/config/mtls_ca_cert.crt
-MTLS_TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
+MTLS_TRUST_STORE_PASSWORD="$(generate_password)"
 MTLS_TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/mtls_trust_store.jks
 MTLS_CA_ALIAS=mtls_ca
 echo "export MTLS_TRUST_STORE_PASSWORD=${MTLS_TRUST_STORE_PASSWORD}" >> "${tmp_dir}/var-store"
@@ -32,7 +36,7 @@ AUTH_SERVER_CA_ALIAS_BASE=auth_server_ca
 
 #Trust store for DB and UAA connections
 TRUST_STORE_PATH=/var/vcap/jobs/credhub/config/trust_store.jks
-TRUST_STORE_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c32)
+TRUST_STORE_PASSWORD="$(generate_password)"
 echo "export TRUST_STORE_PASSWORD=${TRUST_STORE_PASSWORD}" >> "${tmp_dir}/var-store"
 
 rm -f /var/vcap/jobs/credhub/config/*.jks
