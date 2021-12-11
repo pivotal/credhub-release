@@ -25,6 +25,7 @@ export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.security.egd=file:/dev/ura
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.io.tmpdir=/var/vcap/data/credhub/exec-tmp"
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djdk.tls.ephemeralDHKeySize=4096"
 export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djdk.tls.namedGroups=\"secp384r1\""
+export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dlog4j2.formatMsgNoLookups=true"
 
 <%=
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
