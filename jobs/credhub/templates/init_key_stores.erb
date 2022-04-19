@@ -51,8 +51,16 @@ cat > ${PRIVATE_KEY_FILE} <<EOL
 <%= p('credhub.tls.private_key') %>
 EOL
 
+# legacy option is needed for openssl 3 + openjdk8 see https://github.com/pivotal/credhub-release/issues/65
+if openssl version | grep -q 3.0; then
+  LEGACY="-legacy"
+else
+  LEGACY=""
+fi
+
+
 if [ -s ${CERT_FILE} ]; then
-    RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 -export -in ${CERT_FILE} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
+    RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 ${LEGACY} -export -in ${CERT_FILE} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
             -password pass:k0*l*s3cur1tyr0ck$
 
     ${JAVA_HOME}/bin/keytool -importkeystore \
