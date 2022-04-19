@@ -4,3 +4,4 @@ dependencies:
 - openjdk_1.8.0
 files:
 - credhub/**/*
+- bellsoft-jdk*.tar.gz

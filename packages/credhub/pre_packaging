@@ -1,7 +1,25 @@
-set -e -x
+#!/usr/bin/env bash
+
+set -eux
 
 # Make sure we can see uname
 export PATH=$PATH:/bin:/usr/bin
+
+# Unpack Java - we support Linux 64bit otherwise we require JAVA_HOME to point to JDK
+if [ `uname` = "Linux" ]; then
+  mkdir java
+  cd java
+  tar zxvf ../bellsoft-jdk*.tar.gz --strip 1
+  export JAVA_HOME=${BUILD_DIR}/java
+else
+  if [ ! -d $JAVA_HOME ]; then
+    echo "JAVA_HOME properly set is required for non Linux builds."
+    exit 1
+  fi
+fi
+
+#setup Java path
+export PATH=$JAVA_HOME/bin:$PATH
 
 MODULE_GIT_DIR=$RELEASE_DIR/.git/modules/src/credhub
 
@@ -10,3 +28,8 @@ pushd ${BUILD_DIR}/credhub
   cp applications/credhub-api/build/libs/credhub.jar ${BUILD_DIR}/credhub/credhub.jar
   ./gradlew clean
 popd
+
+#clean build credhub data and build tools (java)
+# pushd ${BUILD_DIR}
+#   rm -rf java
+# popd
