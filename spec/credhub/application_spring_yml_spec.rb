@@ -137,6 +137,26 @@ describe 'credhub job' do
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
         end
       end
+
+      context 'when replication parameter is set' do
+        it 'appears in the connection URL' do
+
+          manifest = default_mysql_manifest.tap do |m|
+            m['credhub']['data_storage']['replication'] = 'aurora'
+          end
+          rendered_template = YAML.safe_load(template.render(manifest))
+
+          expected_connection_url =
+            'jdbc:mariadb:aurora://some-host:3306/some-database' \
+            '?autoReconnect=true' \
+            '&useSSL=true' \
+            '&requireSSL=true' \
+            '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
+            '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
+            '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
+          expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
+        end
+      end
     end
 
     context 'when the data storage type is postgres' do
@@ -233,6 +253,14 @@ describe 'credhub job' do
             'password' => 'some-password'
           }
           expect { template.render(postgres_manifest) }.to raise_error('postgres `host` must be set')
+        end
+        it 'should fail when postgres configuration properties do include `replication` string' do
+          postgres_manifest = default_postgres_manifest.tap do |m|
+            m['credhub']['data_storage']['host'] = 'special-postgres-host'
+            m['credhub']['data_storage']['port'] = 7777
+            m['credhub']['data_storage']['replication'] = 'aurora'
+          end
+          expect { template.render(postgres_manifest) }.to raise_error(/replication/)
         end
       end
     end

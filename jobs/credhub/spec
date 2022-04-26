@@ -75,6 +75,7 @@ provides:
   - credhub.data_storage.tls_ca
   - credhub.data_storage.type
   - credhub.data_storage.username
+  - credhub.data_storage.replication
 
 consumes:
 - name: postgres
@@ -211,6 +212,8 @@ properties:
     default: true
   credhub.data_storage.tls_ca:
     description: "CA trusted for making TLS connections to targeted database server"
+  credhub.data_storage.replication:
+    description: "Optional failover or load balancing mode like \"loadbalance\", \"replication\" or \"aurora\". Only available for database type \"mysql\"."
 
   # UAA Authentication
   credhub.authentication.uaa.enabled:

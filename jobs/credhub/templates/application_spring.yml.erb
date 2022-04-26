@@ -23,12 +23,19 @@
     database = p('credhub.data_storage.database')
     username = p('credhub.data_storage.username')
     password = p('credhub.data_storage.password')
+    replication = p('credhub.data_storage.replication', nil)
+
+    if !replication.nil? && !replication.empty?
+      url = "jdbc:mariadb:#{replication}://#{host}:#{port}/#{database}?autoReconnect=true"
+    else
+      url = "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true"
+    end
 
     properties['spring']['flyway']['locations'] << 'classpath:/db/migration/mysql'
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
-      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true",
+      'url' => url,
     }
 
     if p('credhub.data_storage.require_tls')
@@ -57,6 +64,10 @@
       if host == ''
         raise 'postgres `host` must be set'
       end
+    end
+
+    if !p('credhub.data_storage.replication', '').empty?
+      raise 'parameter `replication` is not allowed for postgres'
     end
 
     database = p('credhub.data_storage.database')
