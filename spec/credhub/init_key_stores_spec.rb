@@ -34,7 +34,7 @@ describe 'credhub job' do
 
       it 'loads the TLS certificate' do
         script = template.render(manifest)
-        expect(script).to include('openssl pkcs12 -export -in')
+        expect(script).to include('openssl pkcs12 ${LEGACY} -export -in')
       end
 
       context 'when trusted CAs are provided' do
