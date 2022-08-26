@@ -117,13 +117,11 @@ describe 'credhub job' do
         end
       end
 
-
       context 'when additional_parameters property is set' do
         it 'appears in the connection URL' do
-
           manifest = default_mysql_manifest.tap do |m|
             m['credhub']['data_storage']['additional_parameters'] =
-                    { 'usePipelineAuth' => 'false', 'useBatchMultiSend' => 'true' }
+              { 'usePipelineAuth' => 'false', 'useBatchMultiSend' => 'true' }
           end
           rendered_template = YAML.safe_load(template.render(manifest))
 
