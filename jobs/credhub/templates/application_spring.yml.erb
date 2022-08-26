@@ -14,7 +14,7 @@
   }
 
   additionalDBParameters = ''
-  if_p('credhub.data_storage.additionalParameters') do |dbParameters|
+  if_p('credhub.data_storage.additional_parameters') do |dbParameters|
     dbParameters.each do |key, value|
       next unless value
       additionalDBParameters += '&' + key + '=' + value  # assumes they won't be the first parameters in the URL
