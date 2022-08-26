@@ -117,6 +117,30 @@ describe 'credhub job' do
         end
       end
 
+
+      context 'when additionalParameters parameter is set' do
+        it 'appears in the connection URL' do
+
+          manifest = default_mysql_manifest.tap do |m|
+            m['credhub']['data_storage']['additionalParameters'] =
+                    { 'usePipelineAuth' => 'false', 'useBatchMultiSend' => 'true' }
+          end
+          rendered_template = YAML.safe_load(template.render(manifest))
+
+          expected_connection_url =
+            'jdbc:mariadb://some-host:3306/some-database' \
+            '?autoReconnect=true' \
+            '&usePipelineAuth=false' \
+            '&useBatchMultiSend=true' \
+            '&useSSL=true' \
+            '&requireSSL=true' \
+            '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
+            '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
+            '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
+          expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
+        end
+      end
+
       context 'when hostname verification is disabled' do
         it 'disables hostname verification in the connection URL' do
           manifest = default_mysql_manifest.tap do |m|

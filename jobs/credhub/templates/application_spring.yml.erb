@@ -13,6 +13,14 @@
     }
   }
 
+  additionalDBParameters = ''
+  if_p('credhub.data_storage.additionalParameters') do |dbParameters|
+    dbParameters.each do |key, value|
+      next unless value
+      additionalDBParameters += '&' + key + '=' + value  # assumes they won't be the first parameters in the URL
+    end
+  end
+
   case p('credhub.data_storage.type')
   when 'in-memory'
     properties['spring']['flyway']['locations'] << 'classpath:/db/migration/h2'
@@ -28,7 +36,7 @@
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
-      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true",
+      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true#{additionalDBParameters}",
     }
 
     if p('credhub.data_storage.require_tls')
@@ -67,7 +75,7 @@
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
-      'url' => "jdbc:postgresql://#{host}:#{port}/#{database}?autoReconnect=true",
+      'url' => "jdbc:postgresql://#{host}:#{port}/#{database}?autoReconnect=true#{additionalDBParameters}",
     }
 
     if p('credhub.data_storage.require_tls')

@@ -75,6 +75,7 @@ provides:
   - credhub.data_storage.tls_ca
   - credhub.data_storage.type
   - credhub.data_storage.username
+  - credhub.data_storage.additionalParameters
 
 consumes:
 - name: postgres
@@ -211,6 +212,11 @@ properties:
     default: true
   credhub.data_storage.tls_ca:
     description: "CA trusted for making TLS connections to targeted database server"
+  credhub.data_storage.additionalParameters:
+    description: "Additional parameters that should be added to the url that is used to connect to the database. Boolean values need to be passed as String."
+    example:
+      usePipelineAuth: "false"
+      useBatchMultiSend: "false"
 
   # UAA Authentication
   credhub.authentication.uaa.enabled:
