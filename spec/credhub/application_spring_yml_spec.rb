@@ -136,6 +136,10 @@ describe 'credhub job' do
             '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
             '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
+
+          rendered_jdbc_url = rendered_template['spring']['datasource']['url']
+          expect(rendered_jdbc_url).to include('&usePipelineAuth=false')
+          expect(rendered_jdbc_url).to include('&useBatchMultiSend=true')
         end
       end
 
