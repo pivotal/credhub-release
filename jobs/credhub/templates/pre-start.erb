@@ -29,7 +29,7 @@ fail_unless_credhub_port_is_open() {
   set -e
 
   if [[ $exit_code -eq 0 ]]; then
-    echo 'It appears that CredHub process is already running on port: <%= port %>'
+    echo 'Cannot start CredHub because port <%= port %> is already occupied.'
     exit 1;
   fi
 }
