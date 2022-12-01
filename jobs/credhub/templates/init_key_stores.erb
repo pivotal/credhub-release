@@ -68,7 +68,7 @@ fi
 
 
 if [ -s ${CERT_FILE} ]; then
-    RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 ${LEGACY} -export ${FIPS_OPTS} -in ${CERT_FILE} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
+    RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 ${LEGACY} -export -in ${CERT_FILE} ${FIPS_OPTS} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
             -password pass:k0*l*s3cur1tyr0ck$
 
     ${JAVA_HOME}/bin/keytool -importkeystore \
