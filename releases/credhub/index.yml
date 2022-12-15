@@ -147,6 +147,8 @@ builds:
     version: 1.7.1
   a838e8a6-b07b-4b51-7d6b-e821708bb79e:
     version: 1.8.1
+  b02f91dc-7d97-459b-6b77-04f7556b0cbd:
+    version: 2.12.18
   b125bc70-50d2-4f09-5c7f-a8658c8452cc:
     version: 1.8.2
   b28a99d5-5c82-473c-727e-72a7a5db64c2:
