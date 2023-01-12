@@ -4,7 +4,7 @@ set -euo pipefail
 
 ## BEGIN CERTIFICATE INSTALLATION
 
-export JAVA_HOME=/var/vcap/packages/openjdk_1.8.0/jre
+export JAVA_HOME=/var/vcap/packages/openjdk_11/jre
 declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
 
 function generate_password() {
