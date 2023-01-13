@@ -12,7 +12,7 @@ declare -r max_heap_size=<%= p('credhub.max_heap_size') %>
 
 source $tmp_dir/var-store
 
-export JAVA_HOME=/var/vcap/packages/openjdk_11/jre
+export JAVA_HOME=/var/vcap/packages/openjdk_11.0/jre
 export PATH=$JAVA_HOME/bin:$PATH
 
 LOG_DIR=/var/vcap/sys/log/credhub

@@ -1,5 +1,5 @@
 ---
-name: openjdk_11
+name: openjdk_11.0
 dependencies: []
 files:
-- openjdk_11/bellsoft-jre*.tar.gz
+- openjdk_11.0/bellsoft-jre*.tar.gz

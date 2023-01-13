@@ -1,7 +1,7 @@
 set -ex
 
 cd ${BOSH_INSTALL_TARGET}
-tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_11/bellsoft-jre*.tar.gz
+tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_11.0/bellsoft-jre*.tar.gz
 if [[ $? != 0 ]] ; then
   echo "Cannot unpack JRE"
   exit 1
