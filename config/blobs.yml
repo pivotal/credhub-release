@@ -6,3 +6,7 @@ openjdk_1.8.0/bellsoft-jre8u345%2B1-linux-amd64.tar.gz:
   size: 42015646
   object_id: 918ecc4c-bb6a-4278-57ec-758fcdc77c4b
   sha: d07e0b601787479386a16ca506986f415b82f134
+openjdk_11.0/bellsoft-jre11.0.17%2B7-linux-amd64.tar.gz:
+  size: 49081829
+  object_id: d21f3d6d-0757-47d7-56c5-0249bd534b36
+  sha: sha256:6fa5aa8a18538bf6c27d422a3a7d811dcd69bd2cc9d61d57e6e044cd31a8e334
