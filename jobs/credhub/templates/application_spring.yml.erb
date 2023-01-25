@@ -28,7 +28,7 @@
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
-      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true",
+      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true&socketTimeout=60000&connectTimeout=30000",
     }
 
     if p('credhub.data_storage.require_tls')
