@@ -2,7 +2,7 @@ luna-hsm-client-7.4/luna-hsm-client-7.4.tar:
   size: 40878080
   object_id: 41340dab-409e-4ee6-7571-2f88d38d89b4
   sha: sha256:7df1df90738778437a545ca2b0fb1427ab302503791d329946ab36edd5f07ec4
-openjdk_1.8.0/bellsoft-jre8u362%2B9-linux-amd64.tar.gz:
-  size: 42027672
-  object_id: bb8e2087-7ef5-40d6-68ef-148b724cd1bd
-  sha: sha256:8641017d42750c29055a83129ad6251261bd7ec8caf308b223ef1d29552f997a
+openjdk_1.8.0/bellsoft-jre8u345%2B1-linux-amd64.tar.gz:
+  size: 42015646
+  object_id: 918ecc4c-bb6a-4278-57ec-758fcdc77c4b
+  sha: d07e0b601787479386a16ca506986f415b82f134
