@@ -84,7 +84,7 @@ describe 'credhub job' do
           expected_connection_url =
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&socketTimeout=1200000' \
+            '&socketTimeout=3600000' \
             '&useSSL=true' \
             '&requireSSL=true' \
             '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
@@ -113,7 +113,7 @@ describe 'credhub job' do
           expected_connection_url =
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&socketTimeout=1200000'
+            '&socketTimeout=3600000'
 
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
         end
@@ -129,7 +129,7 @@ describe 'credhub job' do
           expected_connection_url =
             'jdbc:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
-            '&socketTimeout=1200000' \
+            '&socketTimeout=3600000' \
             '&useSSL=true' \
             '&requireSSL=true' \
             '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
