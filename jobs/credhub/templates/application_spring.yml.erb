@@ -25,10 +25,11 @@
     password = p('credhub.data_storage.password')
 
     properties['spring']['flyway']['locations'] << 'classpath:/db/migration/mysql'
+    db_socket_timeout_in_milliseconds = 1 * 60 * 60 * 1000
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
-      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true&socketTimeout=3600000",
+      'url' => "jdbc:mariadb://#{host}:#{port}/#{database}?autoReconnect=true&socketTimeout=#{db_socket_timeout_in_milliseconds}",
     }
 
     if p('credhub.data_storage.require_tls')
