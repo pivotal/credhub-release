@@ -1,4 +1,6 @@
 <%=
+  ONE_HOUR_IN_MILLISECONDS = 1 * 60 * 60 * 1000
+
   properties = {
     'spring' => {
       'flyway' => {
@@ -25,7 +27,8 @@
     password = p('credhub.data_storage.password')
 
     properties['spring']['flyway']['locations'] << 'classpath:/db/migration/mysql'
-    db_socket_timeout_in_milliseconds = 1 * 60 * 60 * 1000
+
+    db_socket_timeout_in_milliseconds = ONE_HOUR_IN_MILLISECONDS
     properties['spring']['datasource'] = {
       'username' => username,
       'password' => password,
