@@ -8,7 +8,7 @@ if [[ $? != 0 ]] ; then
 fi
 
 #rename directory
-mv jre8* jre
+mv jre-11* jre
 
 # latest JRE release didn't have correct permissions
 chmod -R a+rx jre
