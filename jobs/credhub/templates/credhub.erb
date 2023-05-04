@@ -29,7 +29,7 @@ export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dlog4j2.formatMsgNoLookups=true"
 
 <%=
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
-  'export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks"'
+  'export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djavax.net.debug=all -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks"'
 end
 %>
 
