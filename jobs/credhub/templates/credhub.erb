@@ -16,24 +16,25 @@ tee_output_to_sys_log "${LOG_DIR}" "credhub"
 
 /var/vcap/jobs/credhub/bin/wait_for_uaa
 
-export MANAGEMENT_SERVER_PORT="<%= p('credhub.health_endpoint_port').to_s %>"
+MANAGEMENT_SERVER_PORT="<%= p('credhub.health_endpoint_port').to_s %>"
 
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Xmx${MAX_HEAP_SIZE}m"
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dspring.config.additional-location=$application_configs"
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties"
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.security.egd=file:/dev/urandom"
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.io.tmpdir=/var/vcap/data/credhub/exec-tmp"
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djdk.tls.ephemeralDHKeySize=4096"
-export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dlog4j2.formatMsgNoLookups=true"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Xmx${MAX_HEAP_SIZE}m"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dspring.config.additional-location=$application_configs"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dlog4j.configurationFile=/var/vcap/jobs/credhub/config/log4j2.properties"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.security.egd=file:/dev/urandom"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.io.tmpdir=/var/vcap/data/credhub/exec-tmp"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djdk.tls.ephemeralDHKeySize=4096"
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Dlog4j2.formatMsgNoLookups=true"
 
 <%=
 if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enabled')
-  'export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks"'
+  'JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} -Djavax.net.ssl.trustStore=/var/vcap/jobs/credhub/config/trust_store.jks"'
 end
 %>
 
 export JAVA_HOME='/var/vcap/packages/openjdk_1.8.0/jre'
 export PATH="$JAVA_HOME/bin:$PATH"
+export JAVA_TOOL_OPTIONS
 
 java \
 	-jar "credhub.jar" \
