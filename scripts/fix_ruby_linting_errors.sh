@@ -18,7 +18,7 @@ function install_gems() {
 
 function lint_ruby() {
     pushd spec >/dev/null
-        bundle exec rubocop -a
+        bundle exec rubocop -a --config ../.rubocop.yml
     popd >/dev/null
 }
 

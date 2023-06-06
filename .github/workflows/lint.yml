@@ -28,4 +28,4 @@ jobs:
         run: |
           cd spec
           bundle 
-          bundle exec rubocop
+          bundle exec rubocop --config ../.rubocop.yml
