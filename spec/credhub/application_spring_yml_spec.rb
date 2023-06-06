@@ -7,13 +7,18 @@ describe 'credhub job' do
   let(:release) { Bosh::Template::Test::ReleaseDir.new(File.join(File.dirname(__FILE__), '..', '..')) }
   let(:job) { release.job('credhub') }
 
-  let(:postgres_link_instance) { Bosh::Template::Test::InstanceSpec.new(name: 'link_postgres_instance_name', address: 'some-postgres-host') }
+  let(:postgres_link_instance) do
+    Bosh::Template::Test::InstanceSpec.new(name: 'link_postgres_instance_name', address: 'some-postgres-host')
+  end
   let(:postgres_link_properties) do
     {
       'databases' => { 'port' => 5432, 'address' => 'some-postgres-host' }
     }
   end
-  let(:postgres_link) { Bosh::Template::Test::Link.new(name: 'postgres', instances: [postgres_link_instance], properties: postgres_link_properties) }
+  let(:postgres_link) do
+    Bosh::Template::Test::Link.new(name: 'postgres', instances: [postgres_link_instance],
+                                   properties: postgres_link_properties)
+  end
 
   describe 'config/application/spring.yml template' do
     let(:template) { job.template('config/application/spring.yml') }

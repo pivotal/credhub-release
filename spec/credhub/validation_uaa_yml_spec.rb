@@ -21,7 +21,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('When UAA is enabled you must provide a URL and CA Certs. Please update your manifest to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('When UAA is enabled you must provide a URL and CA Certs. Please update your manifest to proceed.')
     end
   end
 end

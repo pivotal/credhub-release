@@ -493,25 +493,33 @@ describe 'credhub job' do
           manifest = Marshal.load(Marshal.dump(base_manifest))
           manifest['credhub']['encryption']['providers'][0]['connection_properties'].delete('partition')
 
-          expect { template.render(manifest) }.to raise_error('`hsm` providers require `connection_properties.partition`')
+          expect do
+            template.render(manifest)
+          end.to raise_error('`hsm` providers require `connection_properties.partition`')
         end
         it 'raises an exception for partition_password' do
           manifest = Marshal.load(Marshal.dump(base_manifest))
           manifest['credhub']['encryption']['providers'][0]['connection_properties'].delete('partition_password')
 
-          expect { template.render(manifest) }.to raise_error('`hsm` providers require `connection_properties.partition_password`')
+          expect do
+            template.render(manifest)
+          end.to raise_error('`hsm` providers require `connection_properties.partition_password`')
         end
         it 'raises an exception for client_certificate' do
           manifest = Marshal.load(Marshal.dump(base_manifest))
           manifest['credhub']['encryption']['providers'][0]['connection_properties'].delete('client_certificate')
 
-          expect { template.render(manifest) }.to raise_error('`hsm` providers require `connection_properties.client_certificate`')
+          expect do
+            template.render(manifest)
+          end.to raise_error('`hsm` providers require `connection_properties.client_certificate`')
         end
         it 'raises an exception for client_key' do
           manifest = Marshal.load(Marshal.dump(base_manifest))
           manifest['credhub']['encryption']['providers'][0]['connection_properties'].delete('client_key')
 
-          expect { template.render(manifest) }.to raise_error('`hsm` providers require `connection_properties.client_key`')
+          expect do
+            template.render(manifest)
+          end.to raise_error('`hsm` providers require `connection_properties.client_key`')
         end
       end
 
