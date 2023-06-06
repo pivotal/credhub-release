@@ -162,7 +162,9 @@ describe 'credhub job' do
           }
         }
 
-        expect { template.render(manifest) }.to raise_error('socket_file must be set when enable_swappable_backend is true')
+        expect do
+          template.render(manifest)
+        end.to raise_error('socket_file must be set when enable_swappable_backend is true')
       end
 
       it 'errors if the ca_cert parameter is empty' do

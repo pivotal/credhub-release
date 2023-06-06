@@ -17,7 +17,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('Invalid log_level. Valid types include: none, error, warn, info, or debug. Please update your manifest to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('Invalid log_level. Valid types include: none, error, warn, info, or debug. Please update your manifest to proceed.')
     end
   end
 end

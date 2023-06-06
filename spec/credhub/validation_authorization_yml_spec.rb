@@ -21,7 +21,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('When ACLs are enabled you must provide at least one permission so that some actor can access CredHub. Please update your manifest to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('When ACLs are enabled you must provide at least one permission so that some actor can access CredHub. Please update your manifest to proceed.')
     end
   end
 end

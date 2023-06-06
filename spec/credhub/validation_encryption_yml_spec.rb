@@ -25,7 +25,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
     end
 
     it 'checks that there is only one active key' do
@@ -49,7 +51,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('Exactly one encryption key must be marked as active in the deployment manifest. Please update your configuration to proceed.')
     end
 
     it 'checks that provider type is supported' do
@@ -72,7 +76,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('The provided encryption provider type is not valid. Valid provider types are "hsm", "internal", and "kms-plugin".')
+      expect do
+        template.render(manifest)
+      end.to raise_error('The provided encryption provider type is not valid. Valid provider types are "hsm", "internal", and "kms-plugin".')
     end
 
     it 'checks that there is only one hsm provider' do
@@ -98,7 +104,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('More than one hsm provider is not supported. Please update your configuration to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('More than one hsm provider is not supported. Please update your configuration to proceed.')
     end
 
     it 'checks that there is only one kms-plugin provider' do
@@ -124,7 +132,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('More than one kms-plugin provider is not supported. Please update your configuration to proceed.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('More than one kms-plugin provider is not supported. Please update your configuration to proceed.')
     end
 
     it 'checks that connection_properties is not set if using internal encryption' do
@@ -148,7 +158,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('connection_properties should only be provided for providers of type "hsm" or "kms-plugin".')
+      expect do
+        template.render(manifest)
+      end.to raise_error('connection_properties should only be provided for providers of type "hsm" or "kms-plugin".')
     end
 
     it 'checks that endpoint is set if using kms-plugin provider type' do
@@ -172,7 +184,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('connection_properties for a provider of type "kms-plugin" must provide an "endpoint".')
+      expect do
+        template.render(manifest)
+      end.to raise_error('connection_properties for a provider of type "kms-plugin" must provide an "endpoint".')
     end
 
     it 'checks that partition and partition_password are not set in multiple places' do
@@ -198,7 +212,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('`partition` and `partition_password` cannot be provided both through `connection_properties` and directly')
+      expect do
+        template.render(manifest)
+      end.to raise_error('`partition` and `partition_password` cannot be provided both through `connection_properties` and directly')
     end
 
     it 'checks that key provider name matches provider name' do
@@ -222,7 +238,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('`provider_name` provided for key is not in list of providers')
+      expect do
+        template.render(manifest)
+      end.to raise_error('`provider_name` provided for key is not in list of providers')
     end
 
     it 'allows both encryption_key_name and encryption_password to be set' do
@@ -275,7 +293,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('credhub.encryption.keys[].key_properties.encryption_password is not valid (must not be empty if provided).')
+      expect do
+        template.render(manifest)
+      end.to raise_error('credhub.encryption.keys[].key_properties.encryption_password is not valid (must not be empty if provided).')
     end
 
     it 'checks that active encryption_password length is greater than 20 characters' do
@@ -301,7 +321,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('The encryption_password value must be at least 20 characters in length. Please update and redeploy.')
+      expect do
+        template.render(manifest)
+      end.to raise_error('The encryption_password value must be at least 20 characters in length. Please update and redeploy.')
     end
 
     it 'does not check that inactive encryption_password length is greater than 20 characters' do

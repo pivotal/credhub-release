@@ -44,8 +44,8 @@ describe 'credhub job' do
                 },
                 {
                   'path' => 'some-other-path',
-                  'actors' => ['some-actor', 'some-other-actor'],
-                  'operations' => ['some-operation', 'some-other-operation']
+                  'actors' => %w[some-actor some-other-actor],
+                  'operations' => %w[some-operation some-other-operation]
                 }
               ]
             }
@@ -61,8 +61,8 @@ describe 'credhub job' do
           },
           {
             'path' => 'some-other-path',
-            'actors' => ['some-actor', 'some-other-actor'],
-            'operations' => ['some-operation', 'some-other-operation']
+            'actors' => %w[some-actor some-other-actor],
+            'operations' => %w[some-operation some-other-operation]
           }
         ]
 

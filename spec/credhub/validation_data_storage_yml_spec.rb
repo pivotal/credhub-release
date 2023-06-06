@@ -19,7 +19,9 @@ describe 'credhub job' do
         }
       }
 
-      expect { template.render(manifest) }.to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
+      expect do
+        template.render(manifest)
+      end.to raise_error('credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".')
     end
 
     it 'checks that required key/value pairs exist when type is `mysql`' do
