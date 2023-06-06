@@ -2,10 +2,9 @@ Metrics/BlockLength:
   Exclude:
     - ./**/*.rb
 
-Metrics/LineLength:
+Layout/LineLength:
   Exclude:
     - ./**/*.rb
 
 Style/FrozenStringLiteralComment:
   Enabled: false
-  
