@@ -229,6 +229,8 @@ builds:
     version: 2.12.35
   d4982a20-b48e-4270-4dfe-edfd8477ed74:
     version: 1.7.9
+  d4d61124-4c52-4f14-6e20-58bec5d90f55:
+    version: 2.12.42
   d6cd05f1-3618-4157-76e5-525eb8fb4d14:
     version: 2.12.29
   dc0f754b-62d3-4151-608e-6027896b5bb5:
