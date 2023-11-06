@@ -1,0 +1,5 @@
+---
+name: openjdk_17.0
+dependencies: []
+files:
+- openjdk_17.0/bellsoft-jre*.tar.gz
