@@ -1,0 +1,3 @@
+[ v3_ext ]
+keyUsage = critical, digitalSignature, keyEncipherment, keyAgreement
+extendedKeyUsage = clientAuth, serverAuth
