@@ -259,6 +259,8 @@ builds:
     version: 2.12.19
   e27fa737-1e79-48b5-4fdd-0e5453c0bce7:
     version: 1.7.8
+  e705c35b-20c0-44dc-6cde-7381832aea17:
+    version: 2.12.52
   e7e2bf7b-fafa-4ebe-7fd0-15cf42e9207f:
     version: 2.1.6
   e94619b2-3067-462d-71b8-8117486ab507:
