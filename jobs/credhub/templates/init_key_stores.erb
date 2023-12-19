@@ -60,8 +60,10 @@ fi
 
 # Use Fips 140-2 compatible encryption algorithm
 if [ -f "/proc/sys/crypto/fips_enabled" ]; then
-  FIPS_OPTS="-certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES"
-  echo "Using Fips 140-2 compatible encryption algorithm PBE-SHA1-3DES to package cert and key with pkcs12"
+  FIPS_OPTS="-nomac"
+  LEGACY=""
+  # see https://github.com/pivotal/credhub-release/issues/174
+  echo "Using Fips 140-2 compatible openssl options to package cert and key with pkcs12"
 else
   FIPS_OPTS=""
 fi
