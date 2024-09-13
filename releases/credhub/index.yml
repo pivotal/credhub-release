@@ -17,6 +17,8 @@ builds:
     version: 2.12.28
   081a1377-042c-4497-6a68-3dc95aa0a640:
     version: 1.1.1
+  09e65aeb-3299-46ef-7a0f-de47e0417d01:
+    version: 2.12.90
   09fcd75d-49ef-4093-64a5-0c8f207f1eaa:
     version: 2.8.0
   0b224f79-37fc-4852-742f-c66bb11664ba:
