@@ -3,7 +3,9 @@
     'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256',
     'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384',
     'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
-    'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'
+    'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+    'TLS_AES_128_GCM_SHA256',
+    'TLS_AES_256_GCM_SHA384'
   ]
   # CredHubDeprecatedStartingAfter(2.1.2)
   if p('credhub.java7_tls_ciphers_enabled')
@@ -17,7 +19,7 @@
       'port' => p('credhub.port'),
       'ssl' => {
         'enabled' => true,
-        'enabled_protocols' => 'TLSv1.2',
+        'enabled_protocols' => 'TLSv1.2,TLSv1.3',
         'ciphers' => ciphers.join(','),
         'key_store' => '/var/vcap/jobs/credhub/config/cacerts.jks',
         'key_password' => '${KEY_STORE_PASSWORD}',

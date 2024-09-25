@@ -23,7 +23,7 @@ describe 'credhub job' do
         rendered_template = YAML.safe_load(template.render(manifest))
 
         expect(rendered_template['server']['ssl']['enabled']).to eq(true)
-        expect(rendered_template['server']['ssl']['enabled_protocols']).to eq('TLSv1.2')
+        expect(rendered_template['server']['ssl']['enabled_protocols']).to eq('TLSv1.2,TLSv1.3')
         expect(rendered_template['server']['ssl']['key_store']).to eq('/var/vcap/jobs/credhub/config/cacerts.jks')
         expect(rendered_template['server']['ssl']['key_password']).to eq('${KEY_STORE_PASSWORD}')
         expect(rendered_template['server']['ssl']['key_store_password']).to eq('${KEY_STORE_PASSWORD}')
@@ -40,6 +40,8 @@ describe 'credhub job' do
                                 TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
                                 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
                                 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+                                TLS_AES_128_GCM_SHA256
+                                TLS_AES_256_GCM_SHA384
                               ])
       end
 
@@ -91,6 +93,8 @@ describe 'credhub job' do
                                 TLS_DHE_RSA_WITH_AES_256_GCM_SHA384
                                 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
                                 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+                                TLS_AES_128_GCM_SHA256
+                                TLS_AES_256_GCM_SHA384
                                 TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
                                 TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
                               ])
