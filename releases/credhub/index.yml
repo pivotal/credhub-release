@@ -7,6 +7,8 @@ builds:
     version: 2.12.31
   047cf5a4-fdb7-4b1d-4c92-211e7212816b:
     version: 2.1.1
+  04be2f7a-7e28-4c20-58cc-0b6c25249929:
+    version: 2.12.108
   0562f7f2-8097-4a40-75f1-0c03c7cc7cd9:
     version: 1.9.9
   063d4417-b998-423f-58d5-f1bd2ae49fc3:
