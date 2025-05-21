@@ -1,14 +1,14 @@
 set -ex
 
 cd ${BOSH_INSTALL_TARGET}
-tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_17.0/bellsoft-jre*.tar.gz
+tar zxvf ${BOSH_COMPILE_TARGET}/openjdk_21.0/bellsoft-jre*.tar.gz
 if [[ $? != 0 ]] ; then
   echo "Cannot unpack JRE"
   exit 1
 fi
 
 #rename directory
-mv jre-17* jre
+mv jre-21* jre
 
 # latest JRE release didn't have correct permissions
 chmod -R a+rx jre
