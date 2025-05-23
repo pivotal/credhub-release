@@ -6,3 +6,7 @@ openjdk_17.0/bellsoft-jre17.0.15%2B10-linux-amd64.tar.gz:
   size: 58504324
   object_id: 0e5743da-82db-4728-73d3-6a99390f397e
   sha: sha256:2205b5d8dc26250303faa38dd501333e03056b4f9b645473cee42c5e79b6c212
+openjdk_21.0/bellsoft-jre21.0.7%2B9-linux-amd64.tar.gz:
+  size: 65735258
+  object_id: 54592c66-ca81-4bd1-5d92-3e33a82017a9
+  sha: sha256:e4b75fc9f3d82f09eb29b2d9a8bd2aac2e0b5cf6dd335d4632ffadc4f298f419
