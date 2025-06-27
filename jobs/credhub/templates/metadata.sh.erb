@@ -2,11 +2,5 @@
 <%
   if p("credhub.authentication.uaa.enabled")
 %>
-  echo "---
-  backup_should_be_locked_before:
-  - job_name: uaa
-    release: uaa
-  restore_should_be_locked_before:
-  - job_name: uaa
-    release: uaa"
+  echo "<%= p("credhub.bbr.metadata") %>"
 <% end %>

@@ -30,6 +30,9 @@ describe 'credhub job' do
               'uaa' => {
                 'enabled' => false
               }
+            },
+            'bbr' => {
+              'metadata' => 'some-yaml'
             }
           }
         }
@@ -40,6 +43,28 @@ describe 'credhub job' do
         expect(script).to eq('#!/usr/bin/env bash
 
 ')
+      end
+    end
+
+    context 'when credhub.authentication.uaa.enabled is set to true' do
+      let(:manifest) do
+        {
+          'credhub' => {
+            'authentication' => {
+              'uaa' => {
+                'enabled' => true
+              }
+            },
+            'bbr' => {
+              'metadata' => 'some-yaml'
+            }
+          }
+        }
+      end
+
+      it 'the metadata script should print the value of credhub.bbr.metadata' do
+        script = template.render(manifest)
+        expect(script).to include('echo "some-yaml')
       end
     end
   end
