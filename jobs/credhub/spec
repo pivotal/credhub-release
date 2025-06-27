@@ -313,3 +313,15 @@ properties:
   bpm.enabled:
     description: "Enable Bosh Process Manager. Deprecated; CredHub 3.x.x and later with require BPM to be enabled."
     default: false
+
+  # Back Up and Restore
+  credhub.bbr.metadata:
+    description: "Complete yaml block printed to standard out by BBR metadata script (usually used to specify locking dependencies). Only in effect if credhub.authentication.uaa.enabled is set to true."
+    default: |
+      ---
+        backup_should_be_locked_before:
+        - job_name: uaa
+          release: uaa
+        restore_should_be_locked_before:
+        - job_name: uaa
+          release: uaa
