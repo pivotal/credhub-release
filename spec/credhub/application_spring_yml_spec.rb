@@ -65,6 +65,11 @@ describe 'credhub job' do
         expect(rendered_template['spring']['jpa']).to eq(
           'hibernate' => {
             'ddl_auto' => 'validate'
+          },
+          'properties' => {
+            'hibernate' => {
+              'dialect' => 'org.hibernate.dialect.MariaDBDialect'
+            }
           }
         )
       end
@@ -87,7 +92,7 @@ describe 'credhub job' do
           rendered_template = YAML.safe_load(template.render(default_mysql_manifest))
 
           expected_connection_url =
-            'jdbc:mariadb://some-host:3306/some-database' \
+            'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
             '&socketTimeout=3600000' \
             '&useSSL=true' \
@@ -116,7 +121,7 @@ describe 'credhub job' do
           rendered_template = YAML.safe_load(template.render(manifest))
 
           expected_connection_url =
-            'jdbc:mariadb://some-host:3306/some-database' \
+            'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
             '&socketTimeout=3600000'
 
@@ -132,7 +137,7 @@ describe 'credhub job' do
           rendered_template = YAML.safe_load(template.render(manifest))
 
           expected_connection_url =
-            'jdbc:mariadb://some-host:3306/some-database' \
+            'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
             '?autoReconnect=true' \
             '&socketTimeout=3600000' \
             '&useSSL=true' \
