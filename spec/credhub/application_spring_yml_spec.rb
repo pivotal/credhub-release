@@ -65,11 +65,6 @@ describe 'credhub job' do
         expect(rendered_template['spring']['jpa']).to eq(
           'hibernate' => {
             'ddl_auto' => 'validate'
-          },
-          'properties' => {
-            'hibernate' => {
-              'dialect' => 'org.hibernate.dialect.MariaDBDialect'
-            }
           }
         )
       end
@@ -90,6 +85,17 @@ describe 'credhub job' do
       context 'default configuration' do
         it 'uses mysql properties and migrations with TLS enabled' do
           rendered_template = YAML.safe_load(template.render(default_mysql_manifest))
+
+          expect(rendered_template['spring']['jpa']).to eq(
+            'hibernate' => {
+              'ddl_auto' => 'validate'
+            },
+            'properties' => {
+              'hibernate' => {
+                'dialect' => 'org.hibernate.dialect.MariaDBDialect'
+              }
+            }
+          )
 
           expected_connection_url =
             'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
@@ -156,6 +162,12 @@ describe 'credhub job' do
       context 'default configuration' do
         it 'uses postgres properties and migrations with TLS enabled' do
           rendered_template = YAML.safe_load(template.render(default_postgres_manifest, consumes: [postgres_link]))
+
+          expect(rendered_template['spring']['jpa']).to eq(
+            'hibernate' => {
+              'ddl_auto' => 'validate'
+            }
+          )
 
           expected_connection_url =
             'jdbc:postgresql://some-postgres-host:5432/some-database' \

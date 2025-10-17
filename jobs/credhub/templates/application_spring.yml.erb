@@ -10,11 +10,6 @@
       'jpa' => {
         'hibernate' => {
           'ddl_auto' => 'validate'
-        },
-        'properties' => {
-          'hibernate' => {
-            'dialect' => 'org.hibernate.dialect.MariaDBDialect'
-          }
         }
       }
     }
@@ -38,6 +33,12 @@
       'username' => username,
       'password' => password,
       'url' => "jdbc:aws-wrapper:mariadb://#{host}:#{port}/#{database}?autoReconnect=true&socketTimeout=#{db_socket_timeout_in_milliseconds}",
+    }
+
+    properties['spring']['jpa']['properties'] = {
+        'hibernate' => {
+          'dialect' => 'org.hibernate.dialect.MariaDBDialect'
+        }
     }
 
     if p('credhub.data_storage.require_tls')
