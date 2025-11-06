@@ -1,4 +1,7 @@
-source 'https://rubygems.org'
+# Use alternative gemfile source if the env var is defined.
+# Note: Do not commit `Gemfile.lock` file with the `GEM remote` value set to
+# the alternative gemfile source.
+source ENV['GEMFILE_SOURCE'] || 'https://rubygems.org'
 
 gem 'bosh-template'
 gem 'rspec'
