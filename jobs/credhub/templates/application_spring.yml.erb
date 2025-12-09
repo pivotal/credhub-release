@@ -48,6 +48,41 @@
       end
     end
 
+  when 'aurora'
+    host = p('credhub.data_storage.host')
+    port = p('credhub.data_storage.port')
+    database = p('credhub.data_storage.database')
+    username = p('credhub.data_storage.username')
+    password = p('credhub.data_storage.password')
+
+    properties['spring']['flyway']['locations'] << 'classpath:/db/migration/mysql'
+
+    db_socket_timeout_in_milliseconds = ONE_HOUR_IN_MILLISECONDS
+    properties['spring']['datasource'] = {
+      'username' => username,
+      'password' => password,
+      'url' => "jdbc:aws-wrapper:mariadb://#{host}:#{port}/#{database}?autoReconnect=true&socketTimeout=#{db_socket_timeout_in_milliseconds}",
+    }
+
+    properties['spring']['jpa']['properties'] = {
+        'hibernate' => {
+          'dialect' => 'org.hibernate.dialect.MariaDBDialect'
+        }
+    }
+
+    if p('credhub.data_storage.require_tls')
+      properties['spring']['datasource']['url'] <<
+      '&useSSL=true' +
+        '&requireSSL=true' +
+        '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' +
+        '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' +
+        '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
+
+      if !p('credhub.data_storage.hostname_verification.enabled')
+        properties['spring']['datasource']['url'] << '&disableSslHostnameVerification=true'
+      end
+    end
+
   when 'postgres'
     host = p('credhub.data_storage.host', '')
     port = p('credhub.data_storage.port', 0)

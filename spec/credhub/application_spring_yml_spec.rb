@@ -45,6 +45,20 @@ describe 'credhub job' do
         }
       }
     end
+    let(:default_aurora_manifest) do
+      {
+        'credhub' => {
+          'data_storage' => {
+            'type' => 'aurora',
+            'port' => 3306,
+            'database' => 'some-database',
+            'host' => 'some-host',
+            'username' => 'some-username',
+            'password' => 'some-password'
+          }
+        }
+      }
+    end
     let(:default_postgres_manifest) do
       {
         'credhub' => {
@@ -141,6 +155,72 @@ describe 'credhub job' do
             '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
             '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks' \
             '&disableSslHostnameVerification=true'
+
+          expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
+        end
+      end
+    end
+
+    context 'when the data storage type is aurora' do
+      context 'default configuration' do
+        it 'uses mysql properties and migrations with TLS enabled' do
+          rendered_template = YAML.safe_load(template.render(default_aurora_manifest))
+
+          expected_connection_url =
+            'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
+              '?autoReconnect=true' \
+              '&socketTimeout=3600000' \
+              '&useSSL=true' \
+              '&requireSSL=true' \
+              '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
+              '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
+              '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks'
+
+          expect(rendered_template['spring']['datasource']).to eq(
+                                                                 'username' => 'some-username',
+                                                                 'password' => 'some-password',
+                                                                 'url' => expected_connection_url
+                                                               )
+          expect(rendered_template['spring']['flyway']['locations']).to eq([
+                                                                             'classpath:/db/migration/common',
+                                                                             'classpath:/db/migration/mysql'
+                                                                           ])
+        end
+      end
+
+      context 'when TLS is disabled' do
+        it 'does not set the TLS params in the connection URL' do
+          manifest = default_aurora_manifest.tap do |m|
+            m['credhub']['data_storage']['require_tls'] = false
+          end
+          rendered_template = YAML.safe_load(template.render(manifest))
+
+          expected_connection_url =
+            'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
+              '?autoReconnect=true' \
+              '&socketTimeout=3600000'
+
+          expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
+        end
+      end
+
+      context 'when hostname verification is disabled' do
+        it 'disables hostname verification in the connection URL' do
+          manifest = default_aurora_manifest.tap do |m|
+            m['credhub']['data_storage']['hostname_verification'] = { 'enabled' => false }
+          end
+          rendered_template = YAML.safe_load(template.render(manifest))
+
+          expected_connection_url =
+            'jdbc:aws-wrapper:mariadb://some-host:3306/some-database' \
+              '?autoReconnect=true' \
+              '&socketTimeout=3600000' \
+              '&useSSL=true' \
+              '&requireSSL=true' \
+              '&verifyServerCertificate=true&enabledSslProtocolSuites=TLSv1,TLSv1.1,TLSv1.2' \
+              '&trustCertificateKeyStorePassword=${TRUST_STORE_PASSWORD}' \
+              '&trustCertificateKeyStoreUrl=/var/vcap/jobs/credhub/config/trust_store.jks' \
+              '&disableSslHostnameVerification=true'
 
           expect(rendered_template['spring']['datasource']['url']).to eq(expected_connection_url)
         end

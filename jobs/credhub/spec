@@ -188,7 +188,7 @@ properties:
 
   # Data storage
   credhub.data_storage.type:
-    description: "Database type. Accepted values are in-memory, mysql, or postgres"
+    description: "Database type. Accepted values are in-memory, mysql, aurora, or postgres"
   credhub.data_storage.username:
     description: "Username for authenticating with targeted database server"
   credhub.data_storage.password:
