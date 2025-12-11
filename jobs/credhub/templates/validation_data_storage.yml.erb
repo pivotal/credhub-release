@@ -37,7 +37,7 @@
     return error_array
   end
 
-  if data_storage['type'] == 'postgres' || data_storage['type'] == 'mysql'
+  if data_storage['type'] == 'postgres' || data_storage['type'] == 'mysql' || data_storage['type'] == 'aurora'
     if key_exists('require_tls')
       if !is_boolean(data_storage['require_tls'])
         raise 'credhub.data_storage.require_tls must be set to `true` or `false`.'
@@ -56,10 +56,10 @@
     end
 
     if errors.length > 0
-      raise 'credhub.data_storage requires the following keys to be set when type is `mysql` or `postgres`: ' + errors.join(', ')
+      raise 'credhub.data_storage requires the following keys to be set when type is `mysql`, `aurora`, or `postgres`: ' + errors.join(', ')
     end
 
   elsif data_storage['type'] != 'in-memory'
-    raise 'credhub.data_storage.type must be set to "mysql", "postgres", or "in-memory".'
+    raise 'credhub.data_storage.type must be set to "mysql", "aurora", "postgres", or "in-memory".'
   end
 %>
