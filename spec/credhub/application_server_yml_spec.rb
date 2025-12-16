@@ -137,6 +137,22 @@ describe 'credhub job' do
       end
     end
 
+    context 'when enable_default_ca_key_usages is true' do
+      it 'sets server property to true' do
+        manifest = {
+          'credhub' => {
+            'certificates' => {
+              'enable_default_ca_key_usages' => true
+            }
+          }
+        }
+
+        rendered_template = YAML.safe_load(template.render(manifest))
+
+        expect(rendered_template['certificates']['enable_default_ca_key_usages']).to eq(true)
+      end
+    end
+
     context 'when enable_swappable_backend is true' do
       it 'sets server property to true, sets socket file, and tls connection properties' do
         manifest = {
