@@ -285,6 +285,9 @@ properties:
                  every certificate is created with at least this
                  value."
     default: 0
+  credhub.certificates.enable_default_ca_key_usages:
+    description: "Enables the setting of default key usage (keyCertSign, cRLSign) for CAs."
+    default: false
 
   # Swappable Backend
   credhub.backend.enable_swappable_backend:
