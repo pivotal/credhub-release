@@ -5,12 +5,7 @@
     'spring' => {
       'flyway' => {
         'enabled' => spec.bootstrap,
-        'locations' => ['classpath:/db/migration/common'],
-        'postgresql' => {
-          'transactional' => {
-            'lock' => false
-          }
-        }
+        'locations' => ['classpath:/db/migration/common']
       },
       'jpa' => {
         'hibernate' => {
