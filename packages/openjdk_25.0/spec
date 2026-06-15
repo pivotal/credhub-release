@@ -1,0 +1,5 @@
+---
+name: openjdk_25.0
+dependencies: []
+files:
+- openjdk_25.0/bellsoft-jre*.tar.gz

@@ -52,7 +52,7 @@ templates:
 
 
 packages:
-- openjdk_21.0
+- openjdk_25.0
 - luna-hsm-client-7.4
 - credhub
 
