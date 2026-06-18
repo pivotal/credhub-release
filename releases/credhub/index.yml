@@ -325,6 +325,8 @@ builds:
     version: 2.12.18
   b125bc70-50d2-4f09-5c7f-a8658c8452cc:
     version: 1.8.2
+  b1319898-9c90-439a-7529-9ada810f70f3:
+    version: 2.15.10
   b28a99d5-5c82-473c-727e-72a7a5db64c2:
     version: 2.12.0
   b2d14569-7128-4bed-5a0f-3c6d17fda240:
