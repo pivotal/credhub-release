@@ -48,6 +48,10 @@ case $1 in
       -Djavax.net.ssl.trustStorePassword=${TRUST_STORE_PASSWORD} \\"
     end
 
+    if p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == 'hsm' }
+      java_command += "-Djava.library.path=/var/vcap/packages/luna-hsm-client-7.4/jsp/64 \\"
+    end
+
     java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
     java_command
     %>

@@ -32,6 +32,10 @@ if p('credhub.data_storage.require_tls') || p('credhub.authentication.uaa.enable
 end
 %>
 
+<% if p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == 'hsm' } %>
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.library.path=/var/vcap/packages/luna-hsm-client-7.4/jsp/64"
+<% end %>
+
 export JAVA_HOME='/var/vcap/packages/openjdk_25.0/jre'
 export PATH="$JAVA_HOME/bin:$PATH"
 export JAVA_TOOL_OPTIONS
