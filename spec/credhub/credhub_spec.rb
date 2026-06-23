@@ -55,9 +55,15 @@ describe 'credhub job' do
     end
 
     context 'when no HSM provider is configured' do
-      it 'does not set java.library.path for Luna' do
+      it 'does not reference luna-hsm-client' do
         script = template.render(base_manifest)
         expect(script).not_to include('luna-hsm-client')
+      end
+
+      it 'launches via JarLauncher without a Luna classpath entry' do
+        script = template.render(base_manifest)
+        expect(script).to include('org.springframework.boot.loader.launch.JarLauncher')
+        expect(script).to include('LUNA_CP=""')
       end
     end
 
@@ -66,10 +72,16 @@ describe 'credhub job' do
         script = template.render(hsm_manifest)
         expect(script).to include('-Djava.library.path=/var/vcap/packages/luna-hsm-client-7.4/jsp/64')
       end
+
+      it 'adds LunaProvider.jar to the classpath via -cp' do
+        script = template.render(hsm_manifest)
+        expect(script).to include('LunaProvider.jar')
+        expect(script).to include('org.springframework.boot.loader.launch.JarLauncher')
+      end
     end
 
     context 'when providers is a nested array containing an HSM provider' do
-      it 'sets java.library.path for the Luna native library' do
+      it 'sets java.library.path and adds LunaProvider.jar to the classpath' do
         manifest = {
           'credhub' => {
             'encryption' => {
@@ -100,6 +112,7 @@ describe 'credhub job' do
         }
         script = template.render(manifest)
         expect(script).to include('-Djava.library.path=/var/vcap/packages/luna-hsm-client-7.4/jsp/64')
+        expect(script).to include('LunaProvider.jar')
       end
     end
   end

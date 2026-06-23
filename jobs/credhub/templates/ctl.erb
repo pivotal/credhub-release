@@ -50,9 +50,10 @@ case $1 in
 
     if p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == 'hsm' }
       java_command += "-Djava.library.path=/var/vcap/packages/luna-hsm-client-7.4/jsp/64 \\"
+      java_command += "-ea -cp credhub.jar:/var/vcap/packages/luna-hsm-client-7.4/jsp/LunaProvider.jar org.springframework.boot.loader.launch.JarLauncher --management.server.port=" + p('credhub.health_endpoint_port').to_s
+    else
+      java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
     end
-
-    java_command += "-ea -jar *.jar --management.server.port=" + p('credhub.health_endpoint_port').to_s
     java_command
     %>
     ;;
