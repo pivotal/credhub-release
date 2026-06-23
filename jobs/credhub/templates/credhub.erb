@@ -34,6 +34,9 @@ end
 
 <% if p('credhub.encryption.providers').flatten.any? { |provider| provider['type'] == 'hsm' } %>
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -Djava.library.path=/var/vcap/packages/luna-hsm-client-7.4/jsp/64"
+  LUNA_CP=":/var/vcap/packages/luna-hsm-client-7.4/jsp/LunaProvider.jar"
+<% else %>
+  LUNA_CP=""
 <% end %>
 
 export JAVA_HOME='/var/vcap/packages/openjdk_25.0/jre'
@@ -41,5 +44,6 @@ export PATH="$JAVA_HOME/bin:$PATH"
 export JAVA_TOOL_OPTIONS
 
 java \
-	-jar "credhub.jar" \
+	-cp "credhub.jar${LUNA_CP}" \
+	org.springframework.boot.loader.launch.JarLauncher \
 	--management.server.port="${MANAGEMENT_SERVER_PORT}"
