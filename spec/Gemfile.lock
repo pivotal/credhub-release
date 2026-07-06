@@ -6,7 +6,7 @@ GEM
       semi_semantic (~> 1.2.0)
     diff-lcs (1.6.2)
     json (2.20.0)
-    language_server-protocol (3.17.0.5)
+    language_server-protocol (3.17.0.6)
     lint_roller (1.1.0)
     parallel (2.1.0)
     parser (3.3.11.1)
