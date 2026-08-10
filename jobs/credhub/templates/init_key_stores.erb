@@ -8,7 +8,17 @@ export JAVA_HOME=/var/vcap/packages/openjdk_25.0/jre
 declare -r tmp_dir=/var/vcap/jobs/credhub/tmp
 
 function generate_password() {
-  head --bytes=10000 /dev/urandom | tr -dc A-Za-z0-9 | head --bytes=32
+  # Do not end this pipeline with `head`: it closes the pipe as soon as it has
+  # read enough bytes, which kills `tr` with SIGPIPE. Combined with the
+  # `pipefail` above that aborts this script with exit code 141. Truncate in
+  # the shell instead so nothing in the pipeline can be signalled.
+  #
+  # `LC_ALL=C` is required: stemcells default to a UTF-8 locale, where `tr`
+  # rejects the invalid multibyte sequences in /dev/urandom with
+  # `tr: Illegal byte sequence`.
+  local characters
+  characters="$(head --bytes=10000 /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9)"
+  printf '%s' "${characters:0:32}"
 }
 
 # TLS
@@ -61,7 +71,7 @@ fi
 
 
 if [ -s ${CERT_FILE} ]; then
-    RANDFILE=/etc/sv/monit/.rnd openssl pkcs12 -export -in ${CERT_FILE} ${FIPS_OPTS} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
+    openssl pkcs12 -export -in ${CERT_FILE} ${FIPS_OPTS} -inkey ${PRIVATE_KEY_FILE} -out cert.p12 -name ${CERT_ALIAS} \
             -password pass:k0*l*s3cur1tyr0ck$
 
     ${JAVA_HOME}/bin/keytool -importkeystore \

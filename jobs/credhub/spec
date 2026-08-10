@@ -17,7 +17,6 @@ templates:
   metadata.sh.erb: bin/bbr/metadata
 
   # Other scripts
-  ctl.erb: bin/ctl
   init_key_stores.erb: bin/init_key_stores.sh
   configure_hsm.erb: bin/configure_hsm.sh
   #Consul scripts
@@ -308,11 +307,6 @@ properties:
       -----BEGIN CERTIFICATE-----
       ...
       -----END CERTIFICATE-----
-
-  # BPM
-  bpm.enabled:
-    description: "Enable Bosh Process Manager. Deprecated; CredHub 3.x.x and later with require BPM to be enabled."
-    default: false
 
   # Back Up and Restore
   credhub.bbr.metadata:
