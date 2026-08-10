@@ -1,5 +1,6 @@
 require 'rspec'
 require 'json'
+require 'open3'
 require 'yaml'
 require 'bosh/template/test'
 
@@ -30,6 +31,26 @@ describe 'credhub job' do
             }
           }
         }
+      end
+
+      describe 'generate_password' do
+        # Runs the rendered function for real: it must survive `set -euo pipefail`
+        # under a UTF-8 locale, where `tr` would otherwise reject the invalid
+        # multibyte sequences coming out of /dev/urandom.
+        it 'prints a 32 character alphanumeric password without erroring' do
+          script = template.render(manifest)
+          function = script[/^function generate_password\(\) \{.*?^\}$/m]
+          expect(function).not_to be_nil
+
+          stdout, stderr, status = Open3.capture3(
+            { 'LC_ALL' => 'C.UTF-8' },
+            'bash', '-c', "set -euo pipefail\n#{function}\ngenerate_password"
+          )
+
+          expect(stderr).to be_empty
+          expect(status.exitstatus).to eq(0)
+          expect(stdout).to match(/\A[A-Za-z0-9]{32}\z/)
+        end
       end
 
       it 'loads the TLS certificate' do

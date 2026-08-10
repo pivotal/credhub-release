@@ -146,8 +146,6 @@ instance_groups:
           providers:
           - name: int
             type: internal
-      bpm:
-        enabled: true
 
   - name: postgres
     release: postgres
