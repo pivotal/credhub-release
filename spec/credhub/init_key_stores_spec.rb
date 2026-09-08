@@ -53,9 +53,11 @@ describe 'credhub job' do
         end
       end
 
-      it 'loads the TLS certificate' do
+      it 'loads the TLS certificate directly into the JKS keystore' do
         script = template.render(manifest)
-        expect(script).to include('openssl pkcs12 -export -in')
+        expect(script).to include('openssl pkcs8 -topk8 -nocrypt')
+        expect(script).to include('PemToKeyStore')
+        expect(script).not_to include('openssl pkcs12')
       end
 
       context 'when trusted CAs are provided' do
