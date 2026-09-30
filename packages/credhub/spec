@@ -4,3 +4,4 @@ dependencies:
 - openjdk_25.0
 files:
 - credhub/**/*
+- keystore-helper/**/*
