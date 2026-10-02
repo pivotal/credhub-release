@@ -383,6 +383,8 @@ builds:
     version: 1.0.11
   bfa5ec11-91ed-4573-6a20-17fccaa575aa:
     version: 2.12.65
+  c0c4143e-f910-4ca9-7adf-a8cf3f4b308b:
+    version: 2.15.25
   c140bef2-227e-4164-4f42-452b5480b092:
     version: 1.7.2
   c18e1da1-3176-4aea-6bbe-c7780e499c14:
